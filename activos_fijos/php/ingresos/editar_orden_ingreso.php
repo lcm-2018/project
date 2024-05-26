@@ -52,13 +52,13 @@ try {
                     $res['mensaje'] = $cmd->errorInfo()[2];
                 }
             } else {
-                $sql = "SELECT estado FROM far_orden_ingreso WHERE id_ingreso=" . $id;
+                $sql = "SELECT estado FROM acf_orden_ingreso WHERE id_ingreso=" . $id;
                 $rs = $cmd->query($sql);
                 $obj_ingreso = $rs->fetch();
 
                 if ($obj_ingreso['estado'] == 1) {
                     $sql = "UPDATE acf_orden_ingreso 
-                        SET num_factura='$num_fac',fec_factura='$fec_fac',id_tipo_ingreso=$id_tiping,id_provedor=$id_tercero,detalle='$detalle'
+                        SET id_tipo_ingreso=$id_tiping,id_provedor=$id_tercero,detalle='$detalle'
                         WHERE id_ingreso=" . $id;
                     $rs = $cmd->query($sql);
 
@@ -77,12 +77,12 @@ try {
         if ($oper == 'del') {
             $id = $_POST['id'];
 
-            $sql = "SELECT estado FROM far_orden_ingreso WHERE id_ingreso=" . $id;
+            $sql = "SELECT estado FROM acf_orden_ingreso WHERE id_ingreso=" . $id;
             $rs = $cmd->query($sql);
             $obj_ingreso = $rs->fetch();
 
             if ($obj_ingreso['estado'] == 1) {
-                $sql = "DELETE FROM far_orden_ingreso WHERE id_ingreso=" . $id;
+                $sql = "DELETE FROM acf_orden_ingreso WHERE id_ingreso=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';

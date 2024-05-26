@@ -94,7 +94,7 @@
     //Editar un registro Orden Ingreso
     $('#tb_ingresos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_orden_ingreso.php", { id: id }, function(he) {
+        $.post("acf_reg_orden_ingreso.php", { id: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
@@ -144,7 +144,8 @@
             }).always(
                 function() {}
             ).fail(function(xhr, textStatus, errorThrown) {
-                alert(xhr.responseText);
+                console.error(xhr.responseText)
+                alert('Ocurrió un error');
             });
         }
     });
@@ -172,7 +173,10 @@
                 $('#divModalError').modal('show');
                 $('#divMsgError').html(r.mensaje);
             }
-        }).always(function() {}).fail(function() {
+        }).always(function() {
+
+        }).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
             alert('Ocurrió un error');
         });
     });
