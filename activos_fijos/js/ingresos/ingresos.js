@@ -13,7 +13,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_ingresos.php", function(he) {
+                    $.post("acf_reg_orden_ingreso.php", function(he) {
                         $('#divTamModalForms').removeClass('modal-sm');
                         $('#divTamModalForms').removeClass('modal-lg');
                         $('#divTamModalForms').addClass('modal-xl');
@@ -33,7 +33,6 @@
                 data: function(data) {
                     data.id_ing = $('#txt_iding_filtro').val();
                     data.num_ing = $('#txt_numing_filtro').val();
-                    data.num_fac = $('#txt_numfac_filtro').val();
                     data.fec_ini = $('#txt_fecini_filtro').val();
                     data.fec_fin = $('#txt_fecfin_filtro').val();
                     data.id_tercero = $('#sl_tercero_filtro').val();
@@ -95,7 +94,7 @@
     //Editar un registro Orden Ingreso
     $('#tb_ingresos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_ingresos.php", { id: id }, function(he) {
+        $.post("frm_reg_orden_ingreso.php", { id: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
@@ -106,11 +105,9 @@
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio_2($('#id_txt_nom_bod'), $('#txt_nom_bod'));
+        var error = verifica_vacio_2($('#id_txt_sede'), $('#txt_nom_sede'));
         error += verifica_vacio($('#txt_fec_ing'));
         error += verifica_vacio($('#txt_hor_ing'));
-        error += verifica_vacio($('#txt_num_fac'));
-        error += verifica_vacio($('#txt_fec_fac'));
         error += verifica_vacio($('#sl_tip_ing'));
 
         if ($('#sl_tip_ing').find('option:selected').attr('data-intext') == 2) {
@@ -123,10 +120,10 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_orden_ingreso').serialize();
+            var data = $('#acf_reg_orden_ingreso').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_ingresos.php',
+                url: 'editar_orden_ingreso.php',
                 dataType: 'json',
                 data: data + "&oper=add"
             }).done(function(r) {
@@ -144,8 +141,10 @@
                     $('#divModalError').modal('show');
                     $('#divMsgError').html(r.mensaje);
                 }
-            }).always(function() {}).fail(function() {
-                alert('Ocurrió un error');
+            }).always(
+                function() {}
+            ).fail(function(xhr, textStatus, errorThrown) {
+                alert(xhr.responseText);
             });
         }
     });
@@ -159,7 +158,7 @@
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_ingresos.php',
+            url: 'editar_orden_ingreso.php',
             dataType: 'json',
             data: { id: id, oper: 'del' }
         }).done(function(r) {
@@ -330,7 +329,7 @@
                     $('#divMsgError').html(r.mensaje);
                 }
             }).always(function() {}).fail(function() {
-                alert('Ocurrió un error');
+                alert('Ocurrió un errorw');
             });
         }
     });
@@ -364,7 +363,7 @@
                 $('#divMsgError').html(r.mensaje);
             }
         }).always(function() {}).fail(function() {
-            alert('Ocurrió un error');
+            alert('Ocurrió un error4');
         });
     });
 
@@ -381,7 +380,6 @@
             $.post("imp_ingresos.php", {
                 id_ing: $('#txt_iding_filtro').val(),
                 num_ing: $('#txt_numing_filtro').val(),
-                num_fac: $('#txt_numfac_filtro').val(),
                 fec_ini: $('#txt_fecini_filtro').val(),
                 fec_fin: $('#txt_fecfin_filtro').val(),
                 id_tercero: $('#sl_tercero_filtro').val(),

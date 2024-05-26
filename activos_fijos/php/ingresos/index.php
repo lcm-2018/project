@@ -55,9 +55,6 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                                 <div class="form-group col-md-1">
                                     <input type="text" class="filtro form-control form-control-sm" id="txt_numing_filtro" placeholder="No. Ingreso">
                                 </div>
-                                <div class="form-group col-md-1">
-                                    <input type="text" class="filtro form-control form-control-sm" id="txt_numfac_filtro" placeholder="No. Factura">
-                                </div>
                                 <div class="form-group col-md-3">
                                     <div class="form-row">
                                         <div class="form-group col-md-6">
