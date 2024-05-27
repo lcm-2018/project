@@ -210,7 +210,8 @@
                 $('#divModalError').modal('show');
                 $('#divMsgError').html(r.mensaje);
             }
-        }).always(function() {}).fail(function() {
+        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
             alert('Ocurrió un error');
         });
     });

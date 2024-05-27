@@ -97,61 +97,40 @@ try {
         if ($oper == 'close') {
             $id = $_POST['id'];
 
-            $sql = "SELECT estado FROM far_orden_ingreso WHERE id_ingreso=" . $id;
+            $sql = "SELECT estado FROM acf_orden_ingreso WHERE id_ingreso=" . $id;
             $rs = $cmd->query($sql);
             $obj_ingreso = $rs->fetch();
             $estado = isset($obj_ingreso['estado']) ? $obj_ingreso['estado'] : -1;
 
-            $sql = "SELECT COUNT(*) AS total FROM far_orden_ingreso_detalle WHERE id_ingreso=" . $id;
+            $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso_detalle WHERE id_ingreso=" . $id;
             $rs = $cmd->query($sql);
             $obj_ingreso = $rs->fetch();
             $num_detalles = $obj_ingreso['total'];
 
-            $sql = "SELECT COUNT(*) AS total FROM far_kardex WHERE id_ingreso=" . $id;
-            $rs = $cmd->query($sql);
-            $obj_ingreso = $rs->fetch();
-            $num_reg_kardex = $obj_ingreso['total'];
-
-            if ($estado == 1 && $num_detalles > 0 && $num_reg_kardex == 0) {
+            if ($estado == 1 && $num_detalles > 0) {
                 $error = 0;
                 $cmd->beginTransaction();
 
-                $sql = 'SELECT far_orden_ingreso.id_sede,far_orden_ingreso.id_bodega,far_orden_ingreso.detalle,
-                            far_orden_ingreso_detalle.id_lote,
-                            far_orden_ingreso_detalle.cantidad*IFNULL(far_presentacion_comercial.cantidad,1) AS cantidad,
-                            far_orden_ingreso_detalle.valor/IFNULL(far_presentacion_comercial.cantidad,1) AS valor                             
-                        FROM far_orden_ingreso_detalle 
-                        INNER JOIN far_orden_ingreso ON (far_orden_ingreso.id_ingreso = far_orden_ingreso_detalle.id_ingreso) 
-                        INNER JOIN far_medicamento_lote ON (far_medicamento_lote.id_lote = far_orden_ingreso_detalle.id_lote)
-                        INNER JOIN far_presentacion_comercial ON (far_presentacion_comercial.id_prescom = far_orden_ingreso_detalle.id_presentacion)
-                        WHERE far_orden_ingreso_detalle.id_ingreso=' . $id;
+                $sql = 'SELECT acf_orden_ingreso.id_medicamento_articulo
+                            acf_orden_ingreso.id_sede,
+                            acf_orden_ingreso.detalle,
+                            acf_orden_ingreso_detalle.cantidad AS cantidad,
+                            acf_orden_ingreso_detalle.valor AS valor
+                        FROM acf_orden_ingreso_detalle 
+                        INNER JOIN acf_orden_ingreso ON (acf_orden_ingreso.id_ingreso = acf_orden_ingreso_detalle.id_orden_ingreso) 
+                        WHERE acf_orden_ingreso_detalle.id_orden_ingreso=' . $id;
                 $rs = $cmd->query($sql);
                 $objs_detalles = $rs->fetchAll();
 
                 foreach ($objs_detalles as $obj_det) {
+                    $id_medicamento = $obj['id_medicamento_articulo'];
                     $id_sede = $obj_det['id_sede'];
-                    $id_bodega = $obj_det['id_bodega'];
                     $detalle = $obj_det['detalle'];
                     $fec_movimiento = date('Y-m-d');
-
-                    $id_lote = $obj_det['id_lote'];
                     $cantidad = $obj_det['cantidad'];
                     $valor = $obj_det['valor'];
 
-                    /* Actualizar valores del Lote */
-                    $sql = 'SELECT existencia,val_promedio,id_med FROM far_medicamento_lote WHERE id_lote=' . $id_lote . ' LIMIT 1';
-                    $rs = $cmd->query($sql);
-                    $obj = $rs->fetch();
-                    $id_medicamento = $obj['id_med'];
-                    $val_promedio_lote = $obj['val_promedio'] ? $obj['val_promedio'] : 0;
-                    $existencia_lote = $obj['existencia'];
-
-                    /* Nuevos Valores [far_medicamento_lote] */
-                    $valor_promedio_lote_kdx = $val_promedio_lote;
-                    $existencia_lote_kdx = $existencia_lote + $cantidad;
-                    if ($existencia_lote_kdx > 0) {
-                        $valor_promedio_lote_kdx = ($val_promedio_lote * $existencia_lote + $cantidad * $valor) / $existencia_lote_kdx;
-                    }
+                  
 
                     /* Valores [far_medicamentos] */
                     $sql = 'SELECT existencia,val_promedio FROM far_medicamentos WHERE id_med=' . $id_medicamento . ' LIMIT 1';
@@ -165,14 +144,6 @@ try {
                     if ($existencia_medicamento_kdx > 0) {
                         $val_promedio_medicamento_kdx = ($val_promedio_med * $existencia_med + $valor * $cantidad) / $existencia_medicamento_kdx;
                     }
-
-                    /* Inserta registros en kardex de estaod=1-activo */
-                    $sql = "INSERT INTO far_kardex(id_lote,fec_movimiento,id_ingreso,id_sede,id_bodega,detalle,can_ingreso,val_ingreso,existencia_lote,val_promedio_lote,id_med,existencia,val_promedio,estado) 
-                            VALUES($id_lote,'$fec_movimiento',$id,$id_sede,$id_bodega,'$detalle',$cantidad,$valor,$existencia_lote_kdx,$valor_promedio_lote_kdx,$id_medicamento,$existencia_medicamento_kdx,$val_promedio_medicamento_kdx,1)";
-                    $rs1 = $cmd->query($sql);
-
-                    $sql = "UPDATE far_medicamento_lote SET existencia=$existencia_lote_kdx,val_promedio=$valor_promedio_lote_kdx WHERE id_lote=" . $id_lote;
-                    $rs2 = $cmd->query($sql);
 
                     $sql = "UPDATE far_medicamentos SET existencia=$existencia_medicamento_kdx,val_promedio=$val_promedio_medicamento_kdx WHERE id_med=" . $id_medicamento;
                     $rs3 = $cmd->query($sql);
