@@ -76,3 +76,33 @@ function sede_principal($cmd){
         echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
     }
 }
+
+
+//FUNCION QUE RETORNAR LOS DATOS DE UN ARTICULO
+function datos_articulo_acf($cmd, $id_med){
+    try {
+        $res = array();
+        $sql = "SELECT FM.id_med,
+                    FM.cod_medicamento,
+                    FM.nom_medicamento,
+                    FM.existencia,
+                    FM.val_promedio
+                FROM far_medicamentos FM WHERE FM.id_med=$id_med";
+        $rs = $cmd->query($sql);
+        $obj = $rs->fetch();
+        if (isset($obj['id_med'])) {
+                $res = array('id_med' => $obj['id_med'],
+                            'cod_articulo' => $obj['cod_medicamento'],
+                            'nom_articulo' => $obj['nom_medicamento'],
+                            'existencia' => $obj['existencia'],
+                            'val_promedio' => $obj['val_promedio']
+                        );
+        } else {
+            $res = array('id_med' => '', 'nom_articulo' => '', 'val_promedio' => '');
+        }
+        $cmd = null;
+        return $res;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
+}

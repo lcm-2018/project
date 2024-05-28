@@ -253,8 +253,8 @@
     DETALLES
     -----------------------------------------------------*/
     $('#divModalBus').on('dblclick', '#tb_lotes_articulos tr', function() {
-        let id_lote = $(this).find('td:eq(0)').text();
-        $.post("frm_reg_ingresos_detalles.php", { id_lote: id_lote }, function(he) {
+        let idMed = $(this).find('td:eq(0)').text();
+        $.post("acf_reg_orden_ingreso_detalle.php", { idMed: idMed }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
@@ -264,7 +264,7 @@
 
     $('#divForms').on('click', '#tb_ingresos_detalles .btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_ingresos_detalles.php", { id: id }, function(he) {
+        $.post("acf_reg_orden_ingreso_detalle.php", { id: id }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
