@@ -310,10 +310,10 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
-            var data = $('#frm_reg_ingresos_detalles').serialize();
+            var data = $('#acf_reg_ingresos_detalles').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_ingresos_detalles.php',
+                url: 'editar_orden_ingreso_detalle.php',
                 dataType: 'json',
                 data: data + "&id_ingreso=" + $('#id_ingreso').val() + '&oper=add'
             }).done(function(r) {
@@ -333,8 +333,9 @@
                     $('#divModalError').modal('show');
                     $('#divMsgError').html(r.mensaje);
                 }
-            }).always(function() {}).fail(function() {
-                alert('Ocurrió un errorw');
+            }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Error al guardar detalle');
             });
         }
     });
