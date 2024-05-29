@@ -98,7 +98,8 @@ try {
                 }
 
                 if ($rs) {
-                    $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT SUM(valor*cantidad) FROM acf_orden_ingreso_detalle WHERE id_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
+                    $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT IFNULL(SUM(valor * cantidad), 0)  
+                            FROM acf_orden_ingreso_detalle WHERE id_orden_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
                     $rs = $cmd->query($sql);
 
                     $sql = "SELECT val_total FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;

@@ -349,7 +349,7 @@
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_ingresos_detalles.php',
+            url: 'editar_orden_ingreso_detalle.php',
             dataType: 'json',
             data: { id: id, id_ingreso: $('#id_ingreso').val(), oper: 'del' }
         }).done(function(r) {
@@ -368,8 +368,9 @@
                 $('#divModalError').modal('show');
                 $('#divMsgError').html(r.mensaje);
             }
-        }).always(function() {}).fail(function() {
-            alert('Ocurrió un error4');
+        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
+            alert('Ocurrió un error');
         });
     });
 
