@@ -107,9 +107,6 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <th>Id</th>
                         <th>Código</th>
                         <th>Descripción</th>
-                        <th>Lote</th>
-                        <th>Fecha Vencimiento</th>
-                        <th>Presentación del Lote</th>
                         <th>Cantidad</th>
                         <th>Vr. Unitario</th>
                         <th>%IVA</th>

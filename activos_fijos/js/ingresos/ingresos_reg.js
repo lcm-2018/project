@@ -28,9 +28,6 @@
                 { 'data': 'id_ing_detalle' }, //Index=0
                 { 'data': 'cod_medicamento' },
                 { 'data': 'nom_medicamento' },
-                { 'data': 'lote' },
-                { 'data': 'fec_vencimiento' },
-                { 'data': 'nom_presentacion' },
                 { 'data': 'cantidad' },
                 { 'data': 'valor_sin_iva' },
                 { 'data': 'iva' },
@@ -40,8 +37,8 @@
                 { 'data': 'botones' }
             ],
             columnDefs: [
-                { class: 'text-wrap', targets: [2, 5, 11] },
-                { orderable: false, targets: 12 }
+                { class: 'text-wrap', targets: [2, 8] },
+                { orderable: false, targets: 9 }
             ],
             order: [
                 [0, "desc"]

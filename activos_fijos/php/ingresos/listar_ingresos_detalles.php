@@ -44,19 +44,18 @@ try {
     $totalRecordsFilter = $total['total'];
 
     //Consulta los datos para listarlos en la tabla
-    $sql = "SELECT far_orden_ingreso_detalle.id_ing_detalle,
-	            far_medicamentos.cod_medicamento,far_medicamentos.nom_medicamento,
-                far_medicamento_lote.lote,far_medicamento_lote.fec_vencimiento,
-                far_presentacion_comercial.nom_presentacion,
-	            far_orden_ingreso_detalle.cantidad,far_orden_ingreso_detalle.valor_sin_iva,
-	            far_orden_ingreso_detalle.iva,far_orden_ingreso_detalle.valor,
-	            (far_orden_ingreso_detalle.valor*far_orden_ingreso_detalle.cantidad) AS val_total,
-	            far_orden_ingreso_detalle.observacion
-            FROM far_orden_ingreso_detalle
-            INNER JOIN far_medicamento_lote ON (far_medicamento_lote.id_lote = far_orden_ingreso_detalle.id_lote)
-            INNER JOIN far_medicamentos ON (far_medicamentos.id_med = far_medicamento_lote.id_med)
-            INNER JOIN far_presentacion_comercial ON (far_presentacion_comercial.id_prescom = far_orden_ingreso_detalle.id_presentacion)
-            WHERE far_orden_ingreso_detalle.id_ingreso=" . $_POST['id_ingreso'] . $where . " ORDER BY $col $dir $limit";
+    $sql = "SELECT OID.id_ing_detalle,
+                FM.cod_medicamento,
+                FM.nom_medicamento,
+                OID.cantidad,
+                OID.valor_sin_iva,
+                OID.iva,
+                OID.valor,
+                (OID.valor*OID.cantidad) AS val_total,
+                OID.observacion
+            FROM acf_orden_ingreso_detalle OID
+            INNER JOIN far_medicamentos FM ON (FM.id_med = OID.id_medicamento_articulo)
+            WHERE OID.id_orden_ingreso=" . $_POST['id_ingreso'] . $where . " ORDER BY $col $dir $limit";
 
     $rs = $cmd->query($sql);
     $objs = $rs->fetchAll();
@@ -82,9 +81,6 @@ if (!empty($objs)) {
             "id_ing_detalle" => $id,
             "cod_medicamento" => $obj['cod_medicamento'],
             "nom_medicamento" => $obj['nom_medicamento'],
-            "lote" => $obj['lote'],
-            "fec_vencimiento" => $obj['fec_vencimiento'],
-            "nom_presentacion" => $obj['nom_presentacion'],
             "cantidad" => $obj['cantidad'],
             "valor_sin_iva" => formato_valor($obj['valor_sin_iva']),
             "iva" => $obj['iva'],
