@@ -37,9 +37,9 @@ try {
 
             if ($id == -1) {
                 $sql = "INSERT INTO acf_orden_ingreso(fec_ingreso,hor_ingreso,id_tipo_ingreso,
-                        id_provedor,id_centrocosto,detalle,val_total,id_sede,id_sedetraslado,id_usr_crea,fec_creacion,estado)
+                        id_provedor,detalle,val_total,id_sede,id_usr_crea,fec_creacion,estado)
                     VALUES('$fec_ing','$hor_ing',$id_tiping,
-                        $id_tercero,0,'$detalle',0,$id_sede,$id_sede,$id_usr_ope,'$fecha_ope',1)";
+                        $id_tercero,'$detalle',0,$id_sede,$id_usr_ope,'$fecha_ope',1)";
                 $rs = $cmd->query($sql);
 
                 if ($rs) {
