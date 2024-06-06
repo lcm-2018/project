@@ -12,12 +12,18 @@ $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usua
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
-$sql = "SELECT acf_orden_ingreso.*,
-        tb_sedes.nom_sede AS nom_sede,
-        CASE acf_orden_ingreso.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
-        FROM acf_orden_ingreso 
-        INNER JOIN tb_sedes ON (tb_sedes.id_sede=acf_orden_ingreso.id_sede)
-        WHERE id_ingreso=" . $id . " LIMIT 1";
+$sql = "SELECT OID.id_ing_detalle,
+            FM.cod_medicamento,
+            FM.nom_medicamento,
+            OID.cantidad,
+            OID.valor_sin_iva,
+            OID.iva,
+            OID.valor,
+            (OID.valor*OID.cantidad) AS val_total,
+            OID.observacion
+            FROM acf_orden_ingreso_detalle OID
+            INNER JOIN far_medicamentos FM ON (FM.id_med = OID.id_medicamento_articulo)
+        WHERE OID.id_ing_detalle=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
 
@@ -25,29 +31,7 @@ if ($obj === false) {
     $obj = array(); // Inicializa $obj como un array vacío
 }
 
-if (empty($obj)) {
-    $n = $rs->columnCount();
-    for ($i = 0; $i < $n; $i++) :
-        $col = $rs->getColumnMeta($i);
-        $name = $col['name'];
-        $obj[$name] = NULL;
-    endfor;
-    //Inicializa variable por defecto
-    $obj['estado'] = 1;
-    $obj['nom_estado'] = 'PENDIENTE';
-    $obj['val_total'] = 0;
-
-    $bodega = sede_principal($cmd);
-    $obj['id_sede'] = $bodega['id_sede'];
-    $obj['nom_sede'] = $bodega['nom_sede'];
-
-    $fecha = fecha_hora_servidor();
-    $obj['fec_ingreso'] = $fecha['fecha'];
-    $obj['hor_ingreso'] = $fecha['hora'];
-}
-$guardar = in_array($obj['estado'],[1]) ? '' : 'disabled="disabled"';
-$cerrar = in_array($obj['estado'],[1]) && $id != -1 ? '' : 'disabled="disabled"';
-$anular = in_array($obj['estado'],[2]) ? '' : 'disabled="disabled"';
+$guardar =  $id != -1 ? '' : 'disabled="disabled"';
 $imprimir = $id != -1 ? '' : 'disabled="disabled"';
 
 ?>
@@ -60,28 +44,39 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
         <div class="px-2">
             <!--Formulario de registro de Ordenes de Ingreso-->
             <form id="acf_reg_orden_ingreso">
-                <input type="hidden" id="id_ingreso" name="id_ingreso" value="<?php echo $id ?>">
+                <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detlle" value="<?php echo $id ?>">
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label for="txt_nom_sede" class="small">Sede</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_nom_sede" class="small" value="<?php echo $obj['nom_sede'] ?>" readonly="readonly">
-                        <input type="hidden" id="id_txt_sede" name="id_txt_sede" value="<?php echo $obj['id_sede'] ?>">
+                        <label for="txt_cod_med" class="small">Codigo</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_cod_med" class="small" value="<?php echo $obj['cod_medicamento'] ?>" readonly="readonly">
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="txt_fec_ing" class="small">Fecha Ingreso</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_fec_ing" name="txt_fec_ing" class="small" value="<?php echo $obj['fec_ingreso'] ?>" readonly="readonly">
+                    <div class="form-group col-md-4">
+                        <label for="txt_desc_med" class="small">Descripción</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_desc_med" class="small" value="<?php echo $obj['nom_medicamento'] ?>" readonly="readonly">
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="txt_hor_ing" class="small">Hora Ingreso</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_hor_ing" name="txt_hor_ing" class="small" value="<?php echo $obj['hor_ingreso'] ?>" readonly="readonly">
+                    <div class="form-group col-md-4">
+                        <label for="txt_cdd_med" class="small">Cantidad</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_cdd_med" class="small" value="<?php echo $obj['cantidad'] ?>" readonly="readonly">
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="txt_num_ing" class="small">No. Ingreso</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_num_ing" name="txt_num_ing" class="small" value="<?php echo $obj['num_ingreso'] ?>" readonly="readonly">
+                    <div class="form-group col-md-4">
+                        <label for="txt_vrunit_med" class="small">Vr. Unitario</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_vrunit_med" class="small" value="<?php echo formato_valor($obj['valor_sin_iva']) ?>" readonly="readonly">
                     </div>
-                    <div class="form-group col-md-2">
-                        <label for="txt_est_ing" class="small">Estado Ingreso</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_est_ing" name="txt_est_ing" class="small" value="<?php echo $obj['nom_estado'] ?>" readonly="readonly">
+                    <div class="form-group col-md-4">
+                        <label for="txt_iva_med" class="small">%IVA</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_iva_med" class="small" value="<?php echo $obj['iva'] ?>" readonly="readonly">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="txt_costo_med" class="small">Costo</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_costo_med" class="small" value="<?php echo formato_valor($obj['valor']) ?>" readonly="readonly">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="txt_total_med" class="small">Total</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_total_med" class="small" value="<?php echo formato_valor($obj['val_total']) ?>" readonly="readonly">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="txt_observacion_med" class="small">%IVA</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_observacion_med" class="small" value="<?php echo $obj['observacion'] ?>" readonly="readonly">
                     </div>
           
                 </div>
@@ -103,15 +98,6 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                 </thead>
                 <tbody class="text-left centro-vertical"></tbody>
             </table>
-            <div class="form-row">
-                <div class="form-group col-md-4"></div>
-                <div class="form-group col-md-2">
-                    <label for="txt_val_tot" class="small">Total Orden Ingreso</label>
-                </div>
-                <div class="form-group col-md-2">
-                    <input type="text" class="form-control form-control-sm" id="txt_val_tot" name="txt_val_tot" class="small" value="<?php echo formato_valor($obj['val_total']) ?>" readonly="readonly">
-                </div>
-            </div>    
         </div>
     </div>
     <div class="text-center pt-3">
