@@ -13,7 +13,7 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $idMed = isset($_POST['idMed']) ? $_POST['idMed'] : -1;
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
-$sql = "SELECT acf_orden_ingreso_detalle.*, far_medicamentos.nom_medicamento AS nom_articulo
+$sql = "SELECT acf_orden_ingreso_detalle.*, far_medicamentos.id_med, far_medicamentos.nom_medicamento AS nom_articulo
         FROM acf_orden_ingreso_detalle
         INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_medicamento_articulo)
         WHERE id_ing_detalle=" . $id . " LIMIT 1";

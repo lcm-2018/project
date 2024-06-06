@@ -66,6 +66,7 @@ try {
 
 $editar = NULL;
 $eliminar = NULL;
+$editaractivofijo = NULL;
 $data = [];
 if (!empty($objs)) {
     foreach ($objs as $obj) {
@@ -73,6 +74,9 @@ if (!empty($objs)) {
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
         if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
+        }
+        if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
+            $editaractivofijo = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_activofijo" title="Activo Fijo"><span class="fas fa-laptop fa-lg"></span></a>';
         }
         if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
@@ -87,7 +91,7 @@ if (!empty($objs)) {
             "valor" => formato_valor($obj['valor']),
             "val_total" => formato_valor($obj['val_total']),
             "observacion" => $obj['observacion'],
-            "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
+            "botones" => '<div class="text-center centro-vertical">' . $editar . $editaractivofijo . $eliminar . '</div>',
         ];
     }    
 }

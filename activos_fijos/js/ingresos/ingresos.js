@@ -271,6 +271,16 @@
         });
     });
 
+    //Editar activos fijos
+    $('#divForms').on('click', '#tb_ingresos_detalles .btn_activofijo', function() {
+        let id = $(this).attr('value');
+        $.post("acf_reg_activofijo.php", { id: id }, function(he) {
+            $('#divTamModalReg').addClass('modal-xl');
+            $('#divModalReg').modal('show');
+            $("#divFormsReg").html(he);
+        });
+    });
+
     // Autocompletar Presentacion de Lote
     $('#divFormsReg').on("input", "#txt_pre_lot", function() {
         $(this).autocomplete({
