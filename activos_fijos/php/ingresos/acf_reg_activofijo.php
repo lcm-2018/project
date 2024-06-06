@@ -84,15 +84,11 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
             <table id="tb_lista_activos_fijos" class="table table-striped table-bordered table-sm nowrap table-hover shadow" style="width:100%; font-size:80%">
                 <thead>
                     <tr class="text-center centro-vertical">
-                        <th>Id</th>
-                        <th>Código</th>
-                        <th>Descripción</th>
-                        <th>Cantidad</th>
-                        <th>Vr. Unitario</th>
-                        <th>%IVA</th>
-                        <th>Vr. Costo</th>
-                        <th>Total</th>
-                        <th>Observación</th>
+                        <th>Placa</th>
+                        <th>Serial</th>
+                        <th>Marca</th>
+                        <th>Valor</th>
+                        <th>Estado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>

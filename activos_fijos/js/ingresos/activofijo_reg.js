@@ -17,28 +17,24 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'listar_ingresos_detalles.php',
+                url: 'listar_activosfijos_detalles.php',
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_ingreso = $('#id_ingreso').val();
+                    data.id_ingreso_detalle = $('#id_ingreso_detalle').val();
                 }
             },
             columns: [
-                { 'data': 'id_ing_detalle' }, //Index=0
-                { 'data': 'cod_medicamento' },
-                { 'data': 'nom_medicamento' },
-                { 'data': 'cantidad' },
-                { 'data': 'valor_sin_iva' },
-                { 'data': 'iva' },
+                { 'data': 'placa' }, //Index=0
+                { 'data': 'serial' },
+                { 'data': 'marca' },
                 { 'data': 'valor' },
-                { 'data': 'val_total' },
-                { 'data': 'observacion' },
+                { 'data': 'tipo_activo' },
                 { 'data': 'botones' }
             ],
             columnDefs: [
-                { class: 'text-wrap', targets: [2, 8] },
-                { orderable: false, targets: 9 }
+                { class: 'text-wrap', targets: [1, 2] },
+                { orderable: false, targets: 5 }
             ],
             order: [
                 [0, "desc"]
