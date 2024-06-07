@@ -57,7 +57,7 @@ if (empty($obj)) {
         <div class="px-2">
 
             <!--Formulario de registro de Detalle-->
-            <form id="acf_reg_ingresos_detalles">
+            <form id="acf_reg_activofijo_detalles">
                 <input type="hidden" id="id_detalle" name="id_detalle" value="<?php echo $id ?>">
                 <div class=" form-row">
                     <div class="form-group col-md-6">

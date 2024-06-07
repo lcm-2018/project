@@ -71,7 +71,7 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
-            var data = $('#acf_reg_ingresos_detalles').serialize();
+            var data = $('#acf_reg_activofijo_detalles').serialize();
             $.ajax({
                 type: 'POST',
                 url: 'editar_activofijo_detalle.php',
