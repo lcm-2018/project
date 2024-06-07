@@ -59,4 +59,46 @@
         });
     });
 
+    $('#divFormsBus').on("click", "#btn_guardar_activofijo", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        var error = verifica_vacio($('#txt_placa'));
+        error += verifica_vacio($('#txt_serial'));
+        error += verifica_vacio($('#sl_marca'));
+        error += verifica_vacio($('#sl_tipoactivo'));
+
+        if (error >= 1) {
+            $('#divModalError').modal('show');
+            $('#divMsgError').html('Los datos resaltados son obligatorios');
+        } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
+            var data = $('#acf_reg_ingresos_detalles').serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'editar_activofijo_detalle.php',
+                dataType: 'json',
+                data: data + "&id_ingreso=" + $('#id_ingreso').val() + '&oper=add'
+            }).done(function(r) {
+                if (r.mensaje == 'ok') {
+                    let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_ingresos_detalles').DataTable().page.info().page;
+                    reloadtable('tb_ingresos_detalles', pag);
+                    pag = $('#tb_ingresos').DataTable().page.info().page;
+                    reloadtable('tb_ingresos', pag);
+
+                    $('#id_detalle').val(r.id);
+                    $('#txt_val_tot').val(r.val_total);
+
+                    $('#divModalReg').modal('hide');
+                    $('#divModalDone').modal('show');
+                    $('#divMsgDone').html("Proceso realizado con éxito");
+                } else {
+                    $('#divModalError').modal('show');
+                    $('#divMsgError').html(r.mensaje);
+                }
+            }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Error al guardar activo');
+            });
+        }
+    });
+
 })(jQuery);

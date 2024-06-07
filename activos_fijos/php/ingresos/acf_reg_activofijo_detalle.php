@@ -102,7 +102,7 @@ if (empty($obj)) {
         </div>
     </div>
     <div class="text-center pt-3">
-        <button type="button" class="btn btn-primary btn-sm" id="btn_guardar_detalle">Guardar</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn_guardar_activofijo">Guardar</button>
         <a type="button" class="btn btn-secondary  btn-sm" data-dismiss="modal">Cancelar</a>
     </div>
 </div>
