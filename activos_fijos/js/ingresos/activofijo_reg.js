@@ -4,7 +4,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("../common/buscar_articulos_acf.php", { id_sede: $('#id_txt_sede').val(), id_bodega: $('#id_txt_nom_bod').val() }, function(he) {
+                    $.post("acf_reg_activofijo_detalle.php", { id_sede: $('#id_txt_sede').val(), id_bodega: $('#id_txt_nom_bod').val() }, function(he) {
                         $('#divTamModalBus').removeClass('modal-lg');
                         $('#divTamModalBus').removeClass('modal-sm');
                         $('#divTamModalBus').addClass('modal-xl');
@@ -47,4 +47,16 @@
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
         $('#tb_lista_activos_fijos').wrap('<div class="overflow"/>');
     });
+
+    $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
+        let idIngresoDetalle = $(this).attr('value');
+        $.post("acf_reg_activofijo_detalle.php", { idIngresoDetalle: idIngresoDetalle }, function(he) {
+            $('#divTamModalBus').removeClass('modal-lg');
+            $('#divTamModalBus').removeClass('modal-sm');
+            $('#divTamModalBus').addClass('modal-xl');
+            $('#divModalBus').modal('show');
+            $("#divFormsBus").html(he);
+        });
+    });
+
 })(jQuery);
