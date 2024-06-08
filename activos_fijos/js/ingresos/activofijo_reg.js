@@ -49,8 +49,14 @@
     });
 
     $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
-        let idIngresoDetalle = $(this).attr('value');
-        $.post("acf_reg_activofijo_detalle.php", { idIngresoDetalle: idIngresoDetalle }, function(he) {
+        let idIngresoDetalle = $('#id_ingreso_detalle').val()
+        let placa = $(this).attr('value');
+        alert(placa)
+        $.post("acf_reg_activofijo_detalle.php", 
+        { 
+            placa: placa,
+            idIngresoDetalle: idIngresoDetalle,
+        }, function(he) {
             $('#divTamModalBus').removeClass('modal-lg');
             $('#divTamModalBus').removeClass('modal-sm');
             $('#divTamModalBus').addClass('modal-xl');
@@ -58,6 +64,8 @@
             $("#divFormsBus").html(he);
         });
     });
+
+    //GUARDAR ACTIVO FIJO
 
     $('#divFormsBus').on("click", "#btn_guardar_activofijo", function() {
         $('.is-invalid').removeClass('is-invalid');
@@ -70,13 +78,14 @@
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
-        } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
+        } else {
             var data = $('#acf_reg_activofijo_detalles').serialize();
+
             $.ajax({
                 type: 'POST',
                 url: 'editar_activofijo_detalle.php',
                 dataType: 'json',
-                data: data + "&id_ingreso=" + $('#id_ingreso').val() + '&oper=add'
+                data: data + "&id_ingreso_detalle=" + $('#id_ingreso_detalle').val() + '&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
                     let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_ingresos_detalles').DataTable().page.info().page;
