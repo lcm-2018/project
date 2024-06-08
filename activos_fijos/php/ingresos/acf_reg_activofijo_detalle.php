@@ -13,6 +13,8 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $idMed = isset($_POST['idMed']) ? $_POST['idMed'] : -1;
 $idIngresoDetalle = isset($_POST['idIngresoDetalle']) ? $_POST['idIngresoDetalle'] : -1;
+$placa = isset($_POST['placa']) ? $_POST['placa'] : -1;
+
 $sql = "SELECT
             OID.id_orden_ingreso,
             OID.id_ing_detalle,
@@ -30,7 +32,7 @@ $sql = "SELECT
             INNER JOIN far_medicamentos FM ON (FM.id_med = OID.id_medicamento_articulo)
             INNER JOIN acf_activofijo AF ON AF.placa = AFOD.placa_activofijo
             INNER JOIN acf_marca M ON M.id = AF.id_marca
-        WHERE OID.id_ing_detalle=" . $idIngresoDetalle . " LIMIT 1";
+        WHERE OID.id_ing_detalle=" . $idIngresoDetalle . " AND AF.placa=" . "'$placa'" . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
 
@@ -58,7 +60,7 @@ if (empty($obj)) {
 
             <!--Formulario de registro de Detalle-->
             <form id="acf_reg_activofijo_detalles">
-                <input type="hidden" id="id_detalle" name="id_detalle" value="<?php echo $id ?>">
+                <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detalle" value="<?php echo $idIngresoDetalle ?>">
                 <div class=" form-row">
                     <div class="form-group col-md-6">
                         <label for="txt_cod_art" class="small">Codigo</label>

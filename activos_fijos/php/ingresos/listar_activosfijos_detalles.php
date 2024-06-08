@@ -78,12 +78,13 @@ $data = [];
 if (!empty($objs)) {
     foreach ($objs as $obj) {
         $id_ingreso_detalle = $obj['id_ing_detalle'];
+        $placa = $obj['placa'];
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
         if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
-            $editar = '<a value="' . $id_ingreso_detalle . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
+            $editar = '<a value="' . $placa . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
         if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
-            $eliminar =  '<a value="' . $id_ingreso_detalle . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
+            $eliminar =  '<a value="' . $placa . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [
             //"id_ing_detalle" => $id_ing_detalle,
