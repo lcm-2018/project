@@ -65,9 +65,9 @@ try {
                         $res['mensaje'] = 'El activo ya existe en los detalles de la Orden de Ingreso';
                     }
                 } else {
-                    $sql = "UPDATE acf_orden_ingreso_detalle1 
-                        SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
-                        WHERE id_ing_detalle=" . $id;
+                    $sql = "UPDATE acf_activofijo
+                            SET idserial=2345we, id_marca=$marca, valor=$valor, tipo_activo=$tipoactivo
+                            WHERE placa=" . $placa;
 
                     $rs = $cmd->query($sql);
                     if ($rs) {
