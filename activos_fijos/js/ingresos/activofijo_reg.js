@@ -51,7 +51,6 @@
     $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
         let idIngresoDetalle = $('#id_ingreso_detalle').val()
         let placa = $(this).attr('value');
-        alert(placa)
         $.post("acf_reg_activofijo_detalle.php", 
         { 
             placa: placa,
@@ -81,11 +80,14 @@
         } else {
             var data = $('#acf_reg_activofijo_detalles').serialize();
 
+            let idIngresoDetalle = $('#id_ingreso_detalle').val();
+            let placa = $('#id_placa').val();
+
             $.ajax({
                 type: 'POST',
                 url: 'editar_activofijo_detalle.php',
                 dataType: 'json',
-                data: data + "&id_ingreso_detalle=" + $('#id_ingreso_detalle').val() + '&oper=add'
+                data: data + "&id_ingreso_detalle=" + idIngresoDetalle + "&placa=" + placa +'&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
                     let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_ingresos_detalles').DataTable().page.info().page;
