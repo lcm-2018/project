@@ -12,7 +12,10 @@ $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usua
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $idMed = isset($_POST['idMed']) ? $_POST['idMed'] : -1;
+$codArticulo = isset($_POST['id_cod_articulo']) ? $_POST['id_cod_articulo'] : -1;
+$nomArticulo = isset($_POST['id_nom_articulo']) ? $_POST['id_nom_articulo'] : -1;
 $idIngresoDetalle = isset($_POST['idIngresoDetalle']) ? $_POST['idIngresoDetalle'] : -1;
+$costo = isset($_POST['id_costo']) ? $_POST['id_costo'] : -1;
 $placa = isset($_POST['placa']) ? $_POST['placa'] : -1;
 
 $sql = "SELECT
@@ -41,12 +44,15 @@ if (empty($obj)) {
     for ($i = 0; $i < $n; $i++) :
         $col = $rs->getColumnMeta($i);
         $name = $col['name'];
+        if (!is_array($obj)) {
+            $obj = [];
+        }
         $obj[$name] = NULL;
     endfor;
-    $articulo = datos_articulo_acf($cmd, $idMed);
-    $obj['id_med'] = $idMed;
-    $obj['nom_articulo'] = $articulo['nom_articulo'];
-    $obj['cod_articulo'] = $articulo['cod_articulo'];
+    //$articulo = datos_articulo_acf($cmd, $idMed);
+    $obj['nom_articulo'] = $codArticulo;
+    $obj['cod_articulo'] = $nomArticulo;
+    $obj['costo'] = $costo;
 
 }
 ?>

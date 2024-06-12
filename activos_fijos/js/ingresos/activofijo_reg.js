@@ -4,7 +4,12 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("acf_reg_activofijo_detalle.php", { id_sede: $('#id_txt_sede').val(), id_bodega: $('#id_txt_nom_bod').val() }, function(he) {
+                    $.post("acf_reg_activofijo_detalle.php", { 
+                            id_ingreso_detalle: $('#id_ingreso_detalle').val(), 
+                            id_cod_articulo: $('#id_cod_articulo').val(),
+                            id_nom_articulo: $('#id_nom_articulo').val(),
+                            id_costo: $('#id_costo').val()
+                        }, function(he) {
                         $('#divTamModalBus').removeClass('modal-lg');
                         $('#divTamModalBus').removeClass('modal-sm');
                         $('#divTamModalBus').addClass('modal-xl');

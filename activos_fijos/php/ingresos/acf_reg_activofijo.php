@@ -45,6 +45,9 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
             <!--Formulario de registro de Ordenes de Ingreso-->
             <form id="acf_reg_orden_ingreso">
                 <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detlle" value="<?php echo $id ?>">
+                <input type="hidden" id="id_cod_articulo" name="id_cod_articulo" value="<?php echo $obj['cod_medicamento'] ?>">
+                <input type="hidden" id="id_nom_articulo" name="id_nom_articulo" value="<?php echo $obj['nom_medicamento'] ?>">
+                <input type="hidden" id="id_costo" name="id_costo" value="<?php echo $obj['valor'] ?>">
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="txt_cod_med" class="small">Codigo</label>
