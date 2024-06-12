@@ -70,7 +70,6 @@
     });
 
     //GUARDAR ACTIVO FIJO
-
     $('#divFormsBus').on("click", "#btn_guardar_activofijo", function() {
         $('.is-invalid').removeClass('is-invalid');
 
@@ -112,5 +111,42 @@
             });
         }
     });
+
+    //ELEIMINAR ACTIVO FIJO DE ORDEN
+    $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_eliminar', function() {
+        let placa = $(this).attr('value');
+        confirmar_del('activofijo_del', placa);
+    });
+    $('#divModalConfDel').on("click", "#activofijo_del", function() {
+        var placa = $(this).attr('value');
+        let idIngresoDetalle = $('#id_ingreso_detalle').val()
+        $.ajax({
+            type: 'POST',
+            url: 'editar_activofijo_detalle.php',
+            dataType: 'json',
+            data: { 
+                    id_ingreso_detalle: idIngresoDetalle, 
+                    placa: placa, 
+                    oper: 'del' 
+                }
+        }).done(function(r) {
+            $('#divModalConfDel').modal('hide');
+            if (r.mensaje == 'ok') {
+                let pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
+                reloadtable('tb_lista_activos_fijos', pag);
+                $('#divModalDone').modal('show');
+                $('#divMsgDone').html("Proceso realizado con éxito");
+            } else {
+                $('#divModalError').modal('show');
+                $('#divMsgError').html(r.mensaje);
+            }
+        }).always(function() {
+
+        }).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
+            alert('Ocurrió un error');
+        });
+    });
+
 
 })(jQuery);

@@ -96,13 +96,18 @@ try {
             }
 
             if ($oper == 'del') {
-                $id = $_POST['id'];
-                $sql = "DELETE FROM acf_orden_ingreso_detalle WHERE id_ing_detalle=" . $id;
+                $placa = $_POST['placa'];
+                $cmd->beginTransaction();
+                $sql = "DELETE FROM acf_activofijo WHERE placa=" . $placa;
+                $rs = $cmd->query($sql);
+                $sql = "DELETE FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=$id_ingreso_detalle AND placa_activofijo=" . $placa;
                 $rs = $cmd->query($sql);
                 if ($rs) {
+                    $cmd->commit();
                     $res['mensaje'] = 'ok';
                 } else {
-                    $res['mensaje'] = $sql->errorInfo()[2];
+                    $cmd->rollBack();
+                    $res['mensaje'] = $cmd->errorInfo()[2];
                 }
             }
         } else {
