@@ -66,15 +66,23 @@ try {
                     }
                 } else {
                     $sql = "UPDATE acf_activofijo
-                            SET idserial=2345we, id_marca=$marca, valor=$valor, tipo_activo=$tipoactivo
-                            WHERE placa=" . $placa;
+                            SET serial=?, id_marca=?, valor=?, tipo_activo=?
+                            WHERE placa=?" ;
 
-                    $rs = $cmd->query($sql);
-                    if ($rs) {
+                    $sql = $cmd->prepare($sql);
+                    $sql->bindParam(1, $serial, PDO::PARAM_STR);
+                    $sql->bindParam(2, $marca, PDO::PARAM_INT);
+                    $sql->bindParam(3, $valor, PDO::PARAM_STR);
+                    $sql->bindParam(4, $tipoactivo, PDO::PARAM_INT);
+                    $sql->bindParam(5, $placa, PDO::PARAM_STR);
+                    $updated = $sql->execute();
+
+                    if ($updated) {
                         $res['mensaje'] = 'ok';
-                        $res['id'] = $id;
+                        $res['placa'] = $placa;
+                        $res['id_ingreso_detalle'] = $id_ingreso_detalle;
                     } else {
-                        $res['mensaje'] = $cmd->errorInfo()[2];
+                        $res['mensaje'] = $sql->errorInfo()[2];
                     }
                 }
             }
@@ -86,19 +94,8 @@ try {
                 if ($rs) {
                     $res['mensaje'] = 'ok';
                 } else {
-                    $res['mensaje'] = $cmd->errorInfo()[2];
+                    $res['mensaje'] = $sql->errorInfo()[2];
                 }
-            }
-
-            if ($rs) {
-                $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT IFNULL(SUM(valor * cantidad), 0)  
-                        FROM acf_orden_ingreso_detalle WHERE id_orden_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
-                $rs = $cmd->query($sql);
-
-                $sql = "SELECT val_total FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;
-                $rs = $cmd->query($sql);
-                $obj_ingreso = $rs->fetch();
-                $res['val_total'] = formato_valor($obj_ingreso['val_total']);
             }
         } else {
             $res['mensaje'] = 'Primero debe guardar el detalle de la Orden de Ingreso';

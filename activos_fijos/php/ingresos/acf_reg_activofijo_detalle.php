@@ -61,7 +61,7 @@ if (empty($obj)) {
             <!--Formulario de registro de Detalle-->
             <form id="acf_reg_activofijo_detalles">
                 <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detalle" value="<?php echo $idIngresoDetalle ?>">
-                <input type="hidden" id="placa" name="id_paca" value="<?php echo $placa ?>">
+                <input type="hidden" id="id_placa" name="id_placa" value="<?php echo $placa ?>">
                 <div class=" form-row">
                     <div class="form-group col-md-6">
                         <label for="txt_cod_art" class="small">Codigo</label>

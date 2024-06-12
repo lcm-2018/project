@@ -90,15 +90,11 @@
                 data: data + "&id_ingreso_detalle=" + idIngresoDetalle + "&placa=" + placa +'&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_ingresos_detalles').DataTable().page.info().page;
-                    reloadtable('tb_ingresos_detalles', pag);
-                    pag = $('#tb_ingresos').DataTable().page.info().page;
-                    reloadtable('tb_ingresos', pag);
+                    pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
+                    reloadtable('tb_lista_activos_fijos', 0);
 
-                    $('#id_detalle').val(r.id);
-                    $('#txt_val_tot').val(r.val_total);
-
-                    $('#divModalReg').modal('hide');
+                    $('#id_ingreso_detalle').val(r.id_ingreso_detalle);
+                    $('#divModalBus').modal('hide');
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");
                 } else {
