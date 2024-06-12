@@ -28,39 +28,47 @@ try {
         if ($id_ingreso_detalle > 0) {
             if ($oper == 'add') {
 
-                $placa = $_POST['txt_placa'];
+                $placa = $_POST['placa'];
+                $txtPlaca = $_POST['txt_placa'];
                 $serial = $_POST['txt_serial'];
                 $marca = $_POST['sl_marca'];
                 $valor = $_POST['txt_val_uni'];
                 $tipoactivo = $_POST['sl_tipoactivo'];
 
                 if ($placa == -1) {
-                    $sql = "SELECT COUNT(*) AS existe FROM acf_orden_ingreso_detalle WHERE id_orden_ingreso=$id_ingreso AND id_medicamento_articulo=" . $id_med;
+                    $sql = "SELECT COUNT(*) AS existe FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=$id_ingreso_detalle AND placa_activofijo=" . $txtPlaca;
                     $rs = $cmd->query($sql);
                     $obj = $rs->fetch();
 
                     if ($obj['existe'] == 0) {
-                        $sql = "INSERT INTO acf_orden_ingreso_detalle1(
-                                    id_orden_ingreso,
-                                    id_medicamento_articulo,
-                                    observacion,
-                                    cantidad,
-                                    valor_sin_iva,
-                                    iva,
-                                    valor
-                                )
-                                VALUES($id_ingreso,$id_med,'$observacion',$cantidad,$vr_unidad,$iva,$vr_costo)";
-                        $rs = $cmd->query($sql);
 
-                        if ($rs) {
+                        $cmd->beginTransaction();
+
+                        $sql = "INSERT INTO acf_activofijo(placa, serial, id_marca, valor,tipo_activo) VALUES(?,?,?,?,?)";
+                        $sql = $cmd->prepare($sql);
+                        $sql->bindParam(1, $txtPlaca, PDO::PARAM_STR);
+                        $sql->bindParam(2, $serial, PDO::PARAM_STR);
+                        $sql->bindParam(3, $marca, PDO::PARAM_INT);
+                        $sql->bindParam(4, $valor, PDO::PARAM_STR);
+                        $sql->bindParam(5, $tipoactivo, PDO::PARAM_INT);
+                        $inserted = $sql->execute();
+
+                        $sql = "INSERT INTO acf_activofijo_ordeningresodetalle(id_ordeningresodetalle, placa_activofijo) VALUES(?,?)";
+                        $sql = $cmd->prepare($sql);
+                        $sql->bindParam(1, $id_ingreso_detalle, PDO::PARAM_INT);
+                        $sql->bindParam(2, $txtPlaca, PDO::PARAM_STR);
+                        $inserted = $sql->execute();
+
+                        if ($inserted) {
+                            $cmd->commit();
                             $res['mensaje'] = 'ok';
-                            $sql_i = 'SELECT LAST_INSERT_ID() AS id';
-                            $rs = $cmd->query($sql_i);
-                            $obj = $rs->fetch();
-                            $res['id'] = $obj['id'];
+                            $res['placa'] = $txtPlaca;
+                            $res['id_ingreso_detalle'] = $id_ingreso_detalle;
                         } else {
-                            $res['mensaje'] = $cmd->errorInfo()[2];
+                            $res['mensaje'] = $sql->errorInfo()[2];
+                            $cmd->rollBack();
                         }
+
                     } else {
                         $res['mensaje'] = 'El activo ya existe en los detalles de la Orden de Ingreso';
                     }
@@ -74,12 +82,12 @@ try {
                     $sql->bindParam(2, $marca, PDO::PARAM_INT);
                     $sql->bindParam(3, $valor, PDO::PARAM_STR);
                     $sql->bindParam(4, $tipoactivo, PDO::PARAM_INT);
-                    $sql->bindParam(5, $placa, PDO::PARAM_STR);
+                    $sql->bindParam(5, $txtPlaca, PDO::PARAM_STR);
                     $updated = $sql->execute();
 
                     if ($updated) {
                         $res['mensaje'] = 'ok';
-                        $res['placa'] = $placa;
+                        $res['placa'] = $txtPlaca;
                         $res['id_ingreso_detalle'] = $id_ingreso_detalle;
                     } else {
                         $res['mensaje'] = $sql->errorInfo()[2];

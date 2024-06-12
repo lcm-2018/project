@@ -8,7 +8,7 @@
                             id_ingreso_detalle: $('#id_ingreso_detalle').val(), 
                             id_cod_articulo: $('#id_cod_articulo').val(),
                             id_nom_articulo: $('#id_nom_articulo').val(),
-                            id_costo: $('#id_costo').val()
+                            id_costo: $('#id_costo').val(),
                         }, function(he) {
                         $('#divTamModalBus').removeClass('modal-lg');
                         $('#divTamModalBus').removeClass('modal-sm');
