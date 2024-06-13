@@ -28,6 +28,7 @@ try {
         if ($id_ingreso_detalle > 0) {
             if ($oper == 'add') {
 
+                $idArticulo = $_POST['id_articulo'];
                 $placa = $_POST['placa'];
                 $txtPlaca = $_POST['txt_placa'];
                 $serial = $_POST['txt_serial'];
@@ -44,13 +45,14 @@ try {
 
                         $cmd->beginTransaction();
 
-                        $sql = "INSERT INTO acf_activofijo(placa, serial, id_marca, valor,tipo_activo) VALUES(?,?,?,?,?)";
+                        $sql = "INSERT INTO acf_activofijo(placa, serial, id_marca, valor,tipo_activo, id_articulo) VALUES(?,?,?,?,?,?)";
                         $sql = $cmd->prepare($sql);
                         $sql->bindParam(1, $txtPlaca, PDO::PARAM_STR);
                         $sql->bindParam(2, $serial, PDO::PARAM_STR);
                         $sql->bindParam(3, $marca, PDO::PARAM_INT);
                         $sql->bindParam(4, $valor, PDO::PARAM_STR);
                         $sql->bindParam(5, $tipoactivo, PDO::PARAM_INT);
+                        $sql->bindParam(6, $idArticulo, PDO::PARAM_INT);
                         $inserted = $sql->execute();
 
                         $sql = "INSERT INTO acf_activofijo_ordeningresodetalle(id_ordeningresodetalle, placa_activofijo) VALUES(?,?)";
@@ -74,7 +76,7 @@ try {
                     }
                 } else {
                     $sql = "UPDATE acf_activofijo
-                            SET serial=?, id_marca=?, valor=?, tipo_activo=?
+                            SET serial=?, id_marca=?, valor=?, tipo_activo=?, id_articulo=?
                             WHERE placa=?" ;
 
                     $sql = $cmd->prepare($sql);
@@ -82,7 +84,8 @@ try {
                     $sql->bindParam(2, $marca, PDO::PARAM_INT);
                     $sql->bindParam(3, $valor, PDO::PARAM_STR);
                     $sql->bindParam(4, $tipoactivo, PDO::PARAM_INT);
-                    $sql->bindParam(5, $txtPlaca, PDO::PARAM_STR);
+                    $sql->bindParam(5, $idArticulo, PDO::PARAM_INT);
+                    $sql->bindParam(6, $txtPlaca, PDO::PARAM_STR);
                     $updated = $sql->execute();
 
                     if ($updated) {
@@ -97,12 +100,23 @@ try {
 
             if ($oper == 'del') {
                 $placa = $_POST['placa'];
+
                 $cmd->beginTransaction();
-                $sql = "DELETE FROM acf_activofijo WHERE placa=" . $placa;
-                $rs = $cmd->query($sql);
-                $sql = "DELETE FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=$id_ingreso_detalle AND placa_activofijo=" . $placa;
-                $rs = $cmd->query($sql);
-                if ($rs) {
+
+                $sql = "DELETE FROM acf_activofijo WHERE placa=?";
+                $sql = $cmd->prepare($sql);
+                $sql->bindParam(1, $placa, PDO::PARAM_STR);
+                $deleted = $sql->execute();
+                
+
+                $sql = "DELETE FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=? AND placa_activofijo=?" ;
+                $sql = $cmd->prepare($sql);
+                $sql->bindParam(1, $id_ingreso_detalle, PDO::PARAM_INT);
+                $sql->bindParam(2, $placa, PDO::PARAM_STR);
+                $deleted = $sql->execute();
+                
+                
+                if ($deleted) {
                     $cmd->commit();
                     $res['mensaje'] = 'ok';
                 } else {

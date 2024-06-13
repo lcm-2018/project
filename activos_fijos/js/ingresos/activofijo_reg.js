@@ -5,7 +5,8 @@
             buttons: [{
                 action: function(e, dt, node, config) {
                     $.post("acf_reg_activofijo_detalle.php", { 
-                            id_ingreso_detalle: $('#id_ingreso_detalle').val(), 
+                            idIngresoDetalle: $('#id_ingreso_detalle').val(), 
+                            idArticulo: $('#id_articulo').val(),
                             id_cod_articulo: $('#id_cod_articulo').val(),
                             id_nom_articulo: $('#id_nom_articulo').val(),
                             id_costo: $('#id_costo').val(),
@@ -55,11 +56,13 @@
 
     $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
         let idIngresoDetalle = $('#id_ingreso_detalle').val()
+        let idArticulo = $('#id_articulo').val();
         let placa = $(this).attr('value');
         $.post("acf_reg_activofijo_detalle.php", 
         { 
             placa: placa,
             idIngresoDetalle: idIngresoDetalle,
+            idArticulo: idArticulo,
         }, function(he) {
             $('#divTamModalBus').removeClass('modal-lg');
             $('#divTamModalBus').removeClass('modal-sm');
@@ -85,13 +88,14 @@
             var data = $('#acf_reg_activofijo_detalles').serialize();
 
             let idIngresoDetalle = $('#id_ingreso_detalle').val();
+            let idArticulo = $('#id_articulo').val();
             let placa = $('#id_placa').val();
 
             $.ajax({
                 type: 'POST',
                 url: 'editar_activofijo_detalle.php',
                 dataType: 'json',
-                data: data + "&id_ingreso_detalle=" + idIngresoDetalle + "&placa=" + placa +'&oper=add'
+                data: data + "&id_ingreso_detalle=" + idIngresoDetalle + "&placa=" + placa + "&id_Articulo=" + idArticulo +'&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
                     pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
