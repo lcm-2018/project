@@ -18,7 +18,7 @@ $rol = $_SESSION['rol'];
 
                 $key = array_search('50', array_column($perm_modulos, 'id_modulo'));
                 if (false !== $key) {
-                ?>
+                    ?>
                     <a class="nav-link collapsed sombra" href="#" data-toggle="collapse" data-target="#collapseAlmacen" aria-expanded="false" aria-controls="collapseAlmacen">
                         <div class="form-row">
                             <div class="div-icono">
@@ -45,7 +45,7 @@ $rol = $_SESSION['rol'];
                             </a>
                             <div class="collapse" id="pagesCollapseArticulos" aria-labelledby="headingOne">
                                 <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
-                                    <?php if (PermisosUsuario($permisos, 50010, 1) || $id_rol == 1) { ?>
+                                    <?php if (PermisosUsuario($permisos, 5010, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/centros_costo/index.php?var=3">
                                             <div class="div-icono">
                                                 <i class="fas fa-file-invoice-dollar fa-sm" style="color: #E74C3C;"></i>
@@ -55,7 +55,7 @@ $rol = $_SESSION['rol'];
                                             </div>
                                         </a>
                                     <?php } ?>
-                                    <?php if (PermisosUsuario($permisos, 50015, 1) || $id_rol == 1) { ?>
+                                    <?php if (PermisosUsuario($permisos, 5015, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/centrocosto_areas/index.php?var=3">
                                             <div class="div-icono">
                                                 <i class="fa fa-sitemap fa-sm" style="color: #E74C3C;"></i>
@@ -65,7 +65,7 @@ $rol = $_SESSION['rol'];
                                             </div>
                                         </a>
                                     <?php } ?>
-                                    <?php if (PermisosUsuario($permisos, 50016, 1) || $id_rol == 1) { ?>
+                                    <?php if (PermisosUsuario($permisos, 5016, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pres_comercial/index.php?var=3">
                                             <div class="div-icono">
                                                 <i class="fas fa-ticket-alt fa-sm" style="color: #E74C3C;"></i>
@@ -111,7 +111,7 @@ $rol = $_SESSION['rol'];
                             <div class="collapse" id="pagesCollapsePedidos" aria-labelledby="headingOne">
                                 <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
                                     <?php if (PermisosUsuario($permisos, 5005, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pedidos/index.php">
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pedidos_alm/index.php">
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fa fa-database fa-sm" style="color: #E74C3C;"></i>
@@ -123,7 +123,7 @@ $rol = $_SESSION['rol'];
                                         </a>
                                     <?php } ?>
                                     <?php if (PermisosUsuario($permisos, 5003, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pedidos/index.php">
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pedidos_bod/index.php">
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fa fa-th-large fa-sm" style="color: #E74C3C;"></i>
@@ -133,19 +133,7 @@ $rol = $_SESSION['rol'];
                                                 </div>
                                             </div>
                                         </a>
-                                    <?php } ?>
-                                    <?php if (PermisosUsuario($permisos, 5004, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/pedidos/index.php">
-                                            <div class="form-row">
-                                                <div class="div-icono">
-                                                    <i class="fa fa-share-square-o fa-sm" style="color: #E74C3C;"></i>
-                                                </div>
-                                                <div>
-                                                    Dependencia
-                                                </div>
-                                            </div>
-                                        </a>
-                                    <?php } ?>
+                                    <?php } ?>                                    
                                 </nav>
                             </div>
                             <a class="nav-link collapsed sombra" href="#" data-toggle="collapse" data-target="#pagesCollapseMovimientos" aria-expanded="false" aria-controls="pagesCollapseMovimientos">
@@ -290,7 +278,7 @@ $rol = $_SESSION['rol'];
                     </div>
                 <?php
                 }
-
+                
                 /* MODULO DE ACTIVOS FIJOS */
 
                 $key = array_search('57', array_column($perm_modulos, 'id_modulo'));

@@ -71,7 +71,7 @@ try {
 
     <table style="width:100%; font-size:70%">
         <tr style="text-align:center">
-            <th>ORDEN DE PEDIDO</th>
+            <th>ORDEN DE PEDIDO DE BODEGA</th>
         </tr>
     </table>
 

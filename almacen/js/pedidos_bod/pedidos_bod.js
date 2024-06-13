@@ -9,11 +9,11 @@
 
     $(document).ready(function() {
         //Tabla de Registros
-        $('#tb_egresos').DataTable({
+        $('#tb_pedidos').DataTable({
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_egresos.php", function(he) {
+                    $.post("frm_reg_pedidos.php", function(he) {
                         $('#divTamModalForms').removeClass('modal-sm');
                         $('#divTamModalForms').removeClass('modal-lg');
                         $('#divTamModalForms').addClass('modal-xl');
@@ -27,44 +27,42 @@
             serverSide: true,
             searching: false,
             ajax: {
-                url: 'listar_egresos.php',
+                url: 'listar_pedidos.php',
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_sede = $('#sl_sede_filtro').val();
-                    data.id_bodega = $('#sl_bodega_filtro').val();
-                    data.id_egr = $('#txt_idegr_filtro').val();
-                    data.num_egr = $('#txt_numegr_filtro').val();
+                    data.id_sedsol = $('#sl_sedsol_filtro').val();
+                    data.id_bodsol = $('#sl_bodsol_filtro').val();
+                    data.id_pedido = $('#txt_id_pedido_filtro').val();
+                    data.num_pedido = $('#txt_num_pedido_filtro').val();
                     data.fec_ini = $('#txt_fecini_filtro').val();
                     data.fec_fin = $('#txt_fecfin_filtro').val();
-                    data.id_tercero = $('#sl_tercero_filtro').val();
-                    data.id_cencost = $('#sl_centrocosto_filtro').val();
-                    data.id_tipegr = $('#sl_tipegr_filtro').val();
+                    data.id_sedpro = $('#sl_sedpro_filtro').val();
+                    data.id_bodpro = $('#sl_bodpro_filtro').val();
                     data.estado = $('#sl_estado_filtro').val();
                 }
             },
             columns: [
-                { 'data': 'id_egreso' }, //Index=0
-                { 'data': 'num_egreso' },
-                { 'data': 'fec_egreso' },
-                { 'data': 'hor_egreso' },
+                { 'data': 'id_pedido' }, //Index=0
+                { 'data': 'num_pedido' },
+                { 'data': 'fec_pedido' },
+                { 'data': 'hor_pedido' },
                 { 'data': 'detalle' },
-                { 'data': 'nom_tercero' },
-                { 'data': 'nom_centro' },
-                { 'data': 'nom_tipo_egreso' },
+                { 'data': 'nom_sede_solicita' },
+                { 'data': 'nom_bodega_solicita' },
+                { 'data': 'nom_sede_provee' },
+                { 'data': 'nom_bodega_provee' },
                 { 'data': 'val_total' },
-                { 'data': 'nom_sede' },
-                { 'data': 'nom_bodega' },
                 { 'data': 'nom_estado' },
                 { 'data': 'botones' }
             ],
             columnDefs: [
-                { class: 'text-wrap', targets: [4, 5, 6] },
-                { type: "numeric-comma", targets: 8 },
-                { orderable: false, targets: 12 }
+                { class: 'text-wrap', targets: [3, 4, 5, 6, 7, 8] },
+                { type: "numeric-comma", targets: 9 },
+                { orderable: false, targets: 11 }
             ],
             rowCallback: function(row, data) {
-                var estado = $($(row).find("td")[11]).text();
+                var estado = $($(row).find("td")[10]).text();
                 if (estado == 'PENDIENTE') {
                     $($(row).find("td")[0]).css("background-color", "yellow");
                 } else if (estado == 'ANULADO') {
@@ -81,105 +79,116 @@
         });
 
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
-        $('#tb_egresos').wrap('<div class="overflow"/>');
+        $('#tb_pedidos').wrap('<div class="overflow"/>');
     });
 
-    //Buascar registros de Egresos
-    $('#sl_sede_filtro').on("change", function() {
-        $('#sl_bodega_filtro').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val(), titulo: '--Bodega--' }, function() {});
+    //Filtrar las Bodegas acorde a la Sede y Usuario de sistema
+    $('#sl_sedsol_filtro').on("change", function() {
+        $('#sl_bodsol_filtro').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val(), titulo: '--Bodega Solititante--' }, function() {});
     });
-    $('#sl_sede_filtro').trigger('change');
+    $('#sl_sedsol_filtro').trigger('change');
 
-    $('#divForms').on("change", "#sl_sede_egr", function() {
-        $('#sl_bodega_egr').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val() }, function() {});
+    $('#sl_sedpro_filtro').on("change", function() {
+        $('#sl_bodpro_filtro').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val(), titulo: '--Bodega Proveedor--', todas: true }, function() {});
+    });
+    $('#sl_sedpro_filtro').trigger('change');
+
+    $('#divForms').on("change", "#sl_sede_solicitante", function() {
+        $('#sl_bodega_solicitante').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val() }, function() {});
+    });
+    $('#divForms').on("change", "#sl_sede_proveedor", function() {
+        $('#sl_bodega_proveedor').load('../common/cargar_bodegas_usuario.php', { id_sede: $(this).val(), todas: true }, function() {});
     });
 
+    //Buscar registros de Pedido
     $('#btn_buscar_filtro').on("click", function() {
         $('.is-invalid').removeClass('is-invalid');
-        reloadtable('tb_egresos');
+        reloadtable('tb_pedidos');
     });
 
     $('.filtro').keypress(function(e) {
         if (e.keyCode == 13) {
-            reloadtable('tb_egresos');
+            reloadtable('tb_pedidos');
         }
     });
 
-    //Editar un registro Orden Egreso
-    $('#tb_egresos').on('click', '.btn_editar', function() {
+    //Editar un registro Pedido
+    $('#tb_pedidos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_egresos.php", { id: id }, function(he) {
+        $.post("frm_reg_pedidos.php", { id: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
         });
     });
 
-    //Guardar registro Orden Egreso
+    //Guardar registro Pedido
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#sl_sede_egr'));
-        error += verifica_vacio($('#sl_bodega_egr'));
-        error += verifica_vacio($('#sl_tip_egr'));
-        if ($('#sl_tip_egr').find('option:selected').attr('data-intext') == 2) {
-            error += verifica_vacio($('#sl_tercero'));
-        } else {
-            error += verifica_vacio($('#sl_centrocosto'));
-        }
-
-        error += verifica_vacio($('#txt_det_egr'));
+        var error = verifica_vacio($('#sl_sede_solicitante'));
+        error += verifica_vacio($('#sl_bodega_solicitante'));
+        error += verifica_vacio($('#sl_sede_proveedor'));
+        error += verifica_vacio($('#sl_bodega_proveedor'));
+        error += verifica_vacio($('#txt_det_pedido'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_orden_egreso').serialize();
-            $.ajax({
-                type: 'POST',
-                url: 'editar_egresos.php',
-                dataType: 'json',
-                data: data + "&oper=add"
-            }).done(function(r) {
-                if (r.mensaje == 'ok') {
-                    let pag = ($('#id_egreso').val() == -1) ? 0 : $('#tb_egresos').DataTable().page.info().page;
-                    reloadtable('tb_egresos', pag);
-                    $('#id_egreso').val(r.id);
+            if ($('#sl_bodega_solicitante').val() == $('#sl_bodega_proveedor').val()) {
+                $('#divModalError').modal('show');
+                $('#divMsgError').html('La Bodega que Solicita y la Bodega Proveedora deben ser diferentes');
+            } else {
+                var data = $('#frm_reg_pedidos').serialize();
+                $.ajax({
+                    type: 'POST',
+                    url: 'editar_pedidos.php',
+                    dataType: 'json',
+                    data: data + "&oper=add"
+                }).done(function(r) {
+                    if (r.mensaje == 'ok') {
+                        let pag = ($('#id_pedido').val() == -1) ? 0 : $('#tb_pedidos').DataTable().page.info().page;
+                        reloadtable('tb_pedidos', pag);
+                        $('#id_pedido').val(r.id);
 
-                    $('#sl_sede_egr').prop('disabled', true);
-                    $('#sl_bodega_egr').prop('disabled', true);
-                    $('#btn_cerrar').prop('disabled', false);
-                    $('#btn_imprimir').prop('disabled', false);
+                        $('#sl_sede_solicitante').prop('disabled', true);
+                        $('#sl_bodega_solicitante').prop('disabled', true);
+                        $('#sl_sede_proveedor').prop('disabled', true);
+                        $('#sl_bodega_proveedor').prop('disabled', true);
+                        $('#btn_cerrar').prop('disabled', false);
+                        $('#btn_imprimir').prop('disabled', false);
 
-                    $('#divModalDone').modal('show');
-                    $('#divMsgDone').html("Proceso realizado con éxito");
-                } else {
-                    $('#divModalError').modal('show');
-                    $('#divMsgError').html(r.mensaje);
-                }
-            }).always(function() {}).fail(function() {
-                alert('Ocurrió un error');
-            });
+                        $('#divModalDone').modal('show');
+                        $('#divMsgDone').html("Proceso realizado con éxito");
+                    } else {
+                        $('#divModalError').modal('show');
+                        $('#divMsgError').html(r.mensaje);
+                    }
+                }).always(function() {}).fail(function() {
+                    alert('Ocurrió un error');
+                });
+            }
         }
     });
 
-    //Borrar un registro Orden Egreso
-    $('#tb_egresos').on('click', '.btn_eliminar', function() {
+    //Borrar un registro Pedido
+    $('#tb_pedidos').on('click', '.btn_eliminar', function() {
         let id = $(this).attr('value');
-        confirmar_del('egresos_del', id);
+        confirmar_del('pedidos_del', id);
     });
-    $('#divModalConfDel').on("click", "#egresos_del", function() {
+    $('#divModalConfDel').on("click", "#pedidos_del", function() {
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_egresos.php',
+            url: 'editar_pedidos.php',
             dataType: 'json',
             data: { id: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_egresos').DataTable().page.info().page;
-                reloadtable('tb_egresos', pag);
+                let pag = $('#tb_pedidos').DataTable().page.info().page;
+                reloadtable('tb_pedidos', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
@@ -191,24 +200,26 @@
         });
     });
 
-    //Cerrar un registro Orden Egreso
+    //Cerrar un registro Pedido
     $('#divForms').on("click", "#btn_cerrar", function() {
-        confirmar_proceso('egresos_close');
+        let id = $(this).attr('value');
+        confirmar_proceso('pedidos_close', id);
     });
-    $('#divModalConfDel').on("click", "#egresos_close", function() {
+    $('#divModalConfDel').on("click", "#pedidos_close", function() {
+        var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_egresos.php',
+            url: 'editar_pedidos.php',
             dataType: 'json',
-            data: { id: $('#id_egreso').val(), oper: 'close' }
+            data: { id: $('#id_pedido').val(), oper: 'close' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_egresos').DataTable().page.info().page;
-                reloadtable('tb_egresos', pag);
+                let pag = $('#tb_pedidos').DataTable().page.info().page;
+                reloadtable('tb_pedidos', pag);
 
-                $('#txt_num_egr').val(r.num_egreso);
-                $('#txt_est_egr').val('CERRADO');
+                $('#txt_num_pedido').val(r.num_pedido);
+                $('#txt_est_pedido').val('CERRADO');
 
                 $('#btn_guardar').prop('disabled', true);
                 $('#btn_cerrar').prop('disabled', true);
@@ -225,23 +236,25 @@
         });
     });
 
-    //Anular un registro Orden Egreso
+    //Anular un registro Pedido
     $('#divForms').on("click", "#btn_anular", function() {
-        confirmar_proceso('egresos_annul');
+        let id = $(this).attr('value');
+        confirmar_proceso('pedidos_annul', id);
     });
-    $('#divModalConfDel').on("click", "#egresos_annul", function() {
+    $('#divModalConfDel').on("click", "#pedidos_annul", function() {
+        var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_egresos.php',
+            url: 'editar_pedidos.php',
             dataType: 'json',
-            data: { id: $('#id_egreso').val(), oper: 'annul' }
+            data: { id: $('#id_pedido').val(), oper: 'annul' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_egresos').DataTable().page.info().page;
-                reloadtable('tb_egresos', pag);
+                let pag = $('#tb_pedidos').DataTable().page.info().page;
+                reloadtable('tb_pedidos', pag);
 
-                $('#txt_est_egr').val('ANULADO');
+                $('#txt_est_pedido').val('ANULADO');
 
                 $('#btn_guardar').prop('disabled', true);
                 $('#btn_cerrar').prop('disabled', true);
@@ -261,9 +274,9 @@
     /* ---------------------------------------------------
     DETALLES
     -----------------------------------------------------*/
-    $('#divModalBus').on('dblclick', '#tb_lotes_articulos tr', function() {
-        let id_lote = $(this).find('td:eq(0)').text();
-        $.post("frm_reg_egresos_detalles.php", { id_lote: id_lote }, function(he) {
+    $('#divModalBus').on('dblclick', '#tb_articulos_bodega tr', function() {
+        let id_med = $(this).find('td:eq(0)').text();
+        $.post("frm_reg_pedidos_detalles.php", { id_med: id_med }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
@@ -271,9 +284,9 @@
         });
     });
 
-    $('#divForms').on('click', '#tb_egresos_detalles .btn_editar', function() {
+    $('#divForms').on('click', '#tb_pedidos_detalles .btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_egresos_detalles.php", { id: id }, function(he) {
+        $.post("frm_reg_pedidos_detalles.php", { id: id }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
@@ -284,24 +297,24 @@
     $('#divFormsReg').on("click", "#btn_guardar_detalle", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#txt_can_egr'));
+        var error = verifica_vacio($('#txt_can_ped'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
-        } else if (!verifica_valmin($('#txt_can_egr'), 1, "La cantidad debe ser mayor igual a 1")) {
-            var data = $('#frm_reg_egresos_detalles').serialize();
+        } else if (!verifica_valmin($('#txt_can_ped'), 1, "La cantidad debe ser mayor igual a 1")) {
+            var data = $('#frm_reg_pedidos_detalles').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_egresos_detalles.php',
+                url: 'editar_pedidos_detalles.php',
                 dataType: 'json',
-                data: data + "&id_egreso=" + $('#id_egreso').val() + '&oper=add'
+                data: data + "&id_pedido=" + $('#id_pedido').val() + '&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_egresos_detalles').DataTable().page.info().page;
-                    reloadtable('tb_egresos_detalles', pag);
-                    pag = $('#tb_egresos').DataTable().page.info().page;
-                    reloadtable('tb_egresos', pag);
+                    let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_pedidos_detalles').DataTable().page.info().page;
+                    reloadtable('tb_pedidos_detalles', pag);
+                    pag = $('#tb_pedidos').DataTable().page.info().page;
+                    reloadtable('tb_pedidos', pag);
 
                     $('#id_detalle').val(r.id);
                     $('#txt_val_tot').val(r.val_total);
@@ -320,7 +333,7 @@
     });
 
     //Borrarr un registro Detalle
-    $('#divForms').on('click', '#tb_egresos_detalles .btn_eliminar', function() {
+    $('#divForms').on('click', '#tb_pedidos_detalles .btn_eliminar', function() {
         let id = $(this).attr('value');
         confirmar_del('detalle', id);
     });
@@ -328,16 +341,16 @@
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_egresos_detalles.php',
+            url: 'editar_pedidos_detalles.php',
             dataType: 'json',
-            data: { id: id, id_egreso: $('#id_egreso').val(), oper: 'del' }
+            data: { id: id, id_pedido: $('#id_pedido').val(), oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_egresos_detalles').DataTable().page.info().page;
-                reloadtable('tb_egresos_detalles', pag);
-                pag = $('#tb_egresos').DataTable().page.info().page;
-                reloadtable('tb_egresos', pag);
+                let pag = $('#tb_pedidos_detalles').DataTable().page.info().page;
+                reloadtable('tb_pedidos_detalles', pag);
+                pag = $('#tb_pedidos').DataTable().page.info().page;
+                reloadtable('tb_pedidos', pag);
 
                 $('#txt_val_tot').val(r.val_total);
 
@@ -354,7 +367,7 @@
 
     //Imprimir listado de registros
     $('#btn_imprime_filtro').on('click', function() {
-        reloadtable('tb_egresos');
+        reloadtable('tb_pedidos');
         $('.is-invalid').removeClass('is-invalid');
         var verifica = verifica_vacio($('#txt_fecini_filtro'));
         verifica += verifica_vacio($('#txt_fecfin_filtro'));
@@ -362,16 +375,15 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Debe especificar un rango de fechas');
         } else {
-            $.post("imp_egresos.php", {
-                id_sede: $('#sl_sede_filtro').val(),
-                id_bodega: $('#sl_bodega_filtro').val(),
-                id_egr: $('#txt_idegr_filtro').val(),
-                num_egr: $('#txt_numegr_filtro').val(),
+            $.post("imp_pedidos.php", {
+                id_sedsol: $('#sl_sedsol_filtro').val(),
+                id_bodsol: $('#sl_bodsol_filtro').val(),
+                id_pedido: $('#txt_id_pedido_filtro').val(),
+                num_pedido: $('#txt_num_pedido_filtro').val(),
                 fec_ini: $('#txt_fecini_filtro').val(),
                 fec_fin: $('#txt_fecfin_filtro').val(),
-                id_tercero: $('#sl_tercero_filtro').val(),
-                id_depende: $('#sl_centrocosto_filtro').val(),
-                id_tipegr: $('#sl_tipegr_filtro').val(),
+                id_sedpro: $('#sl_sedpro_filtro').val(),
+                id_bodpro: $('#sl_bodpro_filtro').val(),
                 estado: $('#sl_estado_filtro').val()
             }, function(he) {
                 $('#divTamModalImp').removeClass('modal-sm');
@@ -383,10 +395,10 @@
         }
     });
 
-    //Imprimit una Orden de Egreso
+    //Imprimit un Pedido
     $('#divForms').on("click", "#btn_imprimir", function() {
-        $.post("imp_egreso.php", {
-            id: $('#id_egreso').val()
+        $.post("imp_pedido.php", {
+            id: $('#id_pedido').val()
         }, function(he) {
             $('#divTamModalImp').removeClass('modal-sm');
             $('#divTamModalImp').removeClass('modal-lg');
