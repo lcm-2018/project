@@ -13,6 +13,7 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
 $sql = "SELECT OID.id_ing_detalle,
+            FM.id_med,
             FM.cod_medicamento,
             FM.nom_medicamento,
             OID.cantidad,
@@ -45,6 +46,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
             <!--Formulario de registro de Ordenes de Ingreso-->
             <form id="acf_reg_orden_ingreso">
                 <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detlle" value="<?php echo $id ?>">
+                <input type="hidden" id="id_articulo" name="id_articulo" value="<?php echo $obj['id_med'] ?>">
                 <input type="hidden" id="id_cod_articulo" name="id_cod_articulo" value="<?php echo $obj['cod_medicamento'] ?>">
                 <input type="hidden" id="id_nom_articulo" name="id_nom_articulo" value="<?php echo $obj['nom_medicamento'] ?>">
                 <input type="hidden" id="id_costo" name="id_costo" value="<?php echo $obj['valor'] ?>">

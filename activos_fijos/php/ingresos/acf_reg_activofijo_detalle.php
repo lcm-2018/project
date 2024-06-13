@@ -12,6 +12,7 @@ $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usua
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $idMed = isset($_POST['idMed']) ? $_POST['idMed'] : -1;
+$idArticulo = isset($_POST['idArticulo']) ? $_POST['idArticulo'] : -1;
 $codArticulo = isset($_POST['id_cod_articulo']) ? $_POST['id_cod_articulo'] : -1;
 $nomArticulo = isset($_POST['id_nom_articulo']) ? $_POST['id_nom_articulo'] : -1;
 $idIngresoDetalle = isset($_POST['idIngresoDetalle']) ? $_POST['idIngresoDetalle'] : -1;
@@ -22,6 +23,7 @@ $sql = "SELECT
             OID.id_orden_ingreso,
             OID.id_ing_detalle,
             OID.valor costo,
+            FM.id_med id_articulo,
             FM.cod_medicamento cod_articulo,
             FM.nom_medicamento nom_articulo,
             AF.placa,
@@ -50,6 +52,7 @@ if (empty($obj)) {
         $obj[$name] = NULL;
     endfor;
     //$articulo = datos_articulo_acf($cmd, $idMed);
+    $obj['id_articulo'] = $idArticulo;
     $obj['nom_articulo'] = $codArticulo;
     $obj['cod_articulo'] = $nomArticulo;
     $obj['costo'] = $costo;
@@ -68,6 +71,7 @@ if (empty($obj)) {
             <form id="acf_reg_activofijo_detalles">
                 <input type="hidden" id="id_ingreso_detalle" name="id_ingreso_detalle" value="<?php echo $idIngresoDetalle ?>">
                 <input type="hidden" id="id_placa" name="id_placa" value="<?php echo $placa ?>">
+                <input type="hidden" id="id_articulo" name="id_articulo" value="<?php echo $idArticulo ?>">
                 <div class=" form-row">
                     <div class="form-group col-md-6">
                         <label for="txt_cod_art" class="small">Codigo</label>
