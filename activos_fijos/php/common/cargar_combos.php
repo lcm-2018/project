@@ -108,6 +108,27 @@ function tipo_ingreso($cmd, $titulo = '', $id = 0)
     }
 }
 
+function marcas($cmd, $titulo = '', $id = 0)
+{
+    try {
+        echo '<option value="">' . $titulo . '</option>';
+        $sql = "SELECT id, descripcion FROM acf_marca";
+        $rs = $cmd->query($sql);
+        $objs = $rs->fetchAll();
+        foreach ($objs as $obj) {
+            $dtad = 'data-intext="' . $obj['es_int_ext'] . '"';
+            if ($obj['id']  == $id) {
+                echo '<option value="' . $obj['id'] . '"' . $dtad . ' selected="selected">' . $obj['descripcion'] . '</option>';
+            } else {
+                echo '<option value="' . $obj['id'] . '"' . $dtad . '>' . $obj['descripcion'] . '</option>';
+            }
+        }
+        $cmd = null;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
+}
+
 function estados_movimientos($titulo = '', $estado = 3)
 {
     echo '<option value="">' . $titulo . '</option>';
@@ -127,6 +148,16 @@ function iva($valor = 0)
     echo '<option value="5"' . $selected . '>5</option>';
     $selected = ($valor == 19) ? 'selected="selected"' : '';
     echo '<option value="19"' . $selected . '>19</option>';
+}
+
+function tiposActivo($valor = 0)
+{
+    $selected = ($valor == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PROPIDAD, PLANTA Y EQUIPO</option>';
+    $selected = ($valor == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>PROPIEDAD PARA LA VENTA</option>';
+    $selected = ($valor == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>PROPIEDAD DE INVERSION</option>';
 }
 
 function subgrupo_articulo($cmd, $titulo = '', $id = 0)
