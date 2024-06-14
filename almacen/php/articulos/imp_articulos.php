@@ -11,12 +11,12 @@ include '../common/funciones_generales.php';
 $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$where = "WHERE far_medicamentos.id_med<>0";
+$where = "WHERE far_subgrupos.id_grupo IN (0,1,2)";
 if (isset($_POST['codigo']) && $_POST['codigo']) {
     $where .= " AND far_medicamentos.cod_medicamento LIKE '" . $_POST['codigo'] . "%'";
 }
 if (isset($_POST['nombre']) && $_POST['nombre']) {
-    $where .= " AND far_medicamentos.nom_medicamento LIKE '" . $_POST['nombre'] . "%'";
+    $where .= " AND far_medicamentos.nom_medicamento LIKE '%" . $_POST['nombre'] . "%'";
 }
 if (isset($_POST['subgrupo']) && $_POST['subgrupo']) {
     $where .= " AND far_medicamentos.id_subgrupo=" . $_POST['subgrupo'];

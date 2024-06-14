@@ -211,12 +211,27 @@ function tipo_ingreso($cmd, $titulo = '', $id = 0)
     }
 }
 
-function estados_movimientos($titulo = '', $estado = 3)
+function estados_movimientos($titulo = '', $estado = -1)
 {
     echo '<option value="">' . $titulo . '</option>';
     $selected = ($estado == 1) ? 'selected="selected"' : '';
     echo '<option value="1"' . $selected . '>PENDIENTE</option>';
     $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>CERRADO</option>';
+    $selected = ($estado == 0) ? 'selected="selected"' : '';
+    echo '<option value="0"' . $selected . '>ANULADO</option>';
+}
+
+function estados_pedidos($titulo = '', $estado = -1)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PENDIENTE</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>CONFIRMADO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>ACEPTADO</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
     echo '<option value="2"' . $selected . '>CERRADO</option>';
     $selected = ($estado == 0) ? 'selected="selected"' : '';
     echo '<option value="0"' . $selected . '>ANULADO</option>';
@@ -302,7 +317,7 @@ function subgrupo_articulo($cmd, $titulo = '', $id = 0)
 {
     try {
         echo '<option value="">' . $titulo . '</option>';
-        $sql = "SELECT id_subgrupo,nom_subgrupo FROM far_subgrupos WHERE id_subgrupo<>0";
+        $sql = "SELECT id_subgrupo,nom_subgrupo FROM far_subgrupos WHERE id_grupo IN (1,2)";
         $rs = $cmd->query($sql);
         $objs = $rs->fetchAll();
         foreach ($objs as $obj) {
