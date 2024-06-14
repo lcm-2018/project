@@ -372,7 +372,7 @@ $rol = $_SESSION['rol'];
                                         </a>
                                     <?php } ?>
                                     <?php if (PermisosUsuario($permisos, 5704, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/activo_fijo/index.php?var=3">
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/hojavida/index.php?var=3">
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fa fa-barcode fa-sm" style="color: #E74C3C;"></i>
