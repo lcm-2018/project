@@ -31,13 +31,11 @@
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_ing = $('#txt_iding_filtro').val();
-                    data.num_ing = $('#txt_numing_filtro').val();
-                    data.fec_ini = $('#txt_fecini_filtro').val();
-                    data.fec_fin = $('#txt_fecfin_filtro').val();
-                    data.id_tercero = $('#sl_tercero_filtro').val();
-                    data.id_tiping = $('#sl_tiping_filtro').val();
-                    data.estado = $('#sl_estado_filtro').val();
+                    data.nombre = $('#txt_nombre_filtro').val();
+                    data.placa = $('#txt_placa_filtro').val();
+                    data.serial = $('#txt_serial_filtro').val();
+                    data.marca = $('#sl_marcas_filtro').val();
+                    data.tipoactivo = $('#sl_tipoactivo_filtro').val();
                 }
             },
             columns: [
@@ -77,15 +75,15 @@
         $('#tb_ingresos').wrap('<div class="overflow"/>');
     });
 
-    //Buascar registros de Ingresos
+    //Buascar registros activos fijos
     $('#btn_buscar_filtro').on("click", function() {
         $('.is-invalid').removeClass('is-invalid');
-        reloadtable('tb_ingresos');
+        reloadtable('tb_hojavida');
     });
 
     $('.filtro').keypress(function(e) {
         if (e.keyCode == 13) {
-            reloadtable('tb_ingresos');
+            reloadtable('tb_hojavida');
         }
     });
 

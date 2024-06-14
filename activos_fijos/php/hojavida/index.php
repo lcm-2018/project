@@ -50,34 +50,22 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                             <!--Opciones de filtros -->
                             <div class="form-row">
                                 <div class="form-group col-md-1">
-                                    <input type="text" class="filtro form-control form-control-sm" id="txt_iding_filtro" placeholder="Id. Ingreso">
+                                    <input type="text" class="filtro form-control form-control-sm" id="txt_nombre_filtro" placeholder="Nombre">
                                 </div>
                                 <div class="form-group col-md-1">
-                                    <input type="text" class="filtro form-control form-control-sm" id="txt_numing_filtro" placeholder="No. Ingreso">
+                                    <input type="text" class="filtro form-control form-control-sm" id="txt_placa_filtro" placeholder="Placa">
                                 </div>
-                                <div class="form-group col-md-3">
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <input type="date" class="form-control form-control-sm" id="txt_fecini_filtro" name="txt_fecini_filtro" placeholder="Fecha Inicial">
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <input type="date" class="form-control form-control-sm" id="txt_fecfin_filtro" name="txt_fecfin_filtro" placeholder="Fecha Final">
-                                        </div>
-                                    </div>
+                                <div class="form-group col-md-1">
+                                    <input type="text" class="filtro form-control form-control-sm" id="txt_serial_filtro" placeholder="Serial">
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <select class="form-control form-control-sm" id="sl_tercero_filtro">
-                                        <?php terceros($cmd,'--Tercero--') ?>
+                                    <select class="form-control form-control-sm" id="sl_marcas_filtro">
+                                        <?php marcas($cmd,'--Marca--') ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <select class="form-control form-control-sm" id="sl_tiping_filtro">
-                                        <?php tipo_ingreso($cmd,'--Tipo Ingreso--') ?>
-                                    </select>
-                                </div>
-                                <div class="form-group col-md-1">
-                                    <select class="form-control form-control-sm" id="sl_estado_filtro">
-                                        <?php estados_movimientos('--Estado--') ?>
+                                    <select class="form-control form-control-sm" id="sl_tipoactivo_filtro">
+                                        <?php tiposActivo($cmd,'--Tipo Activo--') ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-1">
