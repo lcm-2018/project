@@ -67,6 +67,7 @@ $sql = "SELECT
             HV.fecha_act,
             HV.estado
         FROM acf_hojavida HV
+        LEFT JOIN tb_sedes SD ON (SD.id_sede=HV.id_sede)
         WHERE HV.id=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
@@ -91,6 +92,10 @@ if (empty($obj)) {
     $obj['id_sede'] = $bodega['id_sede'];
     $obj['nom_sede'] = $bodega['nom_sede'];
 
+    $area = area_principal($cmd);
+    $obj['id_area'] = $area['id_area'];
+    $obj['nom_area'] = $area['nom_area'];
+
     $fecha = fecha_hora_servidor();
     $obj['fec_ingreso'] = $fecha['fecha'];
     $obj['hor_ingreso'] = $fecha['hora'];
@@ -111,7 +116,23 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
             <form id="acf_reg_hoja_vida">
                 <input type="hidden" id="id" name="id" value="<?php echo $id ?>">
                 <div class="form-row">
-                <div class="form-group col-md-4">
+                    <div class="form-group col-md-4">
+                        <label for="id_sede" class="small">Sede</label>
+                        <input type="text" class="form-control form-control-sm" id="nom_sede" class="small" value="<?php echo $obj['nom_sede'] ?>" readonly="readonly">
+                        <input type="hidden" id="id_sede" name="id_sede" value="<?php echo $obj['id_sede'] ?>">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_area" class="small">Área</label>
+                        <input type="text" class="form-control form-control-sm" id="nom_area" class="small" value="<?php echo $obj['nom_area'] ?>" readonly="readonly">
+                        <input type="hidden" id="id_area" name="id_area" value="<?php echo $obj['id_area'] ?>">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_proveedor" class="small">Proveedor</label>
+                        <select class="form-control form-control-sm" id="id_proveedor" name="id_proveedor">
+                            <?php terceros($cmd, '', $obj['id_provedor']) ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
                         <label for="id_articulo" class="small">Artículo</label>
                         <select class="form-control form-control-sm" id="id_articulo" name="id_articulo">
                         <?php articulosActivosFijos($cmd, '', $obj['id_articulo']) ?>
@@ -146,30 +167,12 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <input type="text" class="form-control form-control-sm" id="modelo" name="modelo" value="<?php echo $obj['modelo'] ?>">
                     </div>
                     <div class="form-group col-md-4">
-                        <label for="id_sede" class="small">Sede</label>
-                        <select class="form-control form-control-sm" id="id_sede" name="id_sede">
-                            <?php cargar_sedes($cmd, $obj['id_sede']) ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="id_area" class="small">Área</label>
-                        <select class="form-control form-control-sm" id="id_area" name="id_area">
-                            <?php cargar_areas($cmd, $obj['id_area']); ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="id_proveedor" class="small">Proveedor</label>
-                        <select class="form-control form-control-sm" id="id_proveedor" name="id_proveedor">
-                            <?php cargar_proveedores($cmd, $obj['id_proveedor']); ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
                         <label for="lote" class="small">Lote</label>
                         <input type="text" class="form-control form-control-sm" id="lote" name="lote" value="<?php echo $obj['lote'] ?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="fecha_fabricacion" class="small">Fecha de Fabricación</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="fecha_fabricacion" name="fecha_fabricacion" value="<?php echo $obj['fecha_fabricacion'] ?>">
+                        <input type="date" class="form-control form-control-sm" id="fecha_fabricacion" name="fecha_fabricacion" value="<?php echo $obj['fecha_fabricacion'] ?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="reg_invima" class="small">Registro INVIMA</label>
@@ -195,27 +198,23 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <label for="tel_representante" class="small">Teléfono del Representante</label>
                         <input type="text" class="form-control form-control-sm" id="tel_representante" name="tel_representante" value="<?php echo $obj['tel_representante'] ?>">
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="imagen" class="small">Imagen</label>
-                        <input type="text" class="form-control form-control-sm" id="imagen" name="imagen" value="<?php echo $obj['imagen'] ?>">
-                    </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-12">
                         <label for="recom_fabricante" class="small">Recomendaciones del Fabricante</label>
                         <textarea class="form-control form-control-sm" id="recom_fabricante" name="recom_fabricante" rows="3"><?php echo $obj['recom_fabricante'] ?></textarea>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="tipo_adquisicion" class="small">Tipo de Adquisición</label>
                         <select class="form-control form-control-sm" id="tipo_adquisicion" name="tipo_adquisicion">
-                            <?php cargar_tipos_adquisicion($cmd, $obj['tipo_adquisicion']); ?>
+                            <?php tipo_ingreso($cmd, '', $obj['tipo_adquisicion']) ?>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="fecha_adquisicion" class="small">Fecha de Adquisición</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="fecha_adquisicion" name="fecha_adquisicion" value="<?php echo $obj['fecha_adquisicion'] ?>">
+                        <input type="date" class="form-control form-control-sm" id="fecha_adquisicion" name="fecha_adquisicion" value="<?php echo $obj['fecha_adquisicion'] ?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="fecha_instalacion" class="small">Fecha de Instalación</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="fecha_instalacion" name="fecha_instalacion" value="<?php echo $obj['fecha_instalacion'] ?>">
+                        <input type="date" class="form-control form-control-sm" id="fecha_instalacion" name="fecha_instalacion" value="<?php echo $obj['fecha_instalacion'] ?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="periodo_garantia" class="small">Período de Garantía</label>
@@ -303,39 +302,27 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="estado_general" class="small">Estado General</label>
-                        <input type="number" class="form-control form-control-sm" id="estado_general" name="estado_general" value="<?php echo $obj['estado_general'] ?>">
+                        <select class="form-control form-control-sm" id="estado_general">
+                            <?php estado_general_activo('--Estado--', $obj['estado_general']) ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="fecha_fuera_servicio" class="small">Fecha Fuera de Servicio</label>
+                        <input type="date" class="form-control form-control-sm" id="fecha_fuera_servicio" name="fecha_fuera_servicio" value="<?php echo $obj['fecha_fuera_servicio'] ?>">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="estado" class="small">Estado</label>
+                        <select class="form-control form-control-sm" id="estado">
+                            <?php estado_activo('--Estado--', $obj['estado']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-12">
                         <label for="causa_est_general" class="small">Causa del Estado General</label>
                         <textarea class="form-control form-control-sm" id="causa_est_general" name="causa_est_general" rows="3"><?php echo $obj['causa_est_general'] ?></textarea>
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="fecha_fuera_servicio" class="small">Fecha Fuera de Servicio</label>
-                        <input type="datetime-local" class="form-control form-control-sm" id="fecha_fuera_servicio" name="fecha_fuera_servicio" value="<?php echo $obj['fecha_fuera_servicio'] ?>">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="id_usr_reg" class="small">Usuario que Registró</label>
-                        <select class="form-control form-control-sm" id="id_usr_reg" name="id_usr_reg">
-                            <?php cargar_usuarios($cmd, $obj['id_usr_reg']) ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="fecha_reg" class="small">Fecha de Registro</label>
-                        <input type="date" class="form-control form-control-sm" id="fecha_reg" name="fecha_reg" value="<?php echo $obj['fecha_reg'] ?>">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="id_usr_act" class="small">Usuario que Actualizó</label>
-                        <select class="form-control form-control-sm" id="id_usr_act" name="id_usr_act">
-                            <?php cargar_usuarios($cmd, $obj['id_usr_act']) ?>
-                        </select>
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="fecha_act" class="small">Fecha de Actualización</label>
-                        <input type="date" class="form-control form-control-sm" id="fecha_act" name="fecha_act" value="<?php echo $obj['fecha_act'] ?>">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="estado" class="small">Estado</label>
-                        <input type="number" class="form-control form-control-sm" id="estado" name="estado" value="<?php echo $obj['estado'] ?>">
+                    <div class="form-group col-md-12">
+                        <label for="imagen" class="small">Imagen</label>
+                        <input type="text" class="form-control form-control-sm" id="imagen" name="imagen" value="<?php echo $obj['imagen'] ?>">
                     </div>
                 </div>
                 <div class="form-group mt-3">

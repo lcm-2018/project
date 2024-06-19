@@ -78,6 +78,29 @@ function sede_principal($cmd){
 }
 
 
+function area_principal($cmd){
+    try {
+ 
+        $res = array();
+        $sql = "SELECT id_area, nom_area, id_centrocosto FROM bd_cronhis.far_centrocosto_area where id_area = 0;";
+
+        $rs = $cmd->query($sql);
+        $obj = $rs->fetch();
+  
+        if (isset($obj['id_area'])) {
+            $res = array('id_area' => $obj['id_area'], 'nom_area' => $obj['nom_area']);
+        } else {
+            $res = array('id_area' => '', 'nom_area' => 'No Existe Area Principal', 'id_area' => '');    
+        }
+  
+        $cmd = null;
+        return $res;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
+}
+
+
 //FUNCION QUE RETORNAR LOS DATOS DE UN ARTICULO
 function datos_articulo_acf($cmd, $id_med){
     try {

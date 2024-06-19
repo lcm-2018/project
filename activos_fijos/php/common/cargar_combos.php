@@ -140,6 +140,31 @@ function estados_movimientos($titulo = '', $estado = 3)
     echo '<option value="0"' . $selected . '>ANULADO</option>';
 }
 
+
+function estado_general_activo($titulo = '', $estado = 3)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>BUENO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>REGULAR</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>MALO</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
+    echo '<option value="4"' . $selected . '>FUERA DE SERVICO</option>';
+}
+
+function estado_activo($titulo = '', $estado = 3)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>ACTIVO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>DADO DE BAJA</option>';
+}
+
 function iva($valor = 0)
 {
     $selected = ($valor == 0) ? 'selected="selected"' : '';
