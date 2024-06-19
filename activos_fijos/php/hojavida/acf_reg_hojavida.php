@@ -99,6 +99,17 @@ if (empty($obj)) {
     $fecha = fecha_hora_servidor();
     $obj['fec_ingreso'] = $fecha['fecha'];
     $obj['hor_ingreso'] = $fecha['hora'];
+} else {
+    if($obj['id_sede'] == null) {
+        $bodega = sede_principal($cmd);
+        $obj['id_sede'] = $bodega['id_sede'];
+        $obj['nom_sede'] = $bodega['nom_sede'];
+    }
+    if($obj['id_area'] == null) {
+        $area = area_principal($cmd);
+        $obj['id_area'] = $area['id_area'];
+        $obj['nom_area'] = $area['nom_area'];
+    }
 }
 $guardar = in_array($obj['estado'],[1]) ? '' : 'disabled="disabled"';
 $cerrar = in_array($obj['estado'],[1]) && $id != -1 ? '' : 'disabled="disabled"';
@@ -326,10 +337,11 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                 </div>
                 <div class="form-group mt-3">
-                    <button type="submit" class="btn btn-success btn-sm" <?php echo $guardar; ?>>Guardar</button>
-                    <button type="button" class="btn btn-warning btn-sm" <?php echo $cerrar; ?>>Cerrar</button>
-                    <button type="button" class="btn btn-danger btn-sm" <?php echo $anular; ?>>Anular</button>
-                    <button type="button" class="btn btn-primary btn-sm" <?php echo $imprimir; ?>>Imprimir</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_guardar" <?php echo $guardar ?>>Guardar</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_cerrar" <?php echo $cerrar ?>>Cerrar</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_anular" <?php echo $anular ?>>Anular</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_imprimir" <?php echo $imprimir ?>>Imprimir</button>
+                    <a type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</a>
                 </div>
             </form>
         </div>
@@ -341,4 +353,3 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
 </script>
 
 
-<script type="text/javascript" src="../../js/ingresos/ingresos_reg.js?v=<?php echo date('YmdHis') ?>"></script>

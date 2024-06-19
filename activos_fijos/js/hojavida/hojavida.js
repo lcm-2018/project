@@ -72,7 +72,7 @@
         });
 
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
-        $('#tb_ingresos').wrap('<div class="overflow"/>');
+        $('#tb_hojavida').wrap('<div class="overflow"/>');
     });
 
     //Buascar registros activos fijos
@@ -87,39 +87,41 @@
         }
     });
 
-    //Editar un registro Orden Ingreso
-    $('#tb_ingresos').on('click', '.btn_editar', function() {
+    //Editar un registro hoja de vida
+    $('#tb_hojavida').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("acf_reg_orden_ingreso.php", { id: id }, function(he) {
+        $.post("acf_reg_hojavida.php", { id: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
         });
     });
 
-    //Guardar registro Orden Ingreso
+    //Guardar hoja de vida
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
+        
+        var error = verifica_vacio_2($('#id_sede'), $('#nom_sede'));
+        error += verifica_vacio($('#placa'));
+        error += verifica_vacio($('#serial'));
+        error += verifica_vacio($('#id_marca'));
+        error += verifica_vacio($('#valor'));
 
-        var error = verifica_vacio_2($('#id_txt_sede'), $('#txt_nom_sede'));
-        error += verifica_vacio($('#txt_fec_ing'));
-        error += verifica_vacio($('#txt_hor_ing'));
-        error += verifica_vacio($('#sl_tip_ing'));
-
-        if ($('#sl_tip_ing').find('option:selected').attr('data-intext') == 2) {
-            error += verifica_vacio($('#sl_tercero'));
-        }
+        error += verifica_vacio($('#id_proveedor'));
+        error += verifica_vacio($('#id_articulo'));
+        
 
         error += verifica_vacio($('#txt_det_ing'));
 
         if (error >= 1) {
+            alert('ERROR')
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#acf_reg_orden_ingreso').serialize();
+            var data = $('#acf_reg_hoja_vida').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_orden_ingreso.php',
+                url: 'editar_hoja_vida.php',
                 dataType: 'json',
                 data: data + "&oper=add"
             }).done(function(r) {
