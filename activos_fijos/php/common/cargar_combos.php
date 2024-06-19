@@ -160,6 +160,34 @@ function tiposActivo($valor = 0)
     echo '<option value="3"' . $selected . '>PROPIEDAD DE INVERSION</option>';
 }
 
+
+function articulosActivosFijos($cmd, $titulo = '', $id = 0)
+{
+    try {
+        echo '<option value="">' . $titulo . '</option>';
+        $sql = "SELECT FM.id_med,
+                    FM.cod_medicamento,
+                    FM.nom_medicamento
+                FROM far_medicamentos FM 
+                INNER JOIN far_subgrupos SG ON SG.id_subgrupo = FM.id_subgrupo 
+                INNER JOIN far_grupos G ON G.id_grupo = SG.id_grupo
+                WHERE FM.estado=1 AND G.id_grupo IN (3 , 4, 5)";
+        $rs = $cmd->query($sql);
+        $objs = $rs->fetchAll();
+        foreach ($objs as $obj) {
+            $dtad = 'data-intext="' . $obj['es_int_ext'] . '"';
+            if ($obj['id_med']  == $id) {
+                echo '<option value="' . $obj['id_med'] . '"' . $dtad . ' selected="selected">' . $obj['nom_medicamento'] . '</option>';
+            } else {
+                echo '<option value="' . $obj['id_med'] . '"' . $dtad . '>' . $obj['nom_medicamento'] . '</option>';
+            }
+        }
+        $cmd = null;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
+}
+
 function subgrupo_articulo($cmd, $titulo = '', $id = 0)
 {
     try {
