@@ -55,16 +55,12 @@ try {
     $totalRecordsFilter = $total['total'];
 
     //Consulta los datos para listarlos en la tabla
-    $sql = "SELECT 
-            acf_orden_ingreso.id_ingreso,
-            acf_orden_ingreso.num_ingreso,
-            acf_orden_ingreso.fec_ingreso,
-            acf_orden_ingreso.hor_ingreso,
-            acf_orden_ingreso.detalle,
-            tb_terceros.nom_tercero,
-            far_orden_ingreso_tipo.nom_tipo_ingreso,
-            acf_orden_ingreso.val_total,
-            tb_sedes.nom_sede,
+    $sql = "SELECT acf_orden_ingreso.id_ingreso,acf_orden_ingreso.num_ingreso,
+                acf_orden_ingreso.fec_ingreso,acf_orden_ingreso.hor_ingreso,
+                acf_orden_ingreso.detalle,
+                tb_terceros.nom_tercero,far_orden_ingreso_tipo.nom_tipo_ingreso,
+                acf_orden_ingreso.val_total,
+                tb_sedes.nom_sede,
 	        CASE acf_orden_ingreso.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
             FROM acf_orden_ingreso
             INNER JOIN far_orden_ingreso_tipo ON (far_orden_ingreso_tipo.id_tipo_ingreso=acf_orden_ingreso.id_tipo_ingreso)
@@ -86,10 +82,10 @@ if (!empty($objs)) {
     foreach ($objs as $obj) {
         $id = $obj['id_ingreso'];
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
-        if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
-        if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5703, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [

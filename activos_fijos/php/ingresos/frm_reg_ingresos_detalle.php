@@ -11,11 +11,12 @@ include '../common/funciones_generales.php';
 $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$idMed = isset($_POST['idMed']) ? $_POST['idMed'] : -1;
+$id_art = isset($_POST['idart']) ? $_POST['idart'] : -1;
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
-$sql = "SELECT acf_orden_ingreso_detalle.*, far_medicamentos.id_med, far_medicamentos.nom_medicamento AS nom_articulo
+$sql = "SELECT acf_orden_ingreso_detalle.*, 
+            far_medicamentos.nom_medicamento AS nom_articulo
         FROM acf_orden_ingreso_detalle
-        INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_medicamento_articulo)
+        INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_articulo)
         WHERE id_ing_detalle=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
@@ -27,9 +28,9 @@ if (empty($obj)) {
         $name = $col['name'];
         $obj[$name] = NULL;
     endfor;
-    $articulo = datos_articulo_acf($cmd, $idMed);
+    $articulo = datos_articulo($cmd, $id_art);
     $obj['iva'] = 0;
-    $obj['id_med'] = $idMed;
+    $obj['id_articulo'] = $articulo['id_med'];
     $obj['nom_articulo'] = $articulo['nom_articulo'];
 }
 ?>
@@ -37,22 +38,19 @@ if (empty($obj)) {
 <div class="px-0">
     <div class="shadow">
         <div class="card-header mb-3" style="background-color: #16a085 !important;">
-            <h7 style="color: white;">REGISRTAR DETALLE EN ORDEN DE INGRESO ACTIVO FIJO</h7>
+            <h7 style="color: white;">REGISRTAR DETALLE EN ORDEN DE INGRESO</h7>
         </div>
         <div class="px-2">
 
             <!--Formulario de registro de Detalle-->
-            <form id="acf_reg_ingresos_detalles">
+            <form id="frm_reg_ingresos_detalle">
                 <input type="hidden" id="id_detalle" name="id_detalle" value="<?php echo $id ?>">
                 <div class=" form-row">
-                    <div class="form-group col-md-9">
+                    <div class="form-group col-md-12">
                         <label for="txt_nom_art" class="small">Articulo</label>
                         <input type="text" class="form-control form-control-sm" id="txt_nom_art" class="small" value="<?php echo $obj['nom_articulo'] ?>" readonly="readonly">
+                        <input type="hidden" id="id_txt_nom_art" name="id_txt_nom_art" value="<?php echo $obj['id_articulo'] ?>">
                     </div>
-                    <div class="form-group col-md-3">
-                        <input type="hidden" id="id_txt_nom_med" name="id_txt_nom_med" value="<?php echo $obj['id_med'] ?>">
-                    </div>
-                
                     <div class="form-group col-md-3">
                         <label for="txt_can_ing" class="small">Cantidad</label>
                         <input type="number" class="form-control form-control-sm numberint" id="txt_can_ing" name="txt_can_ing" required value="<?php echo $obj['cantidad'] ?>">

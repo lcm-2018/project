@@ -13,7 +13,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("acf_reg_orden_ingreso.php", function(he) {
+                    $.post("frm_reg_ingresos.php", function(he) {
                         $('#divTamModalForms').removeClass('modal-sm');
                         $('#divTamModalForms').removeClass('modal-lg');
                         $('#divTamModalForms').addClass('modal-xl');
@@ -59,7 +59,7 @@
                 { orderable: false, targets: 10 }
             ],
             rowCallback: function(row, data) {
-                var estado = $($(row).find("td")[12]).text();
+                var estado = $($(row).find("td")[9]).text();
                 if (estado == 'PENDIENTE') {
                     $($(row).find("td")[0]).css("background-color", "yellow");
                 } else if (estado == 'ANULADO') {
@@ -94,7 +94,7 @@
     //Editar un registro Orden Ingreso
     $('#tb_ingresos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("acf_reg_orden_ingreso.php", { id: id }, function(he) {
+        $.post("frm_reg_ingresos.php", { id: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
@@ -120,7 +120,7 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#acf_reg_orden_ingreso').serialize();
+            var data = $('#frm_reg_ingresos').serialize();
             $.ajax({
                 type: 'POST',
                 url: 'editar_orden_ingreso.php',
@@ -188,7 +188,7 @@
     $('#divModalConfDel').on("click", "#ingresos_close", function() {
         $.ajax({
             type: 'POST',
-            url: 'editar_ingresos.php',
+            url: 'editar_orden_ingreso.php',
             dataType: 'json',
             data: { id: $('#id_ingreso').val(), oper: 'close' }
         }).done(function(r) {
@@ -223,7 +223,7 @@
     $('#divModalConfDel').on("click", "#ingresos_annul", function() {
         $.ajax({
             type: 'POST',
-            url: 'editar_ingresos.php',
+            url: 'editar_orden_ingreso.php',
             dataType: 'json',
             data: { id: $('#id_ingreso').val(), oper: 'annul' }
         }).done(function(r) {
@@ -252,60 +252,22 @@
     /* ---------------------------------------------------
     DETALLES
     -----------------------------------------------------*/
-    $('#divModalBus').on('dblclick', '#tb_lotes_articulos tr', function() {
-        let idMed = $(this).find('td:eq(0)').text();
-        $.post("acf_reg_orden_ingreso_detalle.php", { idMed: idMed }, function(he) {
+    $('#divModalBus').on('dblclick', '#tb_articulos_activos tr', function() {
+        let idart = $(this).find('td:eq(0)').text();
+        $.post("frm_reg_ingresos_detalle.php", { idart: idart }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
-
         });
     });
 
     $('#divForms').on('click', '#tb_ingresos_detalles .btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("acf_reg_orden_ingreso_detalle.php", { id: id }, function(he) {
+        $.post("frm_reg_ingresos_detalle.php", { id: id }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
         });
-    });
-
-    //Editar activos fijos
-    $('#divForms').on('click', '#tb_ingresos_detalles .btn_activofijo', function() {
-        let id = $(this).attr('value');
-        $.post("acf_reg_activofijo.php", { id: id }, function(he) {
-            $('#divTamModalReg').addClass('modal-xl');
-            $('#divModalReg').modal('show');
-            $("#divFormsReg").html(he);
-        });
-    });
-
-    // Autocompletar Presentacion de Lote
-    $('#divFormsReg').on("input", "#txt_pre_lot", function() {
-        $(this).autocomplete({
-            source: function(request, response) {
-                $.ajax({
-                    url: "../common/cargar_prescomercial_ls.php",
-                    dataType: "json",
-                    type: 'POST',
-                    data: { term: request.term }
-                }).done(function(data) {
-                    response(data);
-                });
-            },
-            minLength: 2,
-            select: function(event, ui) {
-                $('#id_txt_pre_lot').val(ui.item.id);
-                $('#txt_can_lot').val(ui.item.cantidad);
-            }
-        });
-    });
-
-    $('#divModalReg').on('input', '#txt_val_uni, #sl_por_iva', function() {
-        var valor = $('#txt_val_uni').val() ? $('#txt_val_uni').val() : 0,
-            iva = $('#sl_por_iva').val() ? $('#sl_por_iva').val() : 0;
-        $('#txt_val_cos').val(parseFloat(valor) + parseFloat(valor) * parseFloat(iva) / 100);
     });
 
     //Guardar registro Detalle
@@ -320,7 +282,7 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
-            var data = $('#acf_reg_ingresos_detalles').serialize();
+            var data = $('#frm_reg_ingresos_detalle').serialize();
             $.ajax({
                 type: 'POST',
                 url: 'editar_orden_ingreso_detalle.php',
@@ -383,6 +345,117 @@
             alert('Ocurrió un error');
         });
     });
+
+    $('#divModalReg').on('input', '#txt_val_uni, #sl_por_iva', function() {
+        var valor = $('#txt_val_uni').val() ? $('#txt_val_uni').val() : 0,
+            iva = $('#sl_por_iva').val() ? $('#sl_por_iva').val() : 0;
+        $('#txt_val_cos').val(parseFloat(valor) + parseFloat(valor) * parseFloat(iva) / 100);
+    });
+
+    /* ---------------------------------------------------
+    DETALLES - ACTIVOS FIJOS
+    -----------------------------------------------------*/
+
+    //Editar la lista de activos fijos
+    $('#divForms').on('click', '#tb_ingresos_detalles .btn_activofijo', function() {
+        let id = $(this).attr('value');
+        $.post("frm_reg_activofijo.php", { id: id }, function(he) {
+            $('#divTamModalBus').addClass('modal-xl');
+            $('#divModalBus').modal('show');
+            $("#divFormsBus").html(he);
+        });
+    });
+
+    //Editar datos basicos de un activo fijo
+    $('#divFormsBus').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
+        let id = $(this).attr('value');
+        $.post("frm_reg_activofijo_detalle.php", { id: id }, function(he) {
+            $('#divTamModalReg').addClass('modal-lg');
+            $('#divModalReg').modal('show');
+            $("#divFormsReg").html(he);
+        });
+    });
+
+    //Guardar activo fijo
+    $('#divFormsReg').on("click", "#btn_guardar_actfij", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        var error = verifica_vacio($('#txt_placa'));
+        error += verifica_vacio($('#txt_serial'));
+        error += verifica_vacio($('#sl_marca'));
+        error += verifica_vacio($('#txt_val_uni'));
+        error += verifica_vacio($('#sl_tipoactivo'));
+
+        if (error >= 1) {
+            $('#divModalError').modal('show');
+            $('#divMsgError').html('Los datos resaltados son obligatorios');
+        } else {
+            var data = $('#frm_reg_activofijo_detalle').serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'editar_activofijo_detalle.php',
+                dataType: 'json',
+                data: data + "&id_ingreso=" + $('#id_ingreso').val() + "&id_articulo=" + $('#id_articulo').val() + "&id_ing_detalle=" + $('#id_ing_detalle').val() + "&oper=add"
+            }).done(function(r) {
+                if (r.mensaje == 'ok') {
+                    pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
+                    reloadtable('tb_lista_activos_fijos', 0);
+
+                    $('#id_act_fijo').val(r.id);
+                    $('#divModalReg').modal('hide');
+                    $('#divModalDone').modal('show');
+                    $('#divMsgDone').html("Proceso realizado con éxito");
+                } else {
+                    $('#divModalError').modal('show');
+                    $('#divMsgError').html(r.mensaje);
+                }
+            }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Error al guardar activo');
+            });
+        }
+    });
+
+    //Elimiar Activo fijo
+    $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_eliminar', function() {
+        let placa = $(this).attr('value');
+        confirmar_del('activofijo_del', placa);
+    });
+    $('#divModalConfDel').on("click", "#activofijo_del", function() {
+        var placa = $(this).attr('value');
+        let idIngresoDetalle = $('#id_ingreso_detalle').val()
+        $.ajax({
+            type: 'POST',
+            url: 'editar_activofijo_detalle.php',
+            dataType: 'json',
+            data: {
+                id_ingreso_detalle: idIngresoDetalle,
+                placa: placa,
+                oper: 'del'
+            }
+        }).done(function(r) {
+            $('#divModalConfDel').modal('hide');
+            if (r.mensaje == 'ok') {
+                let pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
+                reloadtable('tb_lista_activos_fijos', pag);
+                $('#divModalDone').modal('show');
+                $('#divMsgDone').html("Proceso realizado con éxito");
+            } else {
+                $('#divModalError').modal('show');
+                $('#divMsgError').html(r.mensaje);
+            }
+        }).always(function() {
+
+        }).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
+            alert('Ocurrió un error');
+        });
+    });
+
+
+
+
+
 
     //Imprimir listado de registros
     $('#btn_imprime_filtro').on('click', function() {
