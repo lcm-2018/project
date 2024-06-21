@@ -170,7 +170,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     <div class="form-group col-md-4">
                         <label for="tipo_activo" class="small">Tipo de Activo</label>
                         <select class="form-control form-control-sm" id="tipo_activo" name="tipo_activo">
-                            <?php tiposActivo($cmd, $obj['tipo_activo']) ?>
+                            <?php tipos_activo($cmd, $obj['tipo_activo']) ?>
                         </select>
                     </div>
                     <div class="form-group col-md-4">

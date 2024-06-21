@@ -358,11 +358,10 @@ $rol = $_SESSION['rol'];
                                                 </div>
                                             </div>
                                         </a>
-<<<<<<< HEAD
                                     <?php } ?>                                    
                                 </nav>
                             </div>
-                            <a class="nav-link collapsed sombra" href="#" data-toggle="collapse" data-target="#pagesCollapseMantenimiento" aria-expanded="false" aria-controls="pagesCollapseMovimientos">
+                            <a class="nav-link collapsed sombra" href="#" data-toggle="collapse" data-target="#pagesCollapseMantenimiento" aria-expanded="false" aria-controls="pagesCollapseMantenimiento">
                                 <div class="form-row">
                                     <div class="div-icono">
                                     <i class="fas fa-cogs" style="color: #FFC300CC;"></i>
@@ -375,13 +374,8 @@ $rol = $_SESSION['rol'];
                             </a>
                             <div class="collapse" id="pagesCollapseMantenimiento" aria-labelledby="headingOne">
                                 <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
-                                    <?php if (PermisosUsuario($permisos, 5702, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/pedidos/index.php?var=3">
-=======
-                                    <?php } ?>
                                     <?php if (PermisosUsuario($permisos, 5704, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/hojavida/index.php?var=3">
->>>>>>> 9153871d67e8725d5150698a654b71c349ca529c
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fa fa-pencil-square-o fa-sm" style="color: #E74C3C;"></i>
@@ -392,7 +386,7 @@ $rol = $_SESSION['rol'];
                                             </div>
                                         </a>
                                     <?php } ?>
-                                    <?php if (PermisosUsuario($permisos, 5703, 1) || $id_rol == 1) { ?>
+                                    <?php if (PermisosUsuario($permisos, 5704, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/ingresos/index.php?var=3">
                                             <div class="form-row">
                                                 <div class="div-icono">

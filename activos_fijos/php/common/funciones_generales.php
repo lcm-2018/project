@@ -123,9 +123,6 @@ function sede_principal($cmd){
     }
 }
 
-<<<<<<< HEAD
-=======
-
 function area_principal($cmd){
     try {
  
@@ -147,7 +144,6 @@ function area_principal($cmd){
         echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
     }
 }
-
 
 //FUNCION QUE RETORNAR LOS DATOS DE UN ARTICULO
 function datos_articulo_acf($cmd, $id_med){
@@ -177,4 +173,4 @@ function datos_articulo_acf($cmd, $id_med){
         echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
     }
 }
->>>>>>> 9153871d67e8725d5150698a654b71c349ca529c
+
