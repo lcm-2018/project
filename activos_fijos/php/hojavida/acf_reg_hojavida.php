@@ -11,7 +11,7 @@ include '../common/funciones_generales.php';
 $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$id = isset($_POST['id']) ? $_POST['id'] : -1;
+$id = isset($_POST['id_hv']) ? $_POST['id_hv'] : -1;
 $sql = "SELECT 
             HV.id,
             HV.placa,
@@ -125,7 +125,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
         </div>
         <div class="px-2">
             <form id="acf_reg_hoja_vida">
-                <input type="hidden" id="id" name="id" value="<?php echo $id ?>">
+                <input type="hidden" id="id_hv" name="id_hv" value="<?php echo $id ?>">
                 <div class="form-row">
                     <div class="form-group col-md-4">
                         <label for="id_sede" class="small">Sede</label>
@@ -313,7 +313,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="estado_general" class="small">Estado General</label>
-                        <select class="form-control form-control-sm" id="estado_general">
+                        <select class="form-control form-control-sm" id="estado_general" name="estado_general">
                             <?php estado_general_activo('--Estado--', $obj['estado_general']) ?>
                         </select>
                     </div>
@@ -323,7 +323,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="estado" class="small">Estado</label>
-                        <select class="form-control form-control-sm" id="estado">
+                        <select class="form-control form-control-sm" id="estado" name="estado">
                             <?php estado_activo('--Estado--', $obj['estado']) ?>
                         </select>
                     </div>

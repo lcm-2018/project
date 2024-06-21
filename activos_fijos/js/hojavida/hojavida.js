@@ -90,7 +90,7 @@
     //Editar un registro hoja de vida
     $('#tb_hojavida').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("acf_reg_hojavida.php", { id: id }, function(he) {
+        $.post("acf_reg_hojavida.php", { id_hv: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
@@ -109,12 +109,9 @@
 
         error += verifica_vacio($('#id_proveedor'));
         error += verifica_vacio($('#id_articulo'));
-        
 
-        error += verifica_vacio($('#txt_det_ing'));
 
         if (error >= 1) {
-            alert('ERROR')
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
@@ -123,12 +120,12 @@
                 type: 'POST',
                 url: 'editar_hoja_vida.php',
                 dataType: 'json',
-                data: data + "&oper=add"
-            }).done(function(r) {
-                if (r.mensaje == 'ok') {
-                    let pag = ($('#id_ingreso').val() == -1) ? 0 : $('#tb_ingresos').DataTable().page.info().page;
-                    reloadtable('tb_ingresos', pag);
-                    $('#id_ingreso').val(r.id);
+                data: data +"&id_hv=" + $('#id_hv').val() + '&oper=add'
+            }).done(function(res) {
+                if (res.mensaje == 'ok') {
+                    let pag = ($('#tb_hojavida').val() == -1) ? 0 : $('#tb_hojavida').DataTable().page.info().page;
+                    reloadtable('tb_hojavida', pag);
+                    $('#id_hv').val(res.id_hv);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
@@ -137,7 +134,7 @@
                     $('#divMsgDone').html("Proceso realizado con éxito");
                 } else {
                     $('#divModalError').modal('show');
-                    $('#divMsgError').html(r.mensaje);
+                    $('#divMsgError').html(res.mensaje);
                 }
             }).always(
                 function() {}
