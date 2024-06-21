@@ -139,6 +139,7 @@ function estados_movimientos($titulo = '', $estado = 3)
     echo '<option value="0"' . $selected . '>ANULADO</option>';
 }
 
+<<<<<<< HEAD
 function estados_pedidos($titulo = '', $estado = -1)
 {
     echo '<option value="">' . $titulo . '</option>';
@@ -152,6 +153,31 @@ function estados_pedidos($titulo = '', $estado = -1)
     echo '<option value="2"' . $selected . '>CERRADO</option>';
     $selected = ($estado == 0) ? 'selected="selected"' : '';
     echo '<option value="0"' . $selected . '>ANULADO</option>';
+=======
+
+function estado_general_activo($titulo = '', $estado = 3)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>BUENO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>REGULAR</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>MALO</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
+    echo '<option value="4"' . $selected . '>FUERA DE SERVICO</option>';
+}
+
+function estado_activo($titulo = '', $estado = 3)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>ACTIVO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>DADO DE BAJA</option>';
+>>>>>>> 9153871d67e8725d5150698a654b71c349ca529c
 }
 
 function iva($valor = 0)
@@ -172,6 +198,34 @@ function tipos_activo($valor = 0)
     echo '<option value="2"' . $selected . '>PROPIEDAD PARA LA VENTA</option>';
     $selected = ($valor == 3) ? 'selected="selected"' : '';
     echo '<option value="3"' . $selected . '>PROPIEDAD DE INVERSION</option>';
+}
+
+
+function articulosActivosFijos($cmd, $titulo = '', $id = 0)
+{
+    try {
+        echo '<option value="">' . $titulo . '</option>';
+        $sql = "SELECT FM.id_med,
+                    FM.cod_medicamento,
+                    FM.nom_medicamento
+                FROM far_medicamentos FM 
+                INNER JOIN far_subgrupos SG ON SG.id_subgrupo = FM.id_subgrupo 
+                INNER JOIN far_grupos G ON G.id_grupo = SG.id_grupo
+                WHERE FM.estado=1 AND G.id_grupo IN (3 , 4, 5)";
+        $rs = $cmd->query($sql);
+        $objs = $rs->fetchAll();
+        foreach ($objs as $obj) {
+            $dtad = 'data-intext="' . $obj['es_int_ext'] . '"';
+            if ($obj['id_med']  == $id) {
+                echo '<option value="' . $obj['id_med'] . '"' . $dtad . ' selected="selected">' . $obj['nom_medicamento'] . '</option>';
+            } else {
+                echo '<option value="' . $obj['id_med'] . '"' . $dtad . '>' . $obj['nom_medicamento'] . '</option>';
+            }
+        }
+        $cmd = null;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
 }
 
 function subgrupo_articulo($cmd, $titulo = '', $id = 0)

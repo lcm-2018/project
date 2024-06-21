@@ -358,6 +358,7 @@ $rol = $_SESSION['rol'];
                                                 </div>
                                             </div>
                                         </a>
+<<<<<<< HEAD
                                     <?php } ?>                                    
                                 </nav>
                             </div>
@@ -376,6 +377,11 @@ $rol = $_SESSION['rol'];
                                 <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
                                     <?php if (PermisosUsuario($permisos, 5702, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/pedidos/index.php?var=3">
+=======
+                                    <?php } ?>
+                                    <?php if (PermisosUsuario($permisos, 5704, 1) || $id_rol == 1) { ?>
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/hojavida/index.php?var=3">
+>>>>>>> 9153871d67e8725d5150698a654b71c349ca529c
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fa fa-pencil-square-o fa-sm" style="color: #E74C3C;"></i>
