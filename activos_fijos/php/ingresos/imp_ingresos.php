@@ -11,31 +11,40 @@ include '../common/funciones_generales.php';
 $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
-$where = " WHERE far_alm_pedido.tipo=2";
+$where = " WHERE 1";
 
-if (isset($_POST['id_pedido']) && $_POST['id_pedido']) {
-    $where .= " AND far_alm_pedido.id_pedido='" . $_POST['id_pedido'] . "'";
+if (isset($_POST['id_ing']) && $_POST['id_ing']) {
+    $where .= " AND acf_orden_ingreso.id_ingreso='" . $_POST['id_ing'] . "'";
 }
-if (isset($_POST['num_pedido']) && $_POST['num_pedido']) {
-    $where .= " AND far_alm_pedido.num_pedido='" . $_POST['num_pedido'] . "'";
+if (isset($_POST['num_ing']) && $_POST['num_ing']) {
+    $where .= " AND acf_orden_ingreso.num_ingreso='" . $_POST['num_ing'] . "'";
 }
 if (isset($_POST['fec_ini']) && $_POST['fec_ini'] && isset($_POST['fec_fin']) && $_POST['fec_fin']) {
-    $where .= " AND far_alm_pedido.fec_pedido BETWEEN '" . $_POST['fec_ini'] . "' AND '" . $_POST['fec_fin'] . "'";
+    $where .= " AND acf_orden_ingreso.fec_ingreso BETWEEN '" . $_POST['fec_ini'] . "' AND '" . $_POST['fec_fin'] . "'";
+}
+if (isset($_POST['id_tercero']) && $_POST['id_tercero']) {
+    $where .= " AND acf_orden_ingreso.id_provedor=" . $_POST['id_tercero'] . "";
+}
+if (isset($_POST['id_tiping']) && $_POST['id_tiping']) {
+    $where .= " AND acf_orden_ingreso.id_tipo_ingreso=" . $_POST['id_tiping'] . "";
 }
 if (isset($_POST['estado']) && strlen($_POST['estado'])) {
-    $where .= " AND far_alm_pedido.estado=" . $_POST['estado'];
+    $where .= " AND acf_orden_ingreso.estado=" . $_POST['estado'];
 }
 
 try {
-   
-    $sql = "SELECT far_alm_pedido.id_pedido,far_alm_pedido.num_pedido,far_alm_pedido.fec_pedido,far_alm_pedido.hor_pedido,
-	            far_alm_pedido.detalle,far_alm_pedido.val_total,
+    $sql = "SELECT acf_orden_ingreso.id_ingreso,acf_orden_ingreso.num_ingreso,
+                acf_orden_ingreso.fec_ingreso,acf_orden_ingreso.hor_ingreso,
+                acf_orden_ingreso.num_factura,acf_orden_ingreso.fec_factura,acf_orden_ingreso.detalle,
+                tb_terceros.nom_tercero,far_orden_ingreso_tipo.nom_tipo_ingreso,
+                acf_orden_ingreso.val_total,
                 tb_sedes.nom_sede,
-	            CASE far_alm_pedido.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CONFIRMADO' 
-                    WHEN 3 THEN 'ACEPTADO' WHEN 4 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
-            FROM far_alm_pedido
-            INNER JOIN tb_sedes ON (tb_sedes.id_sede=far_alm_pedido.id_sede)
-            $where ORDER BY far_alm_pedido.id_pedido DESC";    
+            CASE acf_orden_ingreso.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
+            FROM acf_orden_ingreso
+            INNER JOIN far_orden_ingreso_tipo ON (far_orden_ingreso_tipo.id_tipo_ingreso=acf_orden_ingreso.id_tipo_ingreso)
+            INNER JOIN tb_terceros ON (tb_terceros.id_tercero=acf_orden_ingreso.id_provedor)
+            INNER JOIN tb_sedes ON (tb_sedes.id_sede=acf_orden_ingreso.id_sede)
+            $where ORDER BY acf_orden_ingreso.id_ingreso DESC";
     $res = $cmd->query($sql);
     $objs = $res->fetchAll();
 } catch (PDOException $e) {
@@ -65,10 +74,10 @@ try {
     </style>
 
     <?php include('../common/reporte_header.php'); ?>
-
+    
     <table style="width:100%; font-size:80%">
         <tr style="text-align:center">
-            <th>REPORTE DE PEDIDOS DE ACTIVOS FIJOS ENTRE: <?php echo $_POST['fec_ini'].' y '. $_POST['fec_fin'] ?></th>
+            <th>REPORTE DE ORDENES DE INGRESO ENTRE: <?php echo $_POST['fec_ini'].' y '. $_POST['fec_fin'] ?></th>
         </tr>     
     </table>
 
@@ -76,27 +85,35 @@ try {
         <thead style="font-size:80%">                
             <tr style="background-color:#CED3D3; color:#000000; text-align:center">
                 <th>Id</th>
-                <th>No. Pedido</th>
-                <th>Fecha Pedido</th>
-                <th>Hora Pedido</th>
+                <th>No. Ingreso</th>
+                <th>Fecha Ingreso</th>
+                <th>Hora Ingreso</th>
+                <th>No. Factura</th>
+                <th>Fecha Factura</th>
                 <th>Detalle</th>
+                <th>Tercero</th>
+                <th>Tipo Ingreso</th>
+                <th>Vr. Total</th>
                 <th>Sede</th>
-                <th>Valor Total</th>
                 <th>Estado</th>
-            </tr>            
+            </tr>    
         </thead>
         <tbody style="font-size: 60%;">
             <?php
             $tabla = '';
             foreach ($objs as $obj) {
                 $tabla .=  '<tr class="resaltar" style="text-align:center"> 
-                        <td>' . $obj['id_pedido'] . '</td>  
-                        <td>' . $obj['num_pedido'] . '</td>
-                        <td>' . $obj['fec_pedido'] . '</td>
-                        <td>' . $obj['hor_pedido'] . '</td>   
+                        <td>' . $obj['id_ingreso'] . '</td>  
+                        <td>' . $obj['num_ingreso'] . '</td>
+                        <td>' . $obj['fec_ingreso'] . '</td>
+                        <td>' . $obj['hor_ingreso'] . '</td>   
+                        <td>' . $obj['num_factura'] . '</td>
+                        <td>' . $obj['fec_factura'] . '</td> 
                         <td style="text-align:left">' . $obj['detalle']. '</td>   
+                        <td style="text-align:left">' . mb_strtoupper($obj['nom_tercero']) . '</td>   
+                        <td>' . mb_strtoupper($obj['nom_tipo_ingreso']) . '</td>   
+                        <td>' . formato_valor($obj['val_total']). '</td>   
                         <td>' . mb_strtoupper($obj['nom_sede']) . '</td>   
-                        <td>' . formato_valor($obj['val_total']) . '</td>   
                         <td>' . $obj['nom_estado']. '</td></tr>';
             }
             echo $tabla;
@@ -104,7 +121,7 @@ try {
         </tbody>
         <tfoot style="font-size:60%"> 
             <tr style="background-color:#CED3D3; color:#000000">
-                <td colspan="8" style="text-align:left">
+                <td colspan="12" style="text-align:left">
                     No. de Registros: <?php echo count($objs); ?>
                 </td>
             </tr>

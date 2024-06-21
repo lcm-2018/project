@@ -84,6 +84,14 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <input type="text" class="form-control form-control-sm" id="txt_est_ing" name="txt_est_ing" class="small" value="<?php echo $obj['nom_estado'] ?>" readonly="readonly">
                     </div>
                     <div class="form-group col-md-2">
+                        <label for="txt_num_fac" class="small">No. Acta y/o Remisión</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_num_fac" name="txt_num_fac" class="small" value="<?php echo $obj['num_factura'] ?>">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="txt_fec_fac" class="small">Fecha Acta y/o Remisión</label>
+                        <input type="date" class="form-control form-control-sm" id="txt_fec_fac" name="txt_fec_fac" class="small" value="<?php echo $obj['fec_factura'] ?>">
+                    </div>
+                    <div class="form-group col-md-2">
                         <label for="sl_tip_ing" class="small" required>Tipo Ingreso</label>
                         <select class="form-control form-control-sm" id="sl_tip_ing" name="sl_tip_ing">
                             <?php tipo_ingreso($cmd, '', $obj['id_tipo_ingreso']) ?>

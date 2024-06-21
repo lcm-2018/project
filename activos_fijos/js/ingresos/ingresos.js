@@ -45,6 +45,8 @@
                 { 'data': 'num_ingreso' },
                 { 'data': 'fec_ingreso' },
                 { 'data': 'hor_ingreso' },
+                { 'data': 'num_factura' },
+                { 'data': 'fec_factura' },
                 { 'data': 'detalle' },
                 { 'data': 'nom_tercero' },
                 { 'data': 'nom_tipo_ingreso' },
@@ -54,12 +56,12 @@
                 { 'data': 'botones' }
             ],
             columnDefs: [
-                { class: 'text-wrap', targets: [4, 5] },
-                { type: "numeric-comma", targets: 7 },
-                { orderable: false, targets: 10 }
+                { class: 'text-wrap', targets: [6, 7] },
+                { type: "numeric-comma", targets: 9 },
+                { orderable: false, targets: 12 }
             ],
             rowCallback: function(row, data) {
-                var estado = $($(row).find("td")[9]).text();
+                var estado = $($(row).find("td")[11]).text();
                 if (estado == 'PENDIENTE') {
                     $($(row).find("td")[0]).css("background-color", "yellow");
                 } else if (estado == 'ANULADO') {
@@ -108,6 +110,8 @@
         var error = verifica_vacio_2($('#id_txt_sede'), $('#txt_nom_sede'));
         error += verifica_vacio($('#txt_fec_ing'));
         error += verifica_vacio($('#txt_hor_ing'));
+        error += verifica_vacio($('#txt_num_fac'));
+        error += verifica_vacio($('#txt_fec_fac'));
         error += verifica_vacio($('#sl_tip_ing'));
 
         if ($('#sl_tip_ing').find('option:selected').attr('data-intext') == 2) {
@@ -451,11 +455,6 @@
             alert('Ocurrió un error');
         });
     });
-
-
-
-
-
 
     //Imprimir listado de registros
     $('#btn_imprime_filtro').on('click', function() {

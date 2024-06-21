@@ -14,27 +14,31 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
 
 try {
-    $sql = "SELECT far_alm_pedido.id_pedido,far_alm_pedido.num_pedido,far_alm_pedido.fec_pedido,far_alm_pedido.hor_pedido,far_alm_pedido.detalle,far_alm_pedido.val_total,
-                tb_sedes.nom_sede,
-                CASE far_alm_pedido.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CONFIRMADO' 
-                    WHEN 3 THEN 'ACEPTADO' WHEN 4 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS estado,
-                CASE far_alm_pedido.estado WHEN 1 THEN far_alm_pedido.fec_creacion WHEN 2 THEN far_alm_pedido.fec_confirma 
-                    WHEN 3 THEN far_alm_pedido.fec_acepta WHEN 4 THEN far_alm_pedido.fec_cierre WHEN 0 THEN far_alm_pedido.fec_anulacion END AS fec_estado,
-                CONCAT_WS(' ',usr.nombre1,usr.nombre2,usr.apellido1,usr.apellido2) AS usr_confirma,
-                usr.descripcion AS usr_perfil,usr.nom_firma
-            FROM far_alm_pedido             
-            INNER JOIN tb_sedes ON (tb_sedes.id_sede = far_alm_pedido.id_sede)
-            LEFT JOIN seg_usuarios_sistema AS usr ON (usr.id_usuario=far_alm_pedido.id_usr_confirma)
-            WHERE id_pedido=" . $id . " LIMIT 1";
+    $sql = "SELECT acf_orden_ingreso.id_ingreso,acf_orden_ingreso.num_ingreso,acf_orden_ingreso.fec_ingreso,
+            acf_orden_ingreso.hor_ingreso,acf_orden_ingreso.num_factura,acf_orden_ingreso.fec_factura,
+            acf_orden_ingreso.detalle,acf_orden_ingreso.val_total,
+            tb_sedes.nom_sede,
+            tb_terceros.nom_tercero,far_orden_ingreso_tipo.nom_tipo_ingreso,
+            CASE acf_orden_ingreso.estado WHEN 0 THEN 'ANULADO' WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' END AS estado,
+            CASE acf_orden_ingreso.estado WHEN 0 THEN acf_orden_ingreso.fec_anulacion WHEN 1 THEN acf_orden_ingreso.fec_creacion WHEN 2 THEN acf_orden_ingreso.fec_cierre END AS fec_estado,
+            CONCAT_WS(' ',usr.nombre1,usr.nombre2,usr.apellido1,usr.apellido2) AS usr_cierra,
+            usr.descripcion AS usr_perfil,usr.nom_firma
+        FROM acf_orden_ingreso 
+        INNER JOIN tb_sedes ON (tb_sedes.id_sede=acf_orden_ingreso.id_sede)
+        INNER JOIN tb_terceros ON (tb_terceros.id_tercero=acf_orden_ingreso.id_provedor)
+        INNER JOIN far_orden_ingreso_tipo ON (far_orden_ingreso_tipo.id_tipo_ingreso=acf_orden_ingreso.id_tipo_ingreso)
+        LEFT JOIN seg_usuarios_sistema AS usr ON (usr.id_usuario=acf_orden_ingreso.id_usr_cierre)
+        WHERE id_ingreso=" . $id . " LIMIT 1";
     $rs = $cmd->query($sql);
     $obj_e = $rs->fetch();
 
     $sql = "SELECT far_medicamentos.cod_medicamento,far_medicamentos.nom_medicamento,
-            far_alm_pedido_detalle.cantidad,far_alm_pedido_detalle.valor,
-            (far_alm_pedido_detalle.cantidad*far_alm_pedido_detalle.valor) AS val_total
-        FROM far_alm_pedido_detalle
-        INNER JOIN far_medicamentos ON (far_medicamentos.id_med = far_alm_pedido_detalle.id_medicamento)
-        WHERE far_alm_pedido_detalle.id_pedido=" . $id . " ORDER BY far_alm_pedido_detalle.id_ped_detalle";
+            acf_orden_ingreso_detalle.cantidad,acf_orden_ingreso_detalle.valor_sin_iva,
+            acf_orden_ingreso_detalle.iva,acf_orden_ingreso_detalle.valor,
+            (acf_orden_ingreso_detalle.cantidad*acf_orden_ingreso_detalle.valor) AS val_total
+        FROM acf_orden_ingreso_detalle
+        INNER JOIN far_medicamentos ON (far_medicamentos.id_med = acf_orden_ingreso_detalle.id_articulo)
+        WHERE acf_orden_ingreso_detalle.id_ingreso=" . $id . " ORDER BY acf_orden_ingreso_detalle.id_ing_detalle";
     $rs = $cmd->query($sql);
     $obj_ds = $rs->fetchAll();
 } catch (PDOException $e) {
@@ -69,35 +73,47 @@ try {
 
     <table style="width:100%; font-size:70%">
         <tr style="text-align:center">
-            <th>ORDEN DE PEDIDO DE ACTIVOS FIJOS</th>
+            <th>ORDEN DE INGRESO</th>
         </tr>
     </table>
 
     <table style="width:100%; font-size:60%; text-align:left; border:#A9A9A9 1px solid;">
         <tr style="background-color:#CED3D3; border:#A9A9A9 1px solid">
-            <td>Id. Pedido</td>
-            <td>No. Pedido</td>
-            <td>Fecha Pedido</td>
-            <td>Hora Pedido</td>
+            <td>Id. Ingreso</td>
+            <td>No. Ingreso</td>
+            <td>Fecha Ingreso</td>
+            <td>Hora Ingreso</td>
             <td>Estado</td>
             <td>Fecha Estado</td>
         </tr>
         <tr>
-            <td><?php echo $obj_e['id_pedido']; ?></td>
-            <td><?php echo $obj_e['num_pedido']; ?></td>
-            <td><?php echo $obj_e['fec_pedido']; ?></td>
-            <td><?php echo $obj_e['hor_pedido']; ?></td>
+            <td><?php echo $obj_e['id_ingreso']; ?></td>
+            <td><?php echo $obj_e['num_ingreso']; ?></td>
+            <td><?php echo $obj_e['fec_ingreso']; ?></td>
+            <td><?php echo $obj_e['hor_ingreso']; ?></td>
             <td><?php echo $obj_e['estado']; ?></td>
             <td><?php echo $obj_e['fec_estado']; ?></td>
         </tr>
         <tr style="background-color:#CED3D3; border:#A9A9A9 1px solid">
             <td>Sede</td>
-            <td colspan="5">Detalle</td>
+            <td>Tipo de Ingreso</td>
+            <td>No. Factura</td>
+            <td>Fecha Factura</td>
+            <td colspan="2">Proveedor</td>
         </tr>
         <tr>
             <td><?php echo $obj_e['nom_sede']; ?></td>
-            <td colspan="5"><?php echo $obj_e['detalle']; ?></td>        
-        </tr>        
+            <td><?php echo $obj_e['nom_tipo_ingreso']; ?></td>
+            <td><?php echo $obj_e['num_factura']; ?></td>
+            <td><?php echo $obj_e['fec_factura']; ?></td>
+            <td colspan="2"><?php echo $obj_e['nom_tercero']; ?></td>
+        </tr>
+        <tr style="background-color:#CED3D3; border:#A9A9A9 1px solid">
+            <td colspan="6">Detalle</td>
+        </tr>
+        <tr>
+            <td colspan="6"><?php echo $obj_e['detalle']; ?></td>
+        </tr>
     </table>
 
     <table style="width:100% !important">
@@ -106,7 +122,9 @@ try {
                 <th>Código</th>
                 <th>Descripción</th>
                 <th>Cantidad</th>
-                <th>Valor Promedio</th>
+                <th>Valor Unitario</th>
+                <th>IVA</th>
+                <th>Valor Costo</th>
                 <th>Valor Total</th>
             </tr>
         </thead>
@@ -118,7 +136,9 @@ try {
                         <td>' . $obj['cod_medicamento'] . '</td>
                         <td style="text-align:left">' . mb_strtoupper($obj['nom_medicamento']) . '</td>   
                         <td>' . $obj['cantidad'] . '</td>
-                        <td>' . formato_valor($obj['valor']) . '</td>   
+                        <td>' . formato_valor($obj['valor_sin_iva']) . '</td> 
+                        <td>' . $obj['iva'] . '</td>
+                        <td>' . formato_valor($obj['valor']) . '</td> 
                         <td>' . formato_valor($obj['val_total']) . '</td></tr>';
             }
             echo $tabla;
@@ -126,7 +146,7 @@ try {
         </tbody>
         <tfoot style="font-size:60%">
             <tr style="background-color:#CED3D3; color:#000000">
-                <td colspan="3"></td>
+                <td colspan="5"></td>
                 <td>TOTAL:</td>
                 <td><?php echo formato_valor($obj_e['val_total']); ?> </td>
             </tr>
@@ -146,12 +166,12 @@ try {
         <tr>
             <td style="vertical-align: top">
                 <div>-------------------------------------------------</div>
-                <div><?php echo $obj_e['usr_confirma']; ?></div>
+                <div><?php echo $obj_e['usr_cierra']; ?></div>
                 <div><?php echo $obj_e['usr_perfil']; ?></div>
             </td>
             <td style="vertical-align: top">
                 <div>-------------------------------------------------</div>
-                <div>Aceptado Por</div>
+                <div>Entregado Por</div>
             </td>
         </tr>        
     </table>

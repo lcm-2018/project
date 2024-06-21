@@ -57,7 +57,7 @@ try {
     //Consulta los datos para listarlos en la tabla
     $sql = "SELECT acf_orden_ingreso.id_ingreso,acf_orden_ingreso.num_ingreso,
                 acf_orden_ingreso.fec_ingreso,acf_orden_ingreso.hor_ingreso,
-                acf_orden_ingreso.detalle,
+                acf_orden_ingreso.num_factura,acf_orden_ingreso.fec_factura,acf_orden_ingreso.detalle,
                 tb_terceros.nom_tercero,far_orden_ingreso_tipo.nom_tipo_ingreso,
                 acf_orden_ingreso.val_total,
                 tb_sedes.nom_sede,
@@ -93,6 +93,8 @@ if (!empty($objs)) {
             "num_ingreso" => $obj['num_ingreso'],
             "fec_ingreso" => $obj['fec_ingreso'],
             "hor_ingreso" => $obj['hor_ingreso'],
+            "num_factura" => $obj['num_factura'],
+            "fec_factura" => $obj['fec_factura'],
             "detalle" => $obj['detalle'],
             "nom_tercero" => mb_strtoupper($obj['nom_tercero']),
             "nom_tipo_ingreso" => mb_strtoupper($obj['nom_tipo_ingreso']),

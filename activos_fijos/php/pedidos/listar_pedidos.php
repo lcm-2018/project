@@ -50,14 +50,12 @@ try {
 
     //Consulta los datos para listarlos en la tabla
     $sql = "SELECT far_alm_pedido.id_pedido,far_alm_pedido.num_pedido,far_alm_pedido.fec_pedido,far_alm_pedido.hor_pedido,
-	            far_alm_pedido.detalle,far_alm_pedido.val_total,
-                tb_sedes.nom_sede,far_bodegas.nombre AS nom_bodega,
+	            far_alm_pedido.detalle,far_alm_pedido.val_total,tb_sedes.nom_sede,
 	            CASE far_alm_pedido.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CONFIRMADO' 
                                             WHEN 3 THEN 'ACEPTADO' WHEN 4 THEN 'CERRADO'
                                             WHEN 0 THEN 'ANULADO' END AS nom_estado
             FROM far_alm_pedido
             INNER JOIN tb_sedes ON (tb_sedes.id_sede=far_alm_pedido.id_sede)
-            INNER JOIN far_bodegas ON (far_bodegas.id_bodega=far_alm_pedido.id_bodega)
             $where ORDER BY $col $dir $limit";
 
     $rs = $cmd->query($sql);
@@ -88,7 +86,6 @@ if (!empty($objs)) {
             "detalle" => $obj['detalle'],
             "val_total" => formato_valor($obj['val_total']),
             "nom_sede" => mb_strtoupper($obj['nom_sede']),
-            "nom_bodega" => mb_strtoupper($obj['nom_bodega']),
             "nom_estado" => $obj['nom_estado'],
             "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
         ];

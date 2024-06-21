@@ -30,14 +30,16 @@ try {
             $id_sede = $_POST['id_txt_sede'];
             $fec_ing = $_POST['txt_fec_ing'];
             $hor_ing = $_POST['txt_hor_ing'];
+            $num_fac = $_POST['txt_num_fac'];
+            $fec_fac = $_POST['txt_fec_fac'];
             $id_tiping = $_POST['sl_tip_ing'];
             $id_tercero = $_POST['sl_tercero'] ? $_POST['sl_tercero'] : 0;
             $detalle = $_POST['txt_det_ing'];
 
             if ($id == -1) {
-                $sql = "INSERT INTO acf_orden_ingreso(fec_ingreso,hor_ingreso,id_tipo_ingreso,
+                $sql = "INSERT INTO acf_orden_ingreso(fec_ingreso,hor_ingreso,num_factura,fec_factura,id_tipo_ingreso,
                         id_provedor,detalle,val_total,id_sede,id_usr_crea,fec_creacion,estado)
-                    VALUES('$fec_ing','$hor_ing',$id_tiping,
+                    VALUES('$fec_ing','$hor_ing','$num_fac','$fec_fac',$id_tiping,
                         $id_tercero,'$detalle',0,$id_sede,$id_usr_ope,'$fecha_ope',1)";
                 $rs = $cmd->query($sql);
 
@@ -57,7 +59,7 @@ try {
 
                 if ($obj_ingreso['estado'] == 1) {
                     $sql = "UPDATE acf_orden_ingreso 
-                        SET id_tipo_ingreso=$id_tiping,id_provedor=$id_tercero,detalle='$detalle'
+                        SET num_factura='$num_fac',fec_factura='$fec_fac',id_tipo_ingreso=$id_tiping,id_provedor=$id_tercero,detalle='$detalle'
                         WHERE id_ingreso=" . $id;
                     $rs = $cmd->query($sql);
 

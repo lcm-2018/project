@@ -27,15 +27,14 @@ try {
 
         if ($oper == 'add') {
             $id = $_POST['id_pedido'];
-            $id_bodega = $_POST['id_txt_nom_bod'];
             $id_sede = $_POST['id_txt_sede'];
             $fec_ped = $_POST['txt_fec_ped'];
             $hor_ped = $_POST['txt_hor_ped'];            
             $detalle = $_POST['txt_det_ped'];
 
             if ($id == -1) {
-                $sql = "INSERT INTO far_alm_pedido(tipo,fec_pedido,hor_pedido,detalle,val_total,id_sede,id_bodega,id_usr_crea,fec_creacion,estado)
-                    VALUES(2,'$fec_ped','$hor_ped','$detalle',0,$id_sede,$id_bodega,$id_usr_ope,'$fecha_ope',1)";
+                $sql = "INSERT INTO far_alm_pedido(tipo,fec_pedido,hor_pedido,detalle,val_total,id_sede,id_usr_crea,fec_creacion,estado)
+                    VALUES(2,'$fec_ped','$hor_ped','$detalle',0,$id_sede,$id_usr_ope,'$fecha_ope',1)";
                 $rs = $cmd->query($sql);
 
                 if ($rs) {

@@ -46,14 +46,13 @@
                 { 'data': 'detalle' },
                 { 'data': 'val_total' },
                 { 'data': 'nom_sede' },
-                { 'data': 'nom_bodega' },
                 { 'data': 'nom_estado' },
                 { 'data': 'botones' }
             ],
             columnDefs: [
                 { class: 'text-wrap', targets: [4] },
                 { type: "numeric-comma", targets: 5 },
-                { orderable: false, targets: 9 }
+                { orderable: false, targets: 8 }
             ],
             rowCallback: function(row, data) {
                 var estado = $($(row).find("td")[8]).text();

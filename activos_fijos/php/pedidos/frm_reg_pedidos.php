@@ -13,12 +13,12 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
 $sql = "SELECT far_alm_pedido.*,
-            far_bodegas.nombre AS nom_bodega,
+            tb_sedes.nom_sede,
             CASE far_alm_pedido.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CONFIRMADO' 
                                             WHEN 3 THEN 'ACEPTADO' WHEN 4 THEN 'CERRADO'
                                             WHEN 0 THEN 'ANULADO' END AS nom_estado
         FROM far_alm_pedido 
-        INNER JOIN far_bodegas ON (far_bodegas.id_bodega=far_alm_pedido.id_bodega)
+        INNER JOIN tb_sedes ON (tb_sedes.id_sede=far_alm_pedido.id_sede)
         WHERE id_pedido=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
@@ -35,10 +35,9 @@ if (empty($obj)) {
     $obj['nom_estado'] = 'PENDIENTE';
     $obj['val_total'] = 0;
 
-    $bodega = bodega_principal($cmd);
-    $obj['id_bodega'] = $bodega['id_bodega'];
-    $obj['nom_bodega'] = $bodega['nom_bodega'];
+    $bodega = sede_principal($cmd);
     $obj['id_sede'] = $bodega['id_sede'];
+    $obj['nom_sede'] = $bodega['nom_sede'];
 
     $fecha = fecha_hora_servidor();
     $obj['fec_pedido'] = $fecha['fecha'];
@@ -63,9 +62,8 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                 <input type="hidden" id="id_pedido" name="id_pedido" value="<?php echo $id ?>">
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label for="txt_nom_bod" class="small">Bodega</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_nom_bod" class="small" value="<?php echo $obj['nom_bodega'] ?>" readonly="readonly">
-                        <input type="hidden" id="id_txt_nom_bod" name="id_txt_nom_bod" value="<?php echo $obj['id_bodega'] ?>">
+                        <label for="txt_nom_bod" class="small">Sede</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_nom_sed" class="small" value="<?php echo $obj['nom_sede'] ?>" readonly="readonly">
                         <input type="hidden" id="id_txt_sede" name="id_txt_sede" value="<?php echo $obj['id_sede'] ?>">
                     </div>
                     <div class="form-group col-md-2">

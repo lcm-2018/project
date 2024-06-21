@@ -104,7 +104,9 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                                         <th>Id</th>
                                         <th>No. Ingreso</th>
                                         <th>Fecha Ingreso</th>
-                                        <th>Hora Ingreso</th>>
+                                        <th>Hora Ingreso</th>
+                                        <th>No. Factura</th>
+                                        <th>Fecha Factura</th>
                                         <th>Detalle</th>
                                         <th>Tercero</th>
                                         <th>Tipo Ingreso</th>
