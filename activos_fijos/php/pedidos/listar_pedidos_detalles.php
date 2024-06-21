@@ -20,7 +20,7 @@ $dir = $_POST['order'][0]['dir'];
 $where = "";
 if (isset($_POST['search']['value']) && $_POST['search']['value']){
     $search = $_POST['search']['value'];
-    $where .= " AND (acf_orden_ingreso_acfs.placa LIKE '%$search%' OR acf_orden_ingreso_acfs.serial LIKE '%$search%')";
+    $where .= " AND (far_medicamentos.nom_medicamento LIKE '%$search%')";
 }
 
 try {
@@ -28,30 +28,27 @@ try {
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
     //Consulta el total de registros de la tabla
-    $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso_acfs
-            WHERE id_ing_detalle=" . $_POST['id_ing_detalle'];
+    $sql = "SELECT COUNT(*) AS total FROM far_alm_pedido_detalle WHERE id_pedido=" . $_POST['id_pedido'];
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
-    $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso_acfs
-            WHERE id_ing_detalle=" . $_POST['id_ing_detalle'] . $where; 
+    $sql = "SELECT COUNT(*) AS total 
+            FROM far_alm_pedido_detalle 
+            INNER JOIN far_medicamentos ON (far_medicamentos.id_med = far_alm_pedido_detalle.id_medicamento)
+            WHERE id_pedido=" . $_POST['id_pedido'] . $where; 
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecordsFilter = $total['total'];
 
     //Consulta los datos para listarlos en la tabla
-    $sql = "SELECT acf_orden_ingreso_acfs.id_act_fij,
-                acf_orden_ingreso_acfs.placa,
-                acf_orden_ingreso_acfs.serial,                
-                acf_orden_ingreso_acfs.valor,
-                CASE acf_orden_ingreso_acfs.tipo_activo WHEN 1 THEN 'PROPIEDAD, PLANTA Y EQUIPO' WHEN 2 THEN 'PROPIDAD PARA LA VENTA' WHEN 3 THEN 'PROPIEDAD DE INVERSION' END AS tipo_activo,
-                acf_marca.descripcion AS nom_marca
-            FROM acf_orden_ingreso_acfs
-            INNER JOIN acf_orden_ingreso_detalle ON (acf_orden_ingreso_detalle.id_ing_detalle = acf_orden_ingreso_acfs.id_ing_detalle)
-            INNER JOIN acf_marca ON (acf_marca.id = acf_orden_ingreso_acfs.id_marca)
-            WHERE acf_orden_ingreso_detalle.id_ing_detalle=" . $_POST['id_ing_detalle'] . $where . " ORDER BY $col $dir $limit";
+    $sql = "SELECT far_alm_pedido_detalle.id_ped_detalle,far_medicamentos.cod_medicamento,far_medicamentos.nom_medicamento,
+                    far_alm_pedido_detalle.cantidad,far_alm_pedido_detalle.valor,
+                    (far_alm_pedido_detalle.cantidad*far_alm_pedido_detalle.valor) AS val_total
+                FROM far_alm_pedido_detalle
+                INNER JOIN far_medicamentos ON (far_medicamentos.id_med = far_alm_pedido_detalle.id_medicamento)
+            WHERE far_alm_pedido_detalle.id_pedido=" . $_POST['id_pedido']. $where . " ORDER BY $col $dir $limit";
     $rs = $cmd->query($sql);
     $objs = $rs->fetchAll();
     $cmd = null;
@@ -64,21 +61,21 @@ $eliminar = NULL;
 $data = [];
 if (!empty($objs)) {
     foreach ($objs as $obj) {
-        $id = $obj['id_act_fij'];
+        $id = $obj['id_ped_detalle'];
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
-        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5702, 3) || $id_rol == 1) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
-        if (PermisosUsuario($permisos, 5703, 4) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5702, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [
-            "id_act_fij" => $id,
-            "placa" => $obj['placa'],
-            "serial" => $obj['serial'],
-            "nom_marca" => $obj['nom_marca'],
-            "valor" => formato_valor($obj['valor']),
-            "tipo_activo" => $obj['tipo_activo'],
+            "id_ped_detalle" => $id,
+            "cod_medicamento" => $obj['cod_medicamento'],
+            "nom_medicamento" => $obj['nom_medicamento'],
+            "cantidad" => $obj['cantidad'],
+            "valor" => formato_valor($obj['valor']),           
+            "val_total" => formato_valor($obj['val_total']),
             "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
         ];
     }    

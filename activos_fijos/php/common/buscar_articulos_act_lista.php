@@ -16,17 +16,14 @@ if ($length != -1) {
 $col = $_POST['order'][0]['column'] + 1;
 $dir = $_POST['order'][0]['dir'];
 
-$where_gen = ' WHERE FM.estado=1 AND G.id_grupo IN (3 , 4, 5)';
+$where_gen = " WHERE far_medicamentos.estado=1 AND far_subgrupos.id_grupo IN (3,4,5)";
 
 $where = $where_gen;
 if (isset($_POST['codigo']) && $_POST['codigo']) {
-    $where .= " AND FM.cod_medicamento LIKE '" . $_POST['codigo'] . "%'";
+    $where .= " AND far_medicamentos.cod_medicamento LIKE '" . $_POST['codigo'] . "%'";
 }
 if (isset($_POST['nombre']) && $_POST['nombre']) {
-    $where .= " AND FM.nom_medicamento LIKE '" . $_POST['nombre'] . "%'";
-} 
-if (isset($_POST['con_existencia']) && $_POST['con_existencia']) {
-    $where .= " AND FM.existencia>0";
+    $where .= " AND far_medicamentos.nom_medicamento LIKE '" . $_POST['nombre'] . "%'";
 }
 
 try {
@@ -34,32 +31,31 @@ try {
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
     //Consulta el total de registros de la tabla
-    $sql = "SELECT COUNT(*) AS total FROM far_medicamentos FM
-        INNER JOIN far_subgrupos SG ON SG.id_subgrupo = FM.id_subgrupo
-        INNER JOIN far_grupos G ON G.id_grupo = SG.id_grupo" . $where_gen;
-
+    $sql = "SELECT COUNT(*) AS total FROM far_medicamentos
+            INNER JOIN far_subgrupos ON (far_subgrupos.id_subgrupo=far_medicamentos.id_subgrupo)" . $where_gen;
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
-    $sql = "SELECT COUNT(*) AS total FROM far_medicamentos FM
-                INNER JOIN far_subgrupos SG ON SG.id_subgrupo = FM.id_subgrupo 
-                INNER JOIN far_grupos G ON G.id_grupo = SG.id_grupo" . $where;
+    $sql = "SELECT COUNT(*) AS total FROM far_medicamentos
+            INNER JOIN far_subgrupos ON (far_subgrupos.id_subgrupo=far_medicamentos.id_subgrupo)" . $where;
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecordsFilter = $total['total'];
 
     //Consulta los datos para listarlos en la tabla
-    $sql = "SELECT FM.id_med,
-                FM.cod_medicamento,
-                FM.nom_medicamento,
-                FM.existencia,
-                FM.val_promedio
-            FROM far_medicamentos FM 
-            INNER JOIN far_subgrupos SG ON SG.id_subgrupo = FM.id_subgrupo 
-            INNER JOIN far_grupos G ON G.id_grupo = SG.id_grupo" . $where . " ORDER BY $col $dir $limit";
-
+    $sql = "SELECT far_medicamentos.id_med,far_medicamentos.cod_medicamento,far_medicamentos.nom_medicamento,
+                    IF(acf_orden_ingreso_detalle.valor IS NULL,0,acf_orden_ingreso_detalle.valor) AS valor
+            FROM far_medicamentos
+            INNER JOIN far_subgrupos ON (far_subgrupos.id_subgrupo=far_medicamentos.id_subgrupo)
+            LEFT JOIN (SELECT acf_orden_ingreso_detalle.id_articulo,MAX(acf_orden_ingreso_detalle.id_ing_detalle) AS id 
+                        FROM acf_orden_ingreso_detalle 
+                        INNER JOIN acf_orden_ingreso ON (acf_orden_ingreso.id_ingreso=acf_orden_ingreso_detalle.id_ingreso)
+                        WHERE acf_orden_ingreso.estado=2
+                        GROUP BY acf_orden_ingreso_detalle.id_articulo) AS v ON (v.id_articulo=far_medicamentos.id_med)
+            LEFT JOIN acf_orden_ingreso_detalle ON (acf_orden_ingreso_detalle.id_ing_detalle=v.id)"            
+            . $where . " ORDER BY $col $dir $limit";
 
     $rs = $cmd->query($sql);
     $objs = $rs->fetchAll();
@@ -74,9 +70,8 @@ if (!empty($objs)) {
         $data[] = [
             "id_med" => $obj['id_med'],
             "cod_medicamento" => $obj['cod_medicamento'],
-            "nom_medicamento" => $obj['nom_medicamento'],            
-            "existencia" => $obj['existencia'],
-            "val_promedio" => formato_valor($obj['val_promedio']),
+            "nom_medicamento" => $obj['nom_medicamento'],
+            "valor" => $obj['valor']
         ];
     }
 }

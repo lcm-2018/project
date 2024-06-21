@@ -112,15 +112,14 @@ function marcas($cmd, $titulo = '', $id = 0)
 {
     try {
         echo '<option value="">' . $titulo . '</option>';
-        $sql = "SELECT id, descripcion FROM acf_marca";
+        $sql = "SELECT id, descripcion FROM acf_marca WHERE id<>0";
         $rs = $cmd->query($sql);
         $objs = $rs->fetchAll();
         foreach ($objs as $obj) {
-            $dtad = 'data-intext="' . $obj['es_int_ext'] . '"';
             if ($obj['id']  == $id) {
-                echo '<option value="' . $obj['id'] . '"' . $dtad . ' selected="selected">' . $obj['descripcion'] . '</option>';
+                echo '<option value="' . $obj['id'] . '" selected="selected">' . $obj['descripcion'] . '</option>';
             } else {
-                echo '<option value="' . $obj['id'] . '"' . $dtad . '>' . $obj['descripcion'] . '</option>';
+                echo '<option value="' . $obj['id'] . '">' . $obj['descripcion'] . '</option>';
             }
         }
         $cmd = null;
@@ -140,6 +139,20 @@ function estados_movimientos($titulo = '', $estado = 3)
     echo '<option value="0"' . $selected . '>ANULADO</option>';
 }
 
+function estados_pedidos($titulo = '', $estado = -1)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PENDIENTE</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>CONFIRMADO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>ACEPTADO</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>CERRADO</option>';
+    $selected = ($estado == 0) ? 'selected="selected"' : '';
+    echo '<option value="0"' . $selected . '>ANULADO</option>';
+}
 
 function estado_general_activo($titulo = '', $estado = 3)
 {
@@ -163,6 +176,7 @@ function estado_activo($titulo = '', $estado = 3)
     echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
     $selected = ($estado == 3) ? 'selected="selected"' : '';
     echo '<option value="3"' . $selected . '>DADO DE BAJA</option>';
+
 }
 
 function iva($valor = 0)
@@ -175,7 +189,7 @@ function iva($valor = 0)
     echo '<option value="19"' . $selected . '>19</option>';
 }
 
-function tiposActivo($valor = 0)
+function tipos_activo($valor = 0)
 {
     $selected = ($valor == 1) ? 'selected="selected"' : '';
     echo '<option value="1"' . $selected . '>PROPIDAD, PLANTA Y EQUIPO</option>';
@@ -200,11 +214,10 @@ function articulosActivosFijos($cmd, $titulo = '', $id = 0)
         $rs = $cmd->query($sql);
         $objs = $rs->fetchAll();
         foreach ($objs as $obj) {
-            $dtad = 'data-intext="' . $obj['es_int_ext'] . '"';
             if ($obj['id_med']  == $id) {
-                echo '<option value="' . $obj['id_med'] . '"' . $dtad . ' selected="selected">' . $obj['nom_medicamento'] . '</option>';
+                echo '<option value="' . $obj['id_med'] . '" selected="selected">' . $obj['nom_medicamento'] . '</option>';
             } else {
-                echo '<option value="' . $obj['id_med'] . '"' . $dtad . '>' . $obj['nom_medicamento'] . '</option>';
+                echo '<option value="' . $obj['id_med'] . '">' . $obj['nom_medicamento'] . '</option>';
             }
         }
         $cmd = null;

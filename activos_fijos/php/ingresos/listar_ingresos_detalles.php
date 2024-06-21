@@ -20,7 +20,7 @@ $dir = $_POST['order'][0]['dir'];
 $where = "";
 if (isset($_POST['search']['value']) && $_POST['search']['value']){
     $search = $_POST['search']['value'];
-    $where .= " AND (far_medicamentos.nom_medicamento LIKE '%$search%' OR far_medicamento_lote.lote LIKE '%$search%')";
+    $where .= " AND far_medicamentos.nom_medicamento LIKE '%$search%'";
 }
 
 try {
@@ -28,34 +28,32 @@ try {
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
     //Consulta el total de registros de la tabla
-    $sql = "SELECT COUNT(*) AS total FROM far_orden_ingreso_detalle WHERE id_ingreso=" . $_POST['id_ingreso'];
+    $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso_detalle WHERE id_ingreso=" . $_POST['id_ingreso'];
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
     $sql = "SELECT COUNT(*) AS total 
-            FROM far_orden_ingreso_detalle 
-            INNER JOIN far_medicamento_lote ON (far_medicamento_lote.id_lote = far_orden_ingreso_detalle.id_lote)
-            INNER JOIN far_medicamentos ON (far_medicamentos.id_med = far_medicamento_lote.id_med)
+            FROM acf_orden_ingreso_detalle 
+            INNER JOIN far_medicamentos ON (far_medicamentos.id_med = acf_orden_ingreso_detalle.id_articulo)
             WHERE id_ingreso=" . $_POST['id_ingreso'] . $where; 
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecordsFilter = $total['total'];
 
     //Consulta los datos para listarlos en la tabla
-    $sql = "SELECT OID.id_ing_detalle,
-                FM.cod_medicamento,
-                FM.nom_medicamento,
-                OID.cantidad,
-                OID.valor_sin_iva,
-                OID.iva,
-                OID.valor,
-                (OID.valor*OID.cantidad) AS val_total,
-                OID.observacion
-            FROM acf_orden_ingreso_detalle OID
-            INNER JOIN far_medicamentos FM ON (FM.id_med = OID.id_medicamento_articulo)
-            WHERE OID.id_orden_ingreso=" . $_POST['id_ingreso'] . $where . " ORDER BY $col $dir $limit";
+    $sql = "SELECT acf_orden_ingreso_detalle.id_ing_detalle,
+                far_medicamentos.cod_medicamento,far_medicamentos.nom_medicamento,
+                acf_orden_ingreso_detalle.cantidad,
+                acf_orden_ingreso_detalle.valor_sin_iva,
+                acf_orden_ingreso_detalle.iva,
+                acf_orden_ingreso_detalle.valor,
+                (acf_orden_ingreso_detalle.valor*acf_orden_ingreso_detalle.cantidad) AS val_total,
+                acf_orden_ingreso_detalle.observacion
+            FROM acf_orden_ingreso_detalle 
+            INNER JOIN far_medicamentos ON (far_medicamentos.id_med = acf_orden_ingreso_detalle.id_articulo)
+            WHERE acf_orden_ingreso_detalle.id_ingreso=" . $_POST['id_ingreso'] . $where . " ORDER BY $col $dir $limit";
 
     $rs = $cmd->query($sql);
     $objs = $rs->fetchAll();
@@ -72,13 +70,13 @@ if (!empty($objs)) {
     foreach ($objs as $obj) {
         $id = $obj['id_ing_detalle'];
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
-        if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
-        if (PermisosUsuario($permisos, 5006, 3) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
             $editaractivofijo = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_activofijo" title="Activo Fijo"><span class="fas fa-laptop fa-lg"></span></a>';
         }
-        if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
+        if (PermisosUsuario($permisos, 5703, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [

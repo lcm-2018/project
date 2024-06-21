@@ -18,114 +18,80 @@ try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    if ((PermisosUsuario($permisos, 5006, 2) && $oper == 'add' && $_POST['id_detalle'] == -1) ||
-        (PermisosUsuario($permisos, 5006, 3) && $oper == 'add' && $_POST['id_detalle'] != -1) ||
-        (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1
+    if ((PermisosUsuario($permisos, 5703, 2) && $oper == 'add' && $_POST['id_detalle'] == -1) ||
+        (PermisosUsuario($permisos, 5703, 3) && $oper == 'add' && $_POST['id_detalle'] != -1) ||
+        (PermisosUsuario($permisos, 5703, 4) && $oper == 'del') || $id_rol == 1
     ) {
 
-        $id_ingreso_detalle = $_POST['id_ingreso_detalle'];
+        $id_ingreso = $_POST['id_ingreso'];
 
-        if ($id_ingreso_detalle > 0) {
+        $sql = "SELECT estado FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;
+        $rs = $cmd->query($sql);
+        $obj_ingreso = $rs->fetch();
+
+        if ($obj_ingreso['estado'] == 1) {
             if ($oper == 'add') {
-
-                $idArticulo = $_POST['id_articulo'];
-                $placa = $_POST['placa'];
-                $txtPlaca = $_POST['txt_placa'];
+                $id = $_POST['id_act_fijo'];
+                $id_art = $_POST['id_articulo'];
+                $id_ing_det = $_POST['id_ing_detalle'];
+                $placa = $_POST['txt_placa'];
                 $serial = $_POST['txt_serial'];
-                $marca = $_POST['sl_marca'];
-                $valor = $_POST['txt_val_uni'];
-                $tipoactivo = $_POST['sl_tipoactivo'];
+                $id_marca = $_POST['sl_marca'];
+                $valor = $_POST['txt_val_uni'] ? $_POST['txt_val_uni'] : 0;
+                $tip_act = $_POST['sl_tipoactivo'];
 
-                if ($placa == -1) {
-                    $sql = "SELECT COUNT(*) AS existe FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=$id_ingreso_detalle AND placa_activofijo=" . $txtPlaca;
+                if ($id == -1) {                    
+                    $sql = "INSERT INTO acf_orden_ingreso_acfs(id_ing_detalle,id_articulo,placa,serial,id_marca,valor,tipo_activo)
+                            VALUES($id_ing_det,$id_art,'$placa','$serial',$id_marca,$valor,$tip_act)";
                     $rs = $cmd->query($sql);
-                    $obj = $rs->fetch();
 
-                    if ($obj['existe'] == 0) {
-
-                        $cmd->beginTransaction();
-
-                        $sql = "INSERT INTO acf_activofijo(placa, serial, id_marca, valor,tipo_activo, id_articulo) VALUES(?,?,?,?,?,?)";
-                        $sql = $cmd->prepare($sql);
-                        $sql->bindParam(1, $txtPlaca, PDO::PARAM_STR);
-                        $sql->bindParam(2, $serial, PDO::PARAM_STR);
-                        $sql->bindParam(3, $marca, PDO::PARAM_INT);
-                        $sql->bindParam(4, $valor, PDO::PARAM_STR);
-                        $sql->bindParam(5, $tipoactivo, PDO::PARAM_INT);
-                        $sql->bindParam(6, $idArticulo, PDO::PARAM_INT);
-                        $inserted = $sql->execute();
-
-                        $sql = "INSERT INTO acf_activofijo_ordeningresodetalle(id_ordeningresodetalle, placa_activofijo) VALUES(?,?)";
-                        $sql = $cmd->prepare($sql);
-                        $sql->bindParam(1, $id_ingreso_detalle, PDO::PARAM_INT);
-                        $sql->bindParam(2, $txtPlaca, PDO::PARAM_STR);
-                        $inserted = $sql->execute();
-
-                        if ($inserted) {
-                            $cmd->commit();
-                            $res['mensaje'] = 'ok';
-                            $res['placa'] = $txtPlaca;
-                            $res['id_ingreso_detalle'] = $id_ingreso_detalle;
-                        } else {
-                            $res['mensaje'] = $sql->errorInfo()[2];
-                            $cmd->rollBack();
-                        }
-
+                    if ($rs) {
+                        $res['mensaje'] = 'ok';
+                        $sql_i = 'SELECT LAST_INSERT_ID() AS id';
+                        $rs = $cmd->query($sql_i);
+                        $obj = $rs->fetch();
+                        $res['id'] = $obj['id'];
                     } else {
-                        $res['mensaje'] = 'El activo ya existe en los detalles de la Orden de Ingreso';
+                        $res['mensaje'] = $cmd->errorInfo()[2];
                     }
                 } else {
-                    $sql = "UPDATE acf_activofijo
-                            SET serial=?, id_marca=?, valor=?, tipo_activo=?, id_articulo=?
-                            WHERE placa=?" ;
+                    $sql = "UPDATE acf_orden_ingreso_acfs 
+                            SET placa='$placa',serial='$serial',id_marca=$id_marca,valor=$valor,tipo_activo=$tip_act
+                            WHERE id_act_fij=" . $id;
 
-                    $sql = $cmd->prepare($sql);
-                    $sql->bindParam(1, $serial, PDO::PARAM_STR);
-                    $sql->bindParam(2, $marca, PDO::PARAM_INT);
-                    $sql->bindParam(3, $valor, PDO::PARAM_STR);
-                    $sql->bindParam(4, $tipoactivo, PDO::PARAM_INT);
-                    $sql->bindParam(5, $idArticulo, PDO::PARAM_INT);
-                    $sql->bindParam(6, $txtPlaca, PDO::PARAM_STR);
-                    $updated = $sql->execute();
-
-                    if ($updated) {
+                    $rs = $cmd->query($sql);
+                    if ($rs) {
                         $res['mensaje'] = 'ok';
-                        $res['placa'] = $txtPlaca;
-                        $res['id_ingreso_detalle'] = $id_ingreso_detalle;
+                        $res['id'] = $id;
                     } else {
-                        $res['mensaje'] = $sql->errorInfo()[2];
+                        $res['mensaje'] = $cmd->errorInfo()[2];
                     }
                 }
             }
 
             if ($oper == 'del') {
-                $placa = $_POST['placa'];
-
-                $cmd->beginTransaction();
-
-                $sql = "DELETE FROM acf_activofijo WHERE placa=?";
-                $sql = $cmd->prepare($sql);
-                $sql->bindParam(1, $placa, PDO::PARAM_STR);
-                $deleted = $sql->execute();
-                
-
-                $sql = "DELETE FROM acf_activofijo_ordeningresodetalle WHERE id_ordeningresodetalle=? AND placa_activofijo=?" ;
-                $sql = $cmd->prepare($sql);
-                $sql->bindParam(1, $id_ingreso_detalle, PDO::PARAM_INT);
-                $sql->bindParam(2, $placa, PDO::PARAM_STR);
-                $deleted = $sql->execute();
-                
-                
-                if ($deleted) {
-                    $cmd->commit();
+                $id = $_POST['id'];
+                $sql = "DELETE FROM acf_orden_ingreso_detalle WHERE id_ing_detalle=" . $id;
+                $rs = $cmd->query($sql);
+                if ($rs) {
                     $res['mensaje'] = 'ok';
                 } else {
-                    $cmd->rollBack();
                     $res['mensaje'] = $cmd->errorInfo()[2];
                 }
             }
+
+            if ($rs) {
+                $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT IFNULL(SUM(valor * cantidad), 0)  
+                        FROM acf_orden_ingreso_detalle WHERE id_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
+                $rs = $cmd->query($sql);
+
+                $sql = "SELECT val_total FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;
+                $rs = $cmd->query($sql);
+                $obj_ingreso = $rs->fetch();
+                $res['val_total'] = formato_valor($obj_ingreso['val_total']);
+            }
         } else {
-            $res['mensaje'] = 'Primero debe guardar el detalle de la Orden de Ingreso';
+            $res['mensaje'] = 'Solo puede Modificar Ordenes de Ingreso en estado Pendiente';
         }
     } else {
         $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';

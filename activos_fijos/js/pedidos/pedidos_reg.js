@@ -1,6 +1,6 @@
 (function($) {
     $(document).ready(function() {
-        $('#tb_ingresos_detalles').DataTable({
+        $('#tb_pedidos_detalles').DataTable({
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
@@ -17,28 +17,25 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'listar_ingresos_detalles.php',
+                url: 'listar_pedidos_detalles.php',
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_ingreso = $('#id_ingreso').val();
+                    data.id_pedido = $('#id_pedido').val();
                 }
             },
             columns: [
-                { 'data': 'id_ing_detalle' }, //Index=0
+                { 'data': 'id_ped_detalle' }, //Index=0
                 { 'data': 'cod_medicamento' },
                 { 'data': 'nom_medicamento' },
                 { 'data': 'cantidad' },
-                { 'data': 'valor_sin_iva' },
-                { 'data': 'iva' },
                 { 'data': 'valor' },
                 { 'data': 'val_total' },
-                { 'data': 'observacion' },
                 { 'data': 'botones' }
             ],
             columnDefs: [
-                { class: 'text-wrap', targets: [2, 8] },
-                { orderable: false, targets: 9 }
+                { class: 'text-wrap', targets: 2 },
+                { orderable: false, targets: 6 }
             ],
             order: [
                 [0, "desc"]
@@ -49,6 +46,6 @@
             ],
         });
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
-        $('#tb_ingresos_detalles').wrap('<div class="overflow"/>');
+        $('#tb_pedidos_detalles').wrap('<div class="overflow"/>');
     });
 })(jQuery);

@@ -18,9 +18,9 @@ try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    if ((PermisosUsuario($permisos, 5006, 2) && $oper == 'add' && $_POST['id_detalle'] == -1) ||
-        (PermisosUsuario($permisos, 5006, 3) && $oper == 'add' && $_POST['id_detalle'] != -1) ||
-        (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1
+    if ((PermisosUsuario($permisos, 5703, 2) && $oper == 'add' && $_POST['id_detalle'] == -1) ||
+        (PermisosUsuario($permisos, 5703, 3) && $oper == 'add' && $_POST['id_detalle'] != -1) ||
+        (PermisosUsuario($permisos, 5703, 4) && $oper == 'del') || $id_rol == 1
     ) {
 
         $id_ingreso = $_POST['id_ingreso'];
@@ -34,7 +34,7 @@ try {
             if ($obj_ingreso['estado'] == 1) {
                 if ($oper == 'add') {
                     $id = $_POST['id_detalle'];
-                    $id_med = $_POST['id_txt_nom_med'];
+                    $id_art = $_POST['id_txt_nom_art'];
                     $cantidad = $_POST['txt_can_ing'] ? $_POST['txt_can_ing'] : 1;
                     $vr_unidad = $_POST['txt_val_uni'] ? $_POST['txt_val_uni'] : 0;
                     $iva = $_POST['sl_por_iva'] ? $_POST['sl_por_iva'] : 0;
@@ -42,21 +42,13 @@ try {
                     $observacion = $_POST['txt_observacion'];
 
                     if ($id == -1) {
-                        $sql = "SELECT COUNT(*) AS existe FROM acf_orden_ingreso_detalle WHERE id_orden_ingreso=$id_ingreso AND id_medicamento_articulo=" . $id_med;
+                        $sql = "SELECT COUNT(*) AS existe FROM acf_orden_ingreso_detalle WHERE id_ingreso=$id_ingreso AND id_articulo=" . $id_art;
                         $rs = $cmd->query($sql);
                         $obj = $rs->fetch();
 
                         if ($obj['existe'] == 0) {
-                            $sql = "INSERT INTO acf_orden_ingreso_detalle(
-                                        id_orden_ingreso,
-                                        id_medicamento_articulo,
-                                        observacion,
-                                        cantidad,
-                                        valor_sin_iva,
-                                        iva,
-                                        valor
-                                    )
-                                    VALUES($id_ingreso,$id_med,'$observacion',$cantidad,$vr_unidad,$iva,$vr_costo)";
+                            $sql = "INSERT INTO acf_orden_ingreso_detalle(id_ingreso,id_articulo,observacion,cantidad,valor_sin_iva,iva,valor)
+                                    VALUES($id_ingreso,$id_art,'$observacion',$cantidad,$vr_unidad,$iva,$vr_costo)";
                             $rs = $cmd->query($sql);
 
                             if ($rs) {
@@ -73,8 +65,8 @@ try {
                         }
                     } else {
                         $sql = "UPDATE acf_orden_ingreso_detalle 
-                            SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
-                            WHERE id_ing_detalle=" . $id;
+                                SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
+                                WHERE id_ing_detalle=" . $id;
 
                         $rs = $cmd->query($sql);
                         if ($rs) {
@@ -99,7 +91,7 @@ try {
 
                 if ($rs) {
                     $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT IFNULL(SUM(valor * cantidad), 0)  
-                            FROM acf_orden_ingreso_detalle WHERE id_orden_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
+                            FROM acf_orden_ingreso_detalle WHERE id_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
                     $rs = $cmd->query($sql);
 
                     $sql = "SELECT val_total FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;

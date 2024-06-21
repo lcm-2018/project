@@ -13,8 +13,8 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id = isset($_POST['id']) ? $_POST['id'] : -1;
 $sql = "SELECT acf_orden_ingreso.*,
-        tb_sedes.nom_sede AS nom_sede,
-        CASE acf_orden_ingreso.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
+            tb_sedes.nom_sede AS nom_sede,
+            CASE acf_orden_ingreso.estado WHEN 1 THEN 'PENDIENTE' WHEN 2 THEN 'CERRADO' WHEN 0 THEN 'ANULADO' END AS nom_estado
         FROM acf_orden_ingreso 
         INNER JOIN tb_sedes ON (tb_sedes.id_sede=acf_orden_ingreso.id_sede)
         WHERE id_ingreso=" . $id . " LIMIT 1";
@@ -55,11 +55,11 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
 <div class="px-0">
     <div class="shadow">
         <div class="card-header mb-3" style="background-color: #16a085 !important;">
-            <h5 style="color: white;">REGISRTAR ORDEN DE INGRESO ACTIVO FIJO</h5>
+            <h5 style="color: white;">REGISRTAR ORDEN DE INGRESO DE ACTIVOS FIJOS</h5>
         </div>
         <div class="px-2">
             <!--Formulario de registro de Ordenes de Ingreso-->
-            <form id="acf_reg_orden_ingreso">
+            <form id="frm_reg_ingresos">
                 <input type="hidden" id="id_ingreso" name="id_ingreso" value="<?php echo $id ?>">
                 <div class="form-row">
                     <div class="form-group col-md-4">
@@ -82,6 +82,14 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     <div class="form-group col-md-2">
                         <label for="txt_est_ing" class="small">Estado Ingreso</label>
                         <input type="text" class="form-control form-control-sm" id="txt_est_ing" name="txt_est_ing" class="small" value="<?php echo $obj['nom_estado'] ?>" readonly="readonly">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="txt_num_fac" class="small">No. Acta y/o Remisión</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_num_fac" name="txt_num_fac" class="small" value="<?php echo $obj['num_factura'] ?>">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="txt_fec_fac" class="small">Fecha Acta y/o Remisión</label>
+                        <input type="date" class="form-control form-control-sm" id="txt_fec_fac" name="txt_fec_fac" class="small" value="<?php echo $obj['fec_factura'] ?>">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="sl_tip_ing" class="small" required>Tipo Ingreso</label>
