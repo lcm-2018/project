@@ -100,11 +100,11 @@ if (empty($obj)) {
     $obj['fec_ingreso'] = $fecha['fecha'];
     $obj['hor_ingreso'] = $fecha['hora'];
 } else {
-    if($obj['id_sede'] == null) {
-        $bodega = sede_principal($cmd);
-        $obj['id_sede'] = $bodega['id_sede'];
-        $obj['nom_sede'] = $bodega['nom_sede'];
-    }
+    
+    $bodega = sede_principal($cmd);
+    $obj['id_sede'] = $bodega['id_sede'];
+    $obj['nom_sede'] = $bodega['nom_sede'];
+    
     if($obj['id_area'] == null) {
         $area = area_principal($cmd);
         $obj['id_area'] = $area['id_area'];
@@ -140,7 +140,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     <div class="form-group col-md-4">
                         <label for="id_proveedor" class="small">Proveedor</label>
                         <select class="form-control form-control-sm" id="id_proveedor" name="id_proveedor">
-                            <?php terceros($cmd, '', $obj['id_provedor']) ?>
+                            <?php terceros($cmd, '', $obj['id_proveedor']) ?>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
@@ -183,7 +183,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="fecha_fabricacion" class="small">Fecha de Fabricación</label>
-                        <input type="date" class="form-control form-control-sm" id="fecha_fabricacion" name="fecha_fabricacion" value="<?php echo $obj['fecha_fabricacion'] ?>">
+                        <input type="date" class="form-control form-control-sm" id="fecha_fabricacion" name="fecha_fabricacion" class="small" value="<?php echo $obj['fecha_fabricacion'] ?>">
                     </div>
                     <div class="form-group col-md-4">
                         <label for="reg_invima" class="small">Registro INVIMA</label>

@@ -120,16 +120,126 @@ try {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }   
             } else {
-                $sql = "UPDATE acf_orden_ingreso_detalle 
-                    SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
-                    WHERE id_ing_detalle=" . $id;
+            
+                $sql = "UPDATE acf_hojavida SET
+                    placa = :placa,
+                    serial = :serial,
+                    id_marca = :id_marca,
+                    valor = :valor,
+                    tipo_activo = :tipo_activo,
+                    id_articulo = :id_articulo,
+                    modelo = :modelo,
+                    id_sede = :id_sede,
+                    id_area = :id_area,
+                    id_proveedor = :id_proveedor,
+                    lote = :lote,
+                    fecha_fabricacion = :fecha_fabricacion,
+                    reg_invima = :reg_invima,
+                    fabricante = :fabricante,
+                    lugar_origen = :lugar_origen,
+                    representante = :representante,
+                    dir_representante = :dir_representante,
+                    tel_representante = :tel_representante,
+                    imagen = :imagen,
+                    recom_fabricante = :recom_fabricante,
+                    tipo_adquisicion = :tipo_adquisicion,
+                    fecha_adquisicion = :fecha_adquisicion,
+                    fecha_instalacion = :fecha_instalacion,
+                    periodo_garantia = :periodo_garantia,
+                    vida_util = :vida_util,
+                    calif_4725 = :calif_4725,
+                    calibracion = :calibracion,
+                    vol_min = :vol_min,
+                    vol_max = :vol_max,
+                    frec_min = :frec_min,
+                    frec_max = :frec_max,
+                    pot_min = :pot_min,
+                    pot_max = :pot_max,
+                    cor_min = :cor_min,
+                    cor_max = :cor_max,
+                    temp_min = :temp_min,
+                    temp_max = :temp_max,
+                    riesgo = :riesgo,
+                    uso = :uso,
+                    cb_diagnostico = :cb_diagnostico,
+                    cb_prevencion = :cb_prevencion,
+                    cb_rehabilitacion = :cb_rehabilitacion,
+                    cb_analisis_lab = :cb_analisis_lab,
+                    cb_trat_mant = :cb_trat_mant,
+                    estado_general = :estado_general,
+                    causa_est_general = :causa_est_general,
+                    fecha_fuera_servicio = :fecha_fuera_servicio,
+                    id_usr_act = :id_usr_act,
+                    fecha_act = :fecha_act,
+                    estado = :estado
+                    WHERE id = :id_hv";
 
-                $rs = $cmd->query($sql);
-                if ($rs) {
+                $sql = $cmd->prepare($sql);
+
+                // Asignar valores utilizando bindValue
+
+                $sql->bindValue(':placa', $_POST['placa']);
+                $sql->bindValue(':serial', $_POST['serial']);
+                $sql->bindValue(':id_marca', $_POST['id_marca'] ? $_POST['id_marca'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':valor', $_POST['valor']);
+                $sql->bindValue(':tipo_activo', $_POST['tipo_activo'] ? $_POST['tipo_activo'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':id_articulo', $_POST['id_articulo'] ? $_POST['id_articulo'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':modelo', $_POST['modelo']);
+                $sql->bindValue(':id_sede', $_POST['id_sede'] ? $_POST['id_sede'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':id_area', $_POST['id_area'] ? $_POST['id_area'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':id_proveedor', $_POST['id_proveedor'] ? $_POST['id_proveedor'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':lote', $_POST['lote']);
+                
+                $fecha_fabricacion_mysql = $_POST['fecha_fabricacion'] ? date('Y-m-d', strtotime($_POST['fecha_fabricacion'])) : null;
+                $sql->bindValue(':fecha_fabricacion', $fecha_fabricacion_mysql);
+                
+                $sql->bindValue(':reg_invima', $_POST['reg_invima']);
+                $sql->bindValue(':fabricante', $_POST['fabricante']);
+                $sql->bindValue(':lugar_origen', $_POST['lugar_origen']);
+                $sql->bindValue(':representante', $_POST['representante']);
+                $sql->bindValue(':dir_representante', $_POST['dir_representante']);
+                $sql->bindValue(':tel_representante', $_POST['tel_representante']);
+                $sql->bindValue(':imagen', $_POST['imagen']);
+                $sql->bindValue(':recom_fabricante', $_POST['recom_fabricante']);
+                $sql->bindValue(':tipo_adquisicion', $_POST['tipo_adquisicion'] ? $_POST['tipo_adquisicion'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':fecha_adquisicion', $_POST['fecha_adquisicion'] ? date('Y-m-d', strtotime($_POST['fecha_adquisicion'])) : null);
+                $sql->bindValue(':fecha_instalacion', $_POST['fecha_instalacion'] ? date('Y-m-d', strtotime($_POST['fecha_instalacion'])) : null);
+                $sql->bindValue(':periodo_garantia', $_POST['periodo_garantia']);
+                $sql->bindValue(':vida_util', $_POST['vida_util']);
+                $sql->bindValue(':calif_4725', $_POST['calif_4725'] ? $_POST['calif_4725'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':calibracion', $_POST['calibracion']);
+                $sql->bindValue(':vol_min', $_POST['vol_min'] ? $_POST['vol_min'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':vol_max', $_POST['vol_max'] ? $_POST['vol_max'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':frec_min', $_POST['frec_min'] ? $_POST['frec_min'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':frec_max', $_POST['frec_max'] ? $_POST['frec_max'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':pot_min', $_POST['pot_min'] ? $_POST['pot_min'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':pot_max', $_POST['pot_max'] ? $_POST['pot_max'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':cor_min', $_POST['cor_min'] ? $_POST['cor_min'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':cor_max', $_POST['cor_max'] ? $_POST['cor_max'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':temp_min', $_POST['temp_min'] ? $_POST['temp_min'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':temp_max', $_POST['temp_max'] ? $_POST['temp_max'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':riesgo', $_POST['riesgo'] ? $_POST['riesgo'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':uso', $_POST['uso'] ? $_POST['uso'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':cb_diagnostico', $_POST['cb_diagnostico']);
+                $sql->bindValue(':cb_prevencion', $_POST['cb_prevencion']);
+                $sql->bindValue(':cb_rehabilitacion', $_POST['cb_rehabilitacion']);
+                $sql->bindValue(':cb_analisis_lab', $_POST['cb_analisis_lab']);
+                $sql->bindValue(':cb_trat_mant', $_POST['cb_trat_mant']);
+                $sql->bindValue(':estado_general', $_POST['estado_general'] ? $_POST['estado_general'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':causa_est_general', $_POST['causa_est_general']);
+                $sql->bindValue(':fecha_fuera_servicio', $_POST['fecha_fuera_servicio'] ? date('Y-m-d', strtotime($_POST['fecha_fuera_servicio'])) : null);
+                $sql->bindValue(':id_usr_act', $id_usr_crea, PDO::PARAM_INT);
+                $sql->bindValue(':fecha_act', $fecha_crea);
+                $sql->bindValue(':estado', $_POST['estado'] ? $_POST['estado'] : null, PDO::PARAM_INT);
+                $sql->bindValue(':id_hv', $id_hv, PDO::PARAM_INT);
+
+                $updated = $sql->execute();
+
+                if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id'] = $id;
+                    $res['id_hv'] = $id_hv;
                 } else {
-                    $res['mensaje'] = $cmd->errorInfo()[2];
+                    $res['mensaje'] = $sql->errorInfo()[2];
                 }
             }
 
