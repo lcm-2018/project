@@ -31,19 +31,24 @@ try {
             if ($id_hv != -1) {
 
                 $nombreImagenLocal =  $_FILES["uploadImageAcf"]['name'];
-            
-                $sql = "UPDATE acf_hojavida SET
-                    imagen = :imagen,
-                    id_usr_act = :id_usr_act,
-                    fecha_act = :fecha_act
-                    WHERE id = :id_hv";
+                $fileExtension = '.' . strtolower( pathinfo($nombreImagenLocal)['extension']);
+                $nombre = $id_hv . '_' .  date('Ymd_His') . $fileExtension;
+                $temporal = $_FILES['uploadImageAcf']['tmp_name'];
+                $ruta = '../../imagenes/activos_fijos/';
 
+                if (!file_exists($ruta)) {
+                    $ruta = mkdir($ruta, 0777, true);
+                    $ruta = '../../imagenes/activos_fijos/';
+                }
+                if (!(move_uploaded_file($temporal, $ruta . $nombre))) {
+                    $res['mensaje'] = 'No se pudo adjuntar el archivo';
+                    exit();
+                } 
+            
+                $sql = "UPDATE acf_hojavida SET imagen = :imagen, id_usr_act = :id_usr_act, fecha_act = :fecha_act WHERE id = :id_hv";
                 $sql = $cmd->prepare($sql);
 
-                
-
-                // Asignar valores utilizando bindValue
-                $sql->bindValue(':imagen', $nombreImagenLocal);
+                $sql->bindValue(':imagen', $nombre);
                 $sql->bindValue(':id_usr_act', $id_usr_crea, PDO::PARAM_INT);
                 $sql->bindValue(':fecha_act', $fecha_crea);
                 $sql->bindValue(':id_hv', $id_hv, PDO::PARAM_INT);
