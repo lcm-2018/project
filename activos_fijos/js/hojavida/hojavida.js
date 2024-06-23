@@ -155,7 +155,7 @@
     });
 
     //Guardar archivos hoja de vida
-    $('#divForms').on("click", "#btn_guardar_archivos", function() {
+    $('#divForms').on("click", "#btn_guardar_imagen", function() {
         $('.is-invalid').removeClass('is-invalid');
 
         var file =  $('#uploadImageAcf')[0].files[0];
@@ -185,8 +185,6 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            //var data = $('#acf_reg_docs_hoja_vida').serialize();
-            //data.append('uploadImageAcf', $('#uploadImageAcf')[0].files[0]);
             $.ajax({
                 type: 'POST',
                 url: 'editar_documentos_hv.php',
@@ -232,12 +230,6 @@
 
         // Redirigir al usuario a la URL para iniciar la descarga
         window.open(urlDescarga, '_blank');
-    });
-
-    $('#divForms').on("change", "#custom-file-input", function() {
-        var fileName = $('#custom-file-input')[0].files[0];
-        alert(fileName)
-        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 
     //Borrar un registro Orden Ingreso

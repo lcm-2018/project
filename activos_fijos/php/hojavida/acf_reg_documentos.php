@@ -54,21 +54,19 @@ if (empty($obj)) {
             <form id="acf_reg_docs_hoja_vida" enctype="multipart/formdata">
                 <input type="hidden" id="id_hv" name="id_hv" value="<?php echo $id ?>">
                 <div class="form-group col-md-12">
-                    <label for="uploadImageAcf" class="small">Imagen</label>
-
+                    <label for="uploadImageAcf" class="small text-left">Imagen</label>
                     <div class="input-group mb-3"> 
+                        <button type="button" id="btn_descargar_imagen" class="btn btn-outline-primary btn-sm shadow-gb" title="Descargar"> <span class="fas fa-download"></span></button>
                         <input type="label" class="form-control form-control-sm" id="imagen" name="imagen" value="<?php echo $obj['imagen'] ?>" readonly="readonly">
-                        <button type="button" id="btn_descargar_imagen" class="btn btn-outline-primary btn-sm shadow-gb" title="Descargar"><span class="fas fa-download fa-lg"></span></>
                     </div> 
                     <div class="input-group mb-3"> 
+                        <button type="button" id="btn_guardar_imagen" class="btn btn-outline-primary btn-sm shadow-gb" title="Guadar"> <span class="fas fa-save"></span></button>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input form-control-sm" id="uploadImageAcf" accept=".jpg,.jpeg,.png">
                             <label class="custom-file-label" for="customFile">Seleccionar archivo</label>
                         </div>
-                        <button type="button" id="btn_guardar_archivos" class="btn btn-outline-primary btn-sm shadow-gb" title="Guardar"><span class="fas fa-save fa-lg"></span></>
                     </div>
                 </div>
-
                 <hr>
 
                 <div class="form-group mt-3">
