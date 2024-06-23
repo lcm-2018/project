@@ -97,6 +97,15 @@
         });
     });
 
+    $('#tb_hojavida').on('click', '.btn_archivos', function() {
+        let id = $(this).attr('value');
+        $.post("acf_reg_documentos.php", { id_hv: id }, function(he) {
+            $('#divTamModalForms').addClass('modal-xl');
+            $('#divModalForms').modal('show');
+            $("#divForms").html(he);
+        });
+    });
+
     //Guardar hoja de vida
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
@@ -122,6 +131,71 @@
                 dataType: 'json',
                 data: data +"&id_hv=" + $('#id_hv').val() + '&oper=add'
             }).done(function(res) {
+                if (res.mensaje == 'ok') {
+                    let pag = ($('#tb_hojavida').val() == -1) ? 0 : $('#tb_hojavida').DataTable().page.info().page;
+                    reloadtable('tb_hojavida', pag);
+                    $('#id_hv').val(res.id_hv);
+
+                    $('#btn_cerrar').prop('disabled', false);
+                    $('#btn_imprimir').prop('disabled', false);
+
+                    $('#divModalDone').modal('show');
+                    $('#divMsgDone').html("Proceso realizado con éxito");
+                } else {
+                    $('#divModalError').modal('show');
+                    $('#divMsgError').html(res.mensaje);
+                }
+            }).always(
+                function() {}
+            ).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Ocurrió un error');
+            });
+        }
+    });
+
+    //Guardar archivos hoja de vida
+    $('#divForms').on("click", "#btn_guardar_archivos", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        var file =  $('#uploadImageAcf')[0].files[0];
+
+        if(!file) {
+            showError('Por favor, selecciona un archivo')
+            return;
+        }
+        
+        var validImageTypes = ["image/jpeg", "image/png", "image/gif"];
+        
+        if (!validImageTypes.includes(file.type)) {
+            showError('Por favor, selecciona un archivo de imagen válido')
+            return;
+        }
+    
+
+        let datos = new FormData();
+        datos.append('id_hv', $('#id_hv').val());
+        datos.append('oper','add');
+        datos.append('uploadImageAcf', file);
+        
+        var error = 0
+
+
+        if (error >= 1) {
+            $('#divModalError').modal('show');
+            $('#divMsgError').html('Los datos resaltados son obligatorios');
+        } else {
+            //var data = $('#acf_reg_docs_hoja_vida').serialize();
+            //data.append('uploadImageAcf', $('#uploadImageAcf')[0].files[0]);
+            $.ajax({
+                type: 'POST',
+                url: 'editar_documentos_hv.php',
+                contentType: false,
+                data: datos,
+                processData: false,
+                cache: false,
+            }).done(function(res) {
+                var res = JSON.parse(res);
                 if (res.mensaje == 'ok') {
                     let pag = ($('#tb_hojavida').val() == -1) ? 0 : $('#tb_hojavida').DataTable().page.info().page;
                     reloadtable('tb_hojavida', pag);

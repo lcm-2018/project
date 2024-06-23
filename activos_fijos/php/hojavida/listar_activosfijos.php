@@ -88,6 +88,9 @@ if (!empty($objs)) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
         if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
+            $archivos =  '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_archivos" title="Archivos"><span class="fas fa-paperclip fa-lg"></span></a>';
+        }
+        if (PermisosUsuario($permisos, 5006, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [
@@ -99,7 +102,7 @@ if (!empty($objs)) {
             "marca" => $obj['marca'],
             "valor" => $obj['valor'],
             "tipo_activo" => $obj['tipo_activo'],
-            "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
+            "botones" => '<div class="text-center centro-vertical">' . $editar . $archivos . $eliminar . '</div>',
         ];
     }
 }

@@ -87,6 +87,11 @@ var verifica_vacio_2 = function (objeto1, objeto2, msg = "") {
     return error;
 };
 
+var showError = function(error) {
+    $('#divModalError').modal('show');
+    $('#divMsgError').html(error);
+}
+
 //VERIFICA SI UN OBJETO TIENE UN VALOR MÍNIMO ESPECÍFICO
 var verifica_valmin = function (objeto, val = 0, msg = "") {
     var error = 0;

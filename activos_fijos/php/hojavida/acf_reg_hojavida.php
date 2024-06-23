@@ -323,7 +323,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="estado" class="small">Estado</label>
-                        <select class="form-control form-control-sm" id="estado" name="estado">
+                        <select class="form-control form-control-sm" id="estado" name="estado" disabled>
                             <?php estado_activo('--Estado--', $obj['estado']) ?>
                         </select>
                     </div>
