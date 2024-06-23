@@ -58,6 +58,7 @@ try {
                 if ($updated) {
                     $res['mensaje'] = 'ok';
                     $res['id_hv'] = $id_hv;
+                    $res['nombre_imagen'] = $nombre;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }

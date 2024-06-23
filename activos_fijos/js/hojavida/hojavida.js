@@ -200,6 +200,7 @@
                     let pag = ($('#tb_hojavida').val() == -1) ? 0 : $('#tb_hojavida').DataTable().page.info().page;
                     reloadtable('tb_hojavida', pag);
                     $('#id_hv').val(res.id_hv);
+                    $('#imagen').val(res.nombre_imagen);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
@@ -217,6 +218,26 @@
                 alert('Ocurrió un error');
             });
         }
+    });
+
+
+     //Descarar archivos hoja de vida
+    $('#divForms').on("click", "#btn_descargar_imagen", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        let nombreImagen = $('#imagen').val()
+
+        // Construir la URL relativa al archivo
+        var urlDescarga = '../../imagenes/activos_fijos/' + nombreImagen
+
+        // Redirigir al usuario a la URL para iniciar la descarga
+        window.open(urlDescarga, '_blank');
+    });
+
+    $('#divForms').on("change", "#custom-file-input", function() {
+        var fileName = $('#custom-file-input')[0].files[0];
+        alert(fileName)
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
     });
 
     //Borrar un registro Orden Ingreso

@@ -333,7 +333,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-12">
                         <label for="imagen" class="small">Imagen</label>
-                        <input type="text" class="form-control form-control-sm" id="imagen" name="imagen" value="<?php echo $obj['imagen'] ?>">
+                        <input type="text" class="form-control form-control-sm" id="imagen" name="imagen" value="<?php echo $obj['imagen'] ?>" readonly="readonly">
                     </div>
                 </div>
                 <div class="form-group mt-3">
