@@ -97,6 +97,15 @@
         });
     });
 
+    $('#tb_hojavida').on('click', '.btn_imagen', function() {
+        let id = $(this).attr('value');
+        $.post("acf_reg_imagen.php", { id_hv: id }, function(he) {
+            $('#divTamModalForms').addClass('modal-xl');
+            $('#divModalForms').modal('show');
+            $("#divForms").html(he);
+        });
+    });
+
     $('#tb_hojavida').on('click', '.btn_archivos', function() {
         let id = $(this).attr('value');
         $.post("acf_reg_documentos.php", { id_hv: id }, function(he) {
