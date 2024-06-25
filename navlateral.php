@@ -310,6 +310,18 @@ $rol = $_SESSION['rol'];
                             </a>
                             <div class="collapse" id="pagesCollapseAcfGeneral" aria-labelledby="headingOne">
                                 <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
+                                    <?php if (PermisosUsuario($permisos, 5707, 1) || $id_rol == 1) { ?>
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/marcas/index.php?var=3">
+                                            <div class="div-icono">
+                                                <i class="fas fa-border-none" style="color: #E74C3C;"></i>
+                                            </div>
+                                            <div>
+                                                Marcas
+                                            </div>
+                                        </a>
+                                    <?php } ?>
+                                </nav>
+                                <nav class="sb-sidenav-menu-nested nav shadow-nav-lat">
                                     <?php if (PermisosUsuario($permisos, 5701, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/articulos/index.php?var=3">
                                             <div class="div-icono">
