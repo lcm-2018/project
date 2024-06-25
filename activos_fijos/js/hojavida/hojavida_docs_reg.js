@@ -4,9 +4,8 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_activofijo_detalle.php", {
-                        id_ing_detalle: $('#id_hv').val(),
-                        val_unitario: $('#txt_vrunit_med').val()
+                    $.post("frm_reg_documentos.php", {
+                        id_hv: $('#id_hv').val()
                     }, function(he) {
                         $('#divTamModalReg').removeClass('modal-xl');
                         $('#divTamModalReg').removeClass('modal-sm');
@@ -50,4 +49,14 @@
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
         $('#tb_lista_documentos_acf').wrap('<div class="overflow"/>');
     });
+
+    //Editar un registro hoja de vida
+    $('#tb_lista_documentos_acf').on('click', '.btn_editar', function() {
+        let id = $(this).attr('value');
+        $.post("frm_reg_documentos.php", { id_hv_doc: id }, function(he) {
+            $('#divTamModalReg').addClass('modal-lg');
+            $('#divModalReg').modal('show');
+            $("#divFormsReg").html(he);
+        });
+    }); 
 })(jQuery);

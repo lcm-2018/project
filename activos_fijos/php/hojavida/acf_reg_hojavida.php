@@ -167,12 +167,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <label for="valor" class="small">Valor</label>
                         <input type="number" step="0.0001" class="form-control form-control-sm" id="valor" name="valor" value="<?php echo $obj['valor'] ?>">
                     </div>
-                    <div class="form-group col-md-4">
-                        <label for="tipo_activo" class="small">Tipo de Activo</label>
-                        <select class="form-control form-control-sm" id="tipo_activo" name="tipo_activo">
-                            <?php tipos_activo($cmd, $obj['tipo_activo']) ?>
-                        </select>
-                    </div>
+                    
                     <div class="form-group col-md-4">
                         <label for="modelo" class="small">Modelo</label>
                         <input type="text" class="form-control form-control-sm" id="modelo" name="modelo" value="<?php echo $obj['modelo'] ?>">

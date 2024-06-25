@@ -181,7 +181,6 @@
             return;
         }
     
-
         let datos = new FormData();
         datos.append('id_hv', $('#id_hv').val());
         datos.append('oper','add');
@@ -189,14 +188,13 @@
         
         var error = 0
 
-
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
             $.ajax({
                 type: 'POST',
-                url: 'editar_documentos_hv.php',
+                url: 'editar_imagenes_hv.php',
                 contentType: false,
                 data: datos,
                 processData: false,
@@ -208,10 +206,6 @@
                     reloadtable('tb_hojavida', pag);
                     $('#id_hv').val(res.id_hv);
                     $('#imagen').val(res.nombre_imagen);
-
-                    $('#btn_cerrar').prop('disabled', false);
-                    $('#btn_imprimir').prop('disabled', false);
-
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");
                 } else {
@@ -228,7 +222,7 @@
     });
 
 
-     //Descarar archivos hoja de vida
+     //Descarar imagen  hoja de vida
     $('#divForms').on("click", "#btn_descargar_imagen", function() {
         $('.is-invalid').removeClass('is-invalid');
 
@@ -240,6 +234,88 @@
         // Redirigir al usuario a la URL para iniciar la descarga
         window.open(urlDescarga, '_blank');
     });
+
+
+    //Descarar documento  hoja de vida
+    $('#divModalReg').on("click", "#btn_descargar_documento", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        let nombreImagen = $('#archivo').val()
+
+        // Construir la URL relativa al archivo
+        var urlDescarga = '../../imagenes/activos_fijos/' + nombreImagen
+
+        // Redirigir al usuario a la URL para iniciar la descarga
+        window.open(urlDescarga, '_blank');
+    });
+
+    //Guardar documentos hoja de vida
+    $('#divModalReg').on("click", "#btn_guardar_documentos", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        var error = verifica_vacio($('#tipo'));
+        error += verifica_vacio($('#descripcion'));
+
+        var file =  $('#uploadDocAcf')[0].files[0];
+
+        if(!file) {
+            showError('Por favor, selecciona un archivo')
+            return;
+        }
+        
+        var validImageTypes = ["application/pdf", "application/pdf"];
+        
+        if (!validImageTypes.includes(file.type)) {
+            showError('Por favor, selecciona un documento válido')
+            return;
+        }
+
+        let datos = new FormData();
+
+        datos.append('id_hv', $('#id_hv').val());
+        datos.append('id_hv_doc', $('#id_hv_doc').val());
+        datos.append('tipo', $('#tipo').val());
+        datos.append('descripcion', $('#descripcion').val());
+
+        datos.append('oper','add');
+        datos.append('uploadDocAcf', file);
+        
+        var error = 0
+
+        if (error >= 1) {
+            $('#divModalError').modal('show');
+            $('#divMsgError').html('Los datos resaltados son obligatorios');
+        } else {
+            $.ajax({
+                type: 'POST',
+                url: 'editar_documentos_hv.php',
+                contentType: false,
+                data: datos,
+                processData: false,
+                cache: false,
+            }).done(function(res) {
+                var res = JSON.parse(res);
+                if (res.mensaje == 'ok') {
+                    let pag = ($('#tb_lista_documentos_acf').val() == -1) ? 0 : $('#tb_lista_documentos_acf').DataTable().page.info().page;
+                    reloadtable('tb_lista_documentos_acf', pag);
+                    $('#id_hv').val(res.id_hv);
+                    $('#id_hv_doc').val(res.id_hv_doc);
+                    $('#archivo').val(res.nombre_archivo);
+                    $('#divModalDone').modal('show');
+                    $('#divMsgDone').html("Proceso realizado con éxito");
+                } else {
+                    $('#divModalError').modal('show');
+                    $('#divMsgError').html(res.mensaje);
+                }
+            }).always(
+                function() {}
+            ).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Ocurrió un error');
+            });
+        }
+    });
+
 
     //Borrar un registro Orden Ingreso
     $('#tb_ingresos').on('click', '.btn_eliminar', function() {

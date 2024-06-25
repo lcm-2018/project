@@ -23,17 +23,81 @@ try {
     ) {
 
         $id_hv = $_POST['id_hv'];
+        $id_hv_doc = $_POST['id_hv_doc'];
 
         $rs = $cmd->query($sql);
         $obj_ingreso = $rs->fetch();
 
         if ($oper == 'add') {
-            if ($id_hv != -1) {
+            if ($id_hv_doc == -1) {
 
-                $nombreImagenLocal =  $_FILES["uploadImageAcf"]['name'];
+
+                // Datos del formulario
+                $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : null;
+                $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : null;
+                $id_usuario_crea = isset($_POST['id_usuario_crea']) ? $_POST['id_usuario_crea'] : null;
+                $fecha_creacion = date('Y-m-d H:i:s'); // Fecha actual
+
+                // Consulta SQL
+                $sql = "INSERT INTO acf_hojavida_documentos (
+                            id_activo_fijo, tipo, descripcion, archivo, id_usuario_crea, fecha_creacion) 
+                        VALUES (:id_activo_fijo, :tipo, :descripcion, :archivo, :id_usuario_crea, :fecha_creacion)";
+
+                // Preparar la consulta
+                $sql = $cmd->prepare($sql);
+
+                $nombre = 'temp_file';
+                $sql->bindParam(':id_activo_fijo', $id_hv, PDO::PARAM_INT);
+                $sql->bindParam(':tipo', $tipo, PDO::PARAM_INT);
+                $sql->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
+                $sql->bindParam(':archivo', $nombre, PDO::PARAM_STR);
+                $sql->bindParam(':id_usuario_crea', $id_usr_crea, PDO::PARAM_INT);
+                $sql->bindParam(':fecha_creacion', $fecha_creacion, PDO::PARAM_STR);
+
+                $inserted = $sql->execute();
+
+                if ($inserted) {
+                    $id_hv_doc = $cmd->lastInsertId();
+
+                    $nombreImagenLocal =  $_FILES["uploadDocAcf"]['name'];
+                    $fileExtension = '.' . strtolower( pathinfo($nombreImagenLocal)['extension']);
+                    $nombre = $id_hv . '_' .  date('Ymd_His') . $fileExtension;
+                    $temporal = $_FILES['uploadDocAcf']['tmp_name'];
+                    $ruta = '../../imagenes/activos_fijos/';
+                    if (!file_exists($ruta)) {
+                        $ruta = mkdir($ruta, 0777, true);
+                        $ruta = '../../imagenes/activos_fijos/';
+                    }
+                    if ((move_uploaded_file($temporal, $ruta . $nombre))) {
+                        $sql = "UPDATE acf_hojavida_documentos SET archivo = :archivo WHERE id_documento = :id_documento";
+                        $sql = $cmd->prepare($sql);
+                        $sql->bindValue(':archivo', $nombre);
+                        $sql->bindValue(':id_documento', $id_hv_doc, PDO::PARAM_INT);
+                        $updated = $sql->execute();
+                        if ($updated) {
+                            $res['mensaje'] = 'ok';
+                            $res['id_hv'] = $id_hv;
+                            $res['id_hv_doc'] = $id_hv_doc;
+                            $res['nombre_archivo'] = $nombre;
+                        } else {
+                            $res['mensaje'] = $sql->errorInfo()[2];
+                        }
+                    } 
+                } else {
+                    $res['mensaje'] = $sql->errorInfo()[2];
+                }
+                if ($updated) {
+                    $res['mensaje'] = 'ok';
+                    $res['id_hv'] = $id_hv;
+                    $res['nombre_imagen'] = $nombre;
+                } else {
+                    $res['mensaje'] = $sql->errorInfo()[2];
+                }
+            }  else {
+                $nombreImagenLocal =  $_FILES["uploadDocAcf"]['name'];
                 $fileExtension = '.' . strtolower( pathinfo($nombreImagenLocal)['extension']);
                 $nombre = $id_hv . '_' .  date('Ymd_His') . $fileExtension;
-                $temporal = $_FILES['uploadImageAcf']['tmp_name'];
+                $temporal = $_FILES['uploadDocAcf']['tmp_name'];
                 $ruta = '../../imagenes/activos_fijos/';
 
                 if (!file_exists($ruta)) {
@@ -45,7 +109,7 @@ try {
                     exit();
                 } 
             
-                $sql = "UPDATE acf_hojavida SET imagen = :imagen, id_usr_act = :id_usr_act, fecha_act = :fecha_act WHERE id = :id_hv";
+                $sql = "UPDATE acf_hojavida_doc4 SET imagen = :imagen, id_usr_act = :id_usr_act, fecha_act = :fecha_act WHERE id = :id_hv";
                 $sql = $cmd->prepare($sql);
 
                 $sql->bindValue(':imagen', $nombre);
@@ -62,7 +126,7 @@ try {
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }
-            } 
+            }
 
         } else {
             $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';
