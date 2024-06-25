@@ -257,17 +257,18 @@
         error += verifica_vacio($('#descripcion'));
 
         var file =  $('#uploadDocAcf')[0].files[0];
-
-        if(!file) {
-            showError('Por favor, selecciona un archivo')
-            return;
-        }
-        
-        var validImageTypes = ["application/pdf", "application/pdf"];
-        
-        if (!validImageTypes.includes(file.type)) {
-            showError('Por favor, selecciona un documento válido')
-            return;
+        if(!$('#archivo').val()) {
+            if(!file) {
+                showError('Por favor, selecciona un archivo')
+                return;
+            }
+            
+            var validImageTypes = ["application/pdf", "application/pdf"];
+            
+            if (!validImageTypes.includes(file.type)) {
+                showError('Por favor, selecciona un documento válido')
+                return;
+            }
         }
 
         let datos = new FormData();
@@ -276,11 +277,13 @@
         datos.append('id_hv_doc', $('#id_hv_doc').val());
         datos.append('tipo', $('#tipo').val());
         datos.append('descripcion', $('#descripcion').val());
+        datos.append('archivo', $('#archivo').val());
 
         datos.append('oper','add');
         datos.append('uploadDocAcf', file);
-        
+
         var error = 0
+
 
         if (error >= 1) {
             $('#divModalError').modal('show');

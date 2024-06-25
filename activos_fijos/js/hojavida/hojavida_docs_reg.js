@@ -59,4 +59,35 @@
             $("#divFormsReg").html(he);
         });
     }); 
+
+    //Borrar DOCUMENTO HOJA VIDA
+    $('#tb_lista_documentos_acf').on('click', '.btn_eliminar', function() {
+        let id = $(this).attr('value');
+        confirmar_del('documentos_del', id);
+    });
+    $('#divModalConfDel').on("click", "#documentos_del", function() {
+        var id = $(this).attr('value');
+        $.ajax({
+            type: 'POST',
+            url: 'editar_documentos_hv.php',
+            dataType: 'json',
+            data: { id_hv_doc: id, oper: 'del' }
+        }).done(function(r) {
+            $('#divModalConfDel').modal('hide');
+            if (r.mensaje == 'ok') {
+                let pag = $('#tb_lista_documentos_acf').DataTable().page.info().page;
+                reloadtable('tb_lista_documentos_acf', pag);
+                $('#divModalDone').modal('show');
+                $('#divMsgDone').html("Proceso realizado con éxito");
+            } else {
+                $('#divModalError').modal('show');
+                $('#divMsgError').html(r.mensaje);
+            }
+        }).always(function() {
+
+        }).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
+            alert('Ocurrió un error');
+        });
+    });
 })(jQuery);
