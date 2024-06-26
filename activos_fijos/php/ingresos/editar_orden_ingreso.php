@@ -123,7 +123,7 @@ try {
                 $sql = 'UPDATE tb_datos_ips SET num_ingresoactual=num_ingresoactual+1';
                 $rs2 = $cmd->query($sql);
 
-                //Crear la shojas de Mantenimiento de los activos fijos
+                //Crear la hojas de Mantenimiento de los activos fijos
 
                 if ($rs1 == false || $rs2 == false || error_get_last()) {
                     $error = 1;
