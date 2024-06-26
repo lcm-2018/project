@@ -215,6 +215,18 @@ function usos($titulo = '', $uso = 0)
 
 }
 
+function calif4725($titulo = '', $calif = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($calif == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>I</option>';
+    $selected = ($calif == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>IIA</option>';
+    $selected = ($calif == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>IIB</option>';
+
+}
+
 function iva($valor = 0)
 {
     $selected = ($valor == 0) ? 'selected="selected"' : '';

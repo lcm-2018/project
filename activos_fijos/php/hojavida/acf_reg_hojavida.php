@@ -241,7 +241,9 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="calif_4725" class="small">Calificación 4725</label>
-                        <input type="number" class="form-control form-control-sm" id="calif_4725" name="calif_4725" value="<?php echo $obj['calif_4725'] ?>">
+                        <select class="form-control form-control-sm" id="calif_4725" name="calif_4725">
+                            <?php calif4725('--Calif 4725--', $obj['calif_4725']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="calibracion" class="small">Calibración</label>
