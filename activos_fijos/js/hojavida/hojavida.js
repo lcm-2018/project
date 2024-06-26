@@ -13,7 +13,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("acf_reg_hojavida.php", function(he) {
+                    $.post("form_reg_hojavida.php", function(he) {
                         $('#divTamModalForms').removeClass('modal-sm');
                         $('#divTamModalForms').removeClass('modal-lg');
                         $('#divTamModalForms').addClass('modal-xl');
@@ -90,7 +90,7 @@
     //Editar un registro hoja de vida
     $('#tb_hojavida').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("acf_reg_hojavida.php", { id_hv: id }, function(he) {
+        $.post("form_reg_hojavida.php", { id_hv: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
