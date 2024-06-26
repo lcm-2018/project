@@ -191,6 +191,30 @@ function estado_activo($titulo = '', $estado = 3)
 
 }
 
+function riesgos($titulo = '', $riesgo = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($riesgo == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>ALTO</option>';
+    $selected = ($riesgo == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>MEDIO</option>';
+    $selected = ($riesgo == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>BAJO</option>';
+
+}
+
+function usos($titulo = '', $uso = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($uso == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>MEDICO</option>';
+    $selected = ($uso == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>BASICO</option>';
+    $selected = ($uso == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>APOYO</option>';
+
+}
+
 function iva($valor = 0)
 {
     $selected = ($valor == 0) ? 'selected="selected"' : '';

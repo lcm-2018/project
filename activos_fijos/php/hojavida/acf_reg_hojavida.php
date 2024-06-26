@@ -289,11 +289,15 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="riesgo" class="small">Riesgo</label>
-                        <input type="number" class="form-control form-control-sm" id="riesgo" name="riesgo" value="<?php echo $obj['riesgo'] ?>">
+                        <select class="form-control form-control-sm" id="riesgo" name="riesgo">
+                            <?php riesgos('--Riesgo--', $obj['riesgo']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="uso" class="small">Uso</label>
-                        <input type="number" class="form-control form-control-sm" id="uso" name="uso" value="<?php echo $obj['uso'] ?>">
+                        <select class="form-control form-control-sm" id="uso" name="uso">
+                            <?php usos('--Usos--', $obj['uso']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="cb_diagnostico" class="small">CB Diagnóstico</label>
