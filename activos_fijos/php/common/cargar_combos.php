@@ -201,8 +201,9 @@ function iva($valor = 0)
     echo '<option value="19"' . $selected . '>19</option>';
 }
 
-function tipos_activo($valor = 0)
+function tipos_activo($titulo = '', $valor = 0)
 {
+    echo '<option value="">' . $titulo . '</option>';
     $selected = ($valor == 1) ? 'selected="selected"' : '';
     echo '<option value="1"' . $selected . '>PROPIDAD, PLANTA Y EQUIPO</option>';
     $selected = ($valor == 2) ? 'selected="selected"' : '';

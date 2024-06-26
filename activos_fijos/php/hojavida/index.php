@@ -65,7 +65,7 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                                 </div>
                                 <div class="form-group col-md-2">
                                     <select class="form-control form-control-sm" id="sl_tipoactivo_filtro">
-                                        <?php tipos_activo($cmd,'--Tipo Activo--') ?>
+                                        <?php tipos_activo('--Tipo Activo--') ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-1">
