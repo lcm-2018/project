@@ -135,6 +135,7 @@
                     let pag = ($('#id_ingreso').val() == -1) ? 0 : $('#tb_ingresos').DataTable().page.info().page;
                     reloadtable('tb_ingresos', pag);
                     $('#id_ingreso').val(r.id);
+                    $('#txt_ide').val(r.id);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
@@ -319,9 +320,9 @@
     //Borrarr un registro Detalle
     $('#divForms').on('click', '#tb_ingresos_detalles .btn_eliminar', function() {
         let id = $(this).attr('value');
-        confirmar_del('detalle', id);
+        confirmar_del('detalle_del', id);
     });
-    $('#divModalConfDel').on("click", "#detalle", function() {
+    $('#divModalConfDel').on("click", "#detalle_del", function() {
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
@@ -421,36 +422,30 @@
     });
 
     //Elimiar Activo fijo
-    $('#divFormsReg').on('click', '#tb_lista_activos_fijos .btn_eliminar', function() {
-        let placa = $(this).attr('value');
-        confirmar_del('activofijo_del', placa);
+    $('#divFormsBus').on('click', '#tb_lista_activos_fijos .btn_eliminar', function() {
+        let id = $(this).attr('value');
+        confirmar_del('activofijo_del', id);
     });
     $('#divModalConfDel').on("click", "#activofijo_del", function() {
-        var placa = $(this).attr('value');
-        let idIngresoDetalle = $('#id_ingreso_detalle').val()
+        var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
             url: 'editar_activofijo_detalle.php',
             dataType: 'json',
-            data: {
-                id_ingreso_detalle: idIngresoDetalle,
-                placa: placa,
-                oper: 'del'
-            }
+            data: { id: id, id_ingreso: $('#id_ingreso').val(), oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
                 let pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
                 reloadtable('tb_lista_activos_fijos', pag);
+
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
                 $('#divModalError').modal('show');
                 $('#divMsgError').html(r.mensaje);
             }
-        }).always(function() {
-
-        }).fail(function(xhr, textStatus, errorThrown) {
+        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
             console.error(xhr.responseText)
             alert('Ocurrió un error');
         });

@@ -64,17 +64,25 @@ try {
                             $res['mensaje'] = 'El activo ya existe en los detalles de la Orden de Ingreso';
                         }
                     } else {
-                        $sql = "UPDATE acf_orden_ingreso_detalle 
-                                SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
-                                WHERE id_ing_detalle=" . $id;
-
+                        $sql = "SELECT COUNT(*) AS cantidad FROM acf_orden_ingreso_acfs WHERE id_ing_detalle=" . $id;
                         $rs = $cmd->query($sql);
-                        if ($rs) {
-                            $res['mensaje'] = 'ok';
-                            $res['id'] = $id;
+                        $obj = $rs->fetch();
+
+                        if ($cantidad >= $obj['cantidad']){
+                            $sql = "UPDATE acf_orden_ingreso_detalle 
+                                    SET cantidad=$cantidad,valor_sin_iva=$vr_unidad,iva=$iva,valor=$vr_costo,observacion='$observacion'
+                                    WHERE id_ing_detalle=" . $id;
+
+                            $rs = $cmd->query($sql);
+                            if ($rs) {
+                                $res['mensaje'] = 'ok';
+                                $res['id'] = $id;
+                            } else {
+                                $res['mensaje'] = $cmd->errorInfo()[2];
+                            }
                         } else {
-                            $res['mensaje'] = $cmd->errorInfo()[2];
-                        }
+                            $res['mensaje'] = 'La Cantidad no debe ser inferior al número de Activos Fijos registrados';    
+                        }    
                     }
                 }
 

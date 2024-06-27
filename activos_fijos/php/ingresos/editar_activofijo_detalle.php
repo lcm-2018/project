@@ -40,20 +40,32 @@ try {
                 $valor = $_POST['txt_val_uni'] ? $_POST['txt_val_uni'] : 0;
                 $tip_act = $_POST['sl_tipoactivo'];
 
-                if ($id == -1) {                    
-                    $sql = "INSERT INTO acf_orden_ingreso_acfs(id_ing_detalle,id_articulo,placa,serial,id_marca,valor,tipo_activo)
-                            VALUES($id_ing_det,$id_art,'$placa','$serial',$id_marca,$valor,$tip_act)";
+                if ($id == -1) {   
+                    
+                    $sql = "SELECT acf_orden_ingreso_detalle.cantidad,COUNT(acf_orden_ingreso_acfs.id_act_fij) AS registros
+                            FROM acf_orden_ingreso_detalle
+                            LEFT JOIN acf_orden_ingreso_acfs ON (acf_orden_ingreso_acfs.id_ing_detalle=acf_orden_ingreso_detalle.id_ing_detalle)
+                            WHERE acf_orden_ingreso_detalle.id_ing_detalle=" . $id_ing_det;
                     $rs = $cmd->query($sql);
+                    $obj = $rs->fetch();
+                    $cantidad = $obj['cantidad'];
+                    if ($obj['cantidad'] > $obj['registros']){
+                        $sql = "INSERT INTO acf_orden_ingreso_acfs(id_ing_detalle,id_articulo,placa,serial,id_marca,valor,tipo_activo)
+                                VALUES($id_ing_det,$id_art,'$placa','$serial',$id_marca,$valor,$tip_act)";
+                        $rs = $cmd->query($sql);
 
-                    if ($rs) {
-                        $res['mensaje'] = 'ok';
-                        $sql_i = 'SELECT LAST_INSERT_ID() AS id';
-                        $rs = $cmd->query($sql_i);
-                        $obj = $rs->fetch();
-                        $res['id'] = $obj['id'];
+                        if ($rs) {
+                            $res['mensaje'] = 'ok';
+                            $sql_i = 'SELECT LAST_INSERT_ID() AS id';
+                            $rs = $cmd->query($sql_i);
+                            $obj = $rs->fetch();
+                            $res['id'] = $obj['id'];
+                        } else {
+                            $res['mensaje'] = $cmd->errorInfo()[2];
+                        }
                     } else {
-                        $res['mensaje'] = $cmd->errorInfo()[2];
-                    }
+                        $res['mensaje'] = 'No puede registrar una Cantidad de Activos Fijos mayor a ' . $cantidad;
+                    }    
                 } else {
                     $sql = "UPDATE acf_orden_ingreso_acfs 
                             SET placa='$placa',serial='$serial',id_marca=$id_marca,valor=$valor,tipo_activo=$tip_act
@@ -71,25 +83,14 @@ try {
 
             if ($oper == 'del') {
                 $id = $_POST['id'];
-                $sql = "DELETE FROM acf_orden_ingreso_detalle WHERE id_ing_detalle=" . $id;
+                $sql = "DELETE FROM acf_orden_ingreso_acfs WHERE id_act_fij=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';
                 } else {
                     $res['mensaje'] = $cmd->errorInfo()[2];
                 }
-            }
-
-            if ($rs) {
-                $sql = "UPDATE acf_orden_ingreso SET val_total=(SELECT IFNULL(SUM(valor * cantidad), 0)  
-                        FROM acf_orden_ingreso_detalle WHERE id_ingreso=$id_ingreso) WHERE id_ingreso=$id_ingreso";
-                $rs = $cmd->query($sql);
-
-                $sql = "SELECT val_total FROM acf_orden_ingreso WHERE id_ingreso=" . $id_ingreso;
-                $rs = $cmd->query($sql);
-                $obj_ingreso = $rs->fetch();
-                $res['val_total'] = formato_valor($obj_ingreso['val_total']);
-            }
+            }            
         } else {
             $res['mensaje'] = 'Solo puede Modificar Ordenes de Ingreso en estado Pendiente';
         }

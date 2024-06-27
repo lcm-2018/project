@@ -108,7 +108,21 @@ try {
             $obj_ingreso = $rs->fetch();
             $num_detalles = $obj_ingreso['total'];
 
-            if ($estado == 1 && $num_detalles > 0) {
+            $sql = "SELECT GROUP_CONCAT(nom_medicamento) AS articulos 
+                    FROM (SELECT far_medicamentos.nom_medicamento,
+                                acf_orden_ingreso_detalle.cantidad,
+                                COUNT(acf_orden_ingreso_acfs.id_act_fij) AS registros
+                            FROM acf_orden_ingreso_detalle
+                            INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_articulo)
+                            LEFT JOIN acf_orden_ingreso_acfs ON (acf_orden_ingreso_acfs.id_ing_detalle=acf_orden_ingreso_detalle.id_ing_detalle)
+                            WHERE id_ingreso=24
+                            GROUP BY acf_orden_ingreso_detalle.id_ing_detalle) AS c
+                    WHERE cantidad>registros";
+            $rs = $cmd->query($sql);
+            $obj_ingreso = $rs->fetch();
+            $articulos_pen = $obj_ingreso['articulos'] ? $obj_ingreso['articulos'] : "";
+
+            if ($estado == 1 && $num_detalles > 0 && !$articulos_pen) {
                 $error = 0;
                 $cmd->beginTransaction();
                 
@@ -140,6 +154,8 @@ try {
                     $res['mensaje'] = 'Solo puede Cerrar Ordenes de Ingreso en estado Pendiente';
                 } else if ($num_detalles == 0) {
                     $res['mensaje'] = 'La Ordenes de Ingreso no tiene detalles';                
+                } else if ($articulos_pen) {
+                    $res['mensaje'] = 'Debe registar los datos básicos de Articulos: ' . $articulos_pen;                
                 }
             }
         }

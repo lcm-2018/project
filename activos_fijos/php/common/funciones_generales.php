@@ -127,7 +127,7 @@ function area_principal($cmd){
     try {
  
         $res = array();
-        $sql = "SELECT id_area, nom_area, id_centrocosto FROM bd_cronhis.far_centrocosto_area where id_area = 0;";
+        $sql = "SELECT id_area,nom_area,id_centrocosto FROM far_centrocosto_area where id_area = 0;";
 
         $rs = $cmd->query($sql);
         $obj = $rs->fetch();

@@ -55,7 +55,7 @@
                 { orderable: false, targets: 8 }
             ],
             rowCallback: function(row, data) {
-                var estado = $($(row).find("td")[8]).text();
+                var estado = $($(row).find("td")[7]).text();
                 if (estado == 'PENDIENTE') {
                     $($(row).find("td")[0]).css("background-color", "yellow");
                 } else if (estado == 'CONFIRMADO') {
@@ -122,6 +122,7 @@
                     let pag = ($('#id_pedido').val() == -1) ? 0 : $('#tb_pedidos').DataTable().page.info().page;
                     reloadtable('tb_pedidos', pag);
                     $('#id_pedido').val(r.id);
+                    $('#txt_ide').val(r.id);
 
                     $('#btn_confirmar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
