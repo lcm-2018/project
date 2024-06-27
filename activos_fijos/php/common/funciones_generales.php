@@ -145,6 +145,19 @@ function area_principal($cmd){
     }
 }
 
+function estado_activo_seleccionado($estado)
+{
+    if($estado == 1) {
+        return array('id' => '1', 'nombre' => 'ACTIVO');
+    }
+    if($estado == 1) {
+        return array('id' => '2', 'nombre' => 'EN MANTENIMIENTO');
+    }
+    if($estado == 1) {
+        return array('id' => '3', 'nombre' => 'DADO DE BAJA');
+    }
+}
+
 //FUNCION QUE RETORNAR LOS DATOS DE UN ARTICULO
 function datos_articulo_acf($cmd, $id_med){
     try {

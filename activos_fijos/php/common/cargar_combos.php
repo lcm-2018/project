@@ -191,6 +191,42 @@ function estado_activo($titulo = '', $estado = 3)
 
 }
 
+function riesgos($titulo = '', $riesgo = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($riesgo == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>ALTO</option>';
+    $selected = ($riesgo == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>MEDIO</option>';
+    $selected = ($riesgo == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>BAJO</option>';
+
+}
+
+function usos($titulo = '', $uso = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($uso == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>MEDICO</option>';
+    $selected = ($uso == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>BASICO</option>';
+    $selected = ($uso == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>APOYO</option>';
+
+}
+
+function calif4725($titulo = '', $calif = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($calif == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>I</option>';
+    $selected = ($calif == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>IIA</option>';
+    $selected = ($calif == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>IIB</option>';
+
+}
+
 function iva($valor = 0)
 {
     $selected = ($valor == 0) ? 'selected="selected"' : '';
@@ -201,8 +237,9 @@ function iva($valor = 0)
     echo '<option value="19"' . $selected . '>19</option>';
 }
 
-function tipos_activo($valor = 0)
+function tipos_activo($titulo = '', $valor = 0)
 {
+    echo '<option value="">' . $titulo . '</option>';
     $selected = ($valor == 1) ? 'selected="selected"' : '';
     echo '<option value="1"' . $selected . '>PROPIDAD, PLANTA Y EQUIPO</option>';
     $selected = ($valor == 2) ? 'selected="selected"' : '';

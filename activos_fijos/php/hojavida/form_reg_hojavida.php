@@ -99,6 +99,8 @@ if (empty($obj)) {
     $fecha = fecha_hora_servidor();
     $obj['fec_ingreso'] = $fecha['fecha'];
     $obj['hor_ingreso'] = $fecha['hora'];
+
+    $estado = estado_activo_seleccionado($obj['estado']);
 } else {
     
     $bodega = sede_principal($cmd);
@@ -110,6 +112,7 @@ if (empty($obj)) {
         $obj['id_area'] = $area['id_area'];
         $obj['nom_area'] = $area['nom_area'];
     }
+    $estado = estado_activo_seleccionado($obj['estado']);
 }
 $guardar = in_array($obj['estado'],[1]) ? '' : 'disabled="disabled"';
 $cerrar = in_array($obj['estado'],[1]) && $id != -1 ? '' : 'disabled="disabled"';
@@ -141,6 +144,12 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                         <label for="id_proveedor" class="small">Proveedor</label>
                         <select class="form-control form-control-sm" id="id_proveedor" name="id_proveedor">
                             <?php terceros($cmd, '', $obj['id_proveedor']) ?>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_articulo" class="small">Tipo Activo</label>
+                        <select class="form-control form-control-sm" id="tipo_activo" name="tipo_activo">
+                            <?php tipos_activo('', $obj['tipo_activo']) ?>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
@@ -232,7 +241,9 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="calif_4725" class="small">Calificación 4725</label>
-                        <input type="number" class="form-control form-control-sm" id="calif_4725" name="calif_4725" value="<?php echo $obj['calif_4725'] ?>">
+                        <select class="form-control form-control-sm" id="calif_4725" name="calif_4725">
+                            <?php calif4725('--Calif 4725--', $obj['calif_4725']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="calibracion" class="small">Calibración</label>
@@ -280,11 +291,15 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="riesgo" class="small">Riesgo</label>
-                        <input type="number" class="form-control form-control-sm" id="riesgo" name="riesgo" value="<?php echo $obj['riesgo'] ?>">
+                        <select class="form-control form-control-sm" id="riesgo" name="riesgo">
+                            <?php riesgos('--Riesgo--', $obj['riesgo']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="uso" class="small">Uso</label>
-                        <input type="number" class="form-control form-control-sm" id="uso" name="uso" value="<?php echo $obj['uso'] ?>">
+                        <select class="form-control form-control-sm" id="uso" name="uso">
+                            <?php usos('--Usos--', $obj['uso']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-4">
                         <label for="cb_diagnostico" class="small">CB Diagnóstico</label>
@@ -318,9 +333,8 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="estado" class="small">Estado</label>
-                        <select class="form-control form-control-sm" id="estado" name="estado" disabled>
-                            <?php estado_activo('--Estado--', $obj['estado']) ?>
-                        </select>
+                        <input type="text" class="form-control form-control-sm" id="nom_estado" class="small" value="<?php echo $estado['nombre'] ?>" readonly="readonly">
+                        <input type="hidden" id="estado" name="estado" value="<?php echo $estado['id'] ?>">
                     </div>
                     <div class="form-group col-md-12">
                         <label for="causa_est_general" class="small">Causa del Estado General</label>
