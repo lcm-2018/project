@@ -4,7 +4,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_documentos.php", {
+                    $.post("form_componente_hojavida_detalle.php", {
                         id_hv: $('#id_hv').val()
                     }, function(he) {
                         $('#divTamModalReg').removeClass('modal-xl');
@@ -52,7 +52,10 @@
     //Editar un registro hoja de vida
     $('#tb_componentes_activofijo').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_documentos.php", { id_hv_doc: id }, function(he) {
+        $.post("form_componente_hojavida_detalle.php", { 
+            id_componente: id,
+            id_hv: $('#id_hv').val()
+        }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
