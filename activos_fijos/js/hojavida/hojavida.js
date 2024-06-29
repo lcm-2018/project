@@ -351,7 +351,7 @@
             }).done(function(res) {
                 if (res.mensaje == 'ok') {
                     let pag = ($('#tb_componentes_activofijo').val() == -1) ? 0 : $('#tb_componentes_activofijo').DataTable().page.info().page;
-                    reloadtable('tb_lista_documentos_acf', pag);
+                    reloadtable('tb_componentes_activofijo', pag);
                     $('#id_componente').val(res.id_hv_doc);
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");
