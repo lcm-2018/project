@@ -23,7 +23,7 @@ try {
     ) {
 
         $id_componente = isset($_POST['id_componente']) ? $_POST['id_componente'] : -1;
-        $id_hv = $_POST['id_hv'];
+        $id_hv = isset($_POST['id_hv']) ? $_POST['id_hv'] : -1;
         
         $rs = $cmd->query($sql);
         $obj_ingreso = $rs->fetch();
@@ -92,7 +92,7 @@ try {
         } 
 
         if ($oper == 'del') {
-            $sql = "DELETE FROM acf_hojavida_documentos WHERE id_documento=" . $id_hv_doc;
+            $sql = "DELETE FROM acf_hojavida_componente WHERE id_componente=" . $id_componente;
             $rs = $cmd->query($sql);
             if ($rs) {
                 $res['mensaje'] = 'ok';
