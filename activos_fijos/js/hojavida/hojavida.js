@@ -329,6 +329,45 @@
         }
     });
 
+    //Guardar documentos hoja de vida
+    $('#divModalReg').on("click", "#btn_guardar_componente", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        var error = verifica_vacio($('#id_articulo'));
+        error += verifica_vacio($('#serial'));
+        error += verifica_vacio($('#id_marca'));
+        error += verifica_vacio($('#modelo'));
+
+        if (error >= 1) {
+            $('#divModalError').modal('show');
+            $('#divMsgError').html('Los datos resaltados son obligatorios');
+        } else {
+            var data = $('#frm_reg_componente').serialize();
+            $.ajax({
+                type: 'POST',
+                url: 'editar_componente.php',
+                dataType: 'json',
+                data: data +"&id_componente=" + $('#id_componente').val() + "&id_hv=" + $('#id_hv').val() + '&oper=add'
+            }).done(function(res) {
+                if (res.mensaje == 'ok') {
+                    let pag = ($('#tb_componentes_activofijo').val() == -1) ? 0 : $('#tb_componentes_activofijo').DataTable().page.info().page;
+                    reloadtable('tb_componentes_activofijo', pag);
+                    $('#id_componente').val(res.id_hv_doc);
+                    $('#divModalDone').modal('show');
+                    $('#divMsgDone').html("Proceso realizado con éxito");
+                } else {
+                    $('#divModalError').modal('show');
+                    $('#divMsgError').html(res.mensaje);
+                }
+            }).always(
+                function() {}
+            ).fail(function(xhr, textStatus, errorThrown) {
+                console.error(xhr.responseText)
+                alert('Ocurrió un error');
+            });
+        }
+    });
+
 
     //Borrar un registro Orden Ingreso
     $('#tb_ingresos').on('click', '.btn_eliminar', function() {

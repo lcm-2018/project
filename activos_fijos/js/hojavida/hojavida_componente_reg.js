@@ -4,7 +4,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_documentos.php", {
+                    $.post("form_componente_hojavida_detalle.php", {
                         id_hv: $('#id_hv').val()
                     }, function(he) {
                         $('#divTamModalReg').removeClass('modal-xl');
@@ -52,7 +52,10 @@
     //Editar un registro hoja de vida
     $('#tb_componentes_activofijo').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_documentos.php", { id_hv_doc: id }, function(he) {
+        $.post("form_componente_hojavida_detalle.php", { 
+            id_componente: id,
+            id_hv: $('#id_hv').val()
+        }, function(he) {
             $('#divTamModalReg').addClass('modal-lg');
             $('#divModalReg').modal('show');
             $("#divFormsReg").html(he);
@@ -62,20 +65,20 @@
     //Borrar DOCUMENTO HOJA VIDA
     $('#tb_componentes_activofijo').on('click', '.btn_eliminar', function() {
         let id = $(this).attr('value');
-        confirmar_del('documentos_del', id);
+        confirmar_del('componente_del', id);
     });
-    $('#divModalConfDel').on("click", "#documentos_del", function() {
+    $('#divModalConfDel').on("click", "#componente_del", function() {
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_documentos_hv.php',
+            url: 'editar_componente.php',
             dataType: 'json',
-            data: { id_hv_doc: id, oper: 'del' }
+            data: { id_componente: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_lista_documentos_acf').DataTable().page.info().page;
-                reloadtable('tb_lista_documentos_acf', pag);
+                let pag = $('#tb_componentes_activofijo').DataTable().page.info().page;
+                reloadtable('tb_componentes_activofijo', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
