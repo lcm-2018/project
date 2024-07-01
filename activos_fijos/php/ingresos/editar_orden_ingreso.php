@@ -137,9 +137,19 @@ try {
                 $sql = 'UPDATE tb_datos_ips SET num_ingresoactual=num_ingresoactual+1';
                 $rs2 = $cmd->query($sql);
 
-                //Crear la hojas de Mantenimiento de los activos fijos
-
-                if ($rs1 == false || $rs2 == false || error_get_last()) {
+                //Crear la hojas de vida de los activos fijos
+                $sql = "INSERT INTO acf_hojavida(id_act_fij,id_articulo,placa,serial,id_marca,valor,tipo_activo,id_proveedor,tipo_adquisicion,id_sede,id_area,id_usr_reg,fecha_reg,estado) 
+                        SELECT acf_orden_ingreso_acfs.id_act_fij,acf_orden_ingreso_acfs.id_articulo,
+                            acf_orden_ingreso_acfs.placa,acf_orden_ingreso_acfs.serial,acf_orden_ingreso_acfs.id_marca,
+                            acf_orden_ingreso_acfs.valor,acf_orden_ingreso_acfs.tipo_activo,acf_orden_ingreso.id_provedor,
+                            acf_orden_ingreso.id_tipo_ingreso,acf_orden_ingreso.id_sede,1,$id_usr_ope,'$fecha_ope',1
+                        FROM acf_orden_ingreso_acfs
+                        INNER JOIN acf_orden_ingreso_detalle ON (acf_orden_ingreso_detalle.id_ing_detalle=acf_orden_ingreso_acfs.id_ing_detalle)
+                        INNER JOIN acf_orden_ingreso ON (acf_orden_ingreso.id_ingreso=acf_orden_ingreso_detalle.id_ingreso)
+                        WHERE acf_orden_ingreso_detalle.id_ingreso=" . $id;
+                $rs3 = $cmd->query($sql);
+                
+                if ($rs1 == false || $rs2 == false || $rs3 == false || error_get_last()) {
                     $error = 1;
                 }                
                 if ($error == 0) {
@@ -155,7 +165,7 @@ try {
                 } else if ($num_detalles == 0) {
                     $res['mensaje'] = 'La Ordenes de Ingreso no tiene detalles';                
                 } else if ($articulos_pen) {
-                    $res['mensaje'] = 'Debe registar los datos básicos de Articulos: ' . $articulos_pen;                
+                    $res['mensaje'] = 'Debe registar los datos básicos de los Articulos: ' . $articulos_pen;                
                 }
             }
         }
