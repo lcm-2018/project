@@ -1,4 +1,7 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 session_start();
 if (!isset($_SESSION['user'])) {
     echo '<script>window.location.replace("../../../index.php");</script>';
@@ -46,9 +49,7 @@ try {
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
-    $sql = "SELECT COUNT(*) AS total, 
-                CASE HV.tipo_activo WHEN 1 THEN 'PROPIEDAD, PLANTA Y EQUIPO' WHEN 2 THEN 'PROPIDAD PARA LA VENTA' WHEN 3 THEN 'PROPIEDAD DE INVERSION' END AS tipo_activo 
-            FROM acf_hojavida HV
+    $sql = "SELECT COUNT(*) AS total FROM acf_hojavida HV
                 INNER JOIN far_medicamentos FM On FM.id_med = HV.id_articulo
                 INNER JOIN acf_marca M ON M.id = HV.id_marca  $where";
     $rs = $cmd->query($sql);
