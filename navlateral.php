@@ -260,7 +260,7 @@ $rol = $_SESSION['rol'];
                                             </div>
                                         </a>
                                     <?php } ?>
-                                    <?php if (PermisosUsuario($permisos, 5017, 1) || $id_rol == 1) { ?>
+                                    <?php if (PermisosUsuario($permisos, 5099, 1) || $id_rol == 1) { ?>
                                         <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/almacen/php/inf_personalizados/index.php">
                                             <div class="form-row">
                                                 <div class="div-icono">

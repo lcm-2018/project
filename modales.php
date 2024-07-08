@@ -84,12 +84,12 @@
             <div class="modal-header" id="divDone">
                 <h5 class="modal-title" id="exampleModalLongTitle">
                     <i class="fas fa-check-circle fa-lg" style="color:#2FDA49"></i>
-                    Liquidando...
+                    Procesando...
                 </h5>
             </div>
             <div class="modal-body text-center" id="divMsgExito">
                 <div class="spinner-grow text-warning" role="status">
-                    <span class="sr-only">Liquidando...</span>
+                    <span class="sr-only">Procesando...</span>
                 </div>
             </div>
         </div>
