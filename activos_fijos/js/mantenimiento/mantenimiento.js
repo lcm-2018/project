@@ -31,12 +31,11 @@
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_ing = $('#txt_iding_filtro').val();
-                    data.num_ing = $('#txt_numing_filtro').val();
+                    data.id_mantenimiento= $('#txt_idmantenimiento_filtro').val();
                     data.fec_ini = $('#txt_fecini_filtro').val();
                     data.fec_fin = $('#txt_fecfin_filtro').val();
                     data.id_tercero = $('#sl_tercero_filtro').val();
-                    data.id_tiping = $('#sl_tiping_filtro').val();
+                    data.id_tipo_mantenimiento = $('#sl_tipomantenimiento_filtro').val();
                     data.estado = $('#sl_estado_filtro').val();
                 }
             },
@@ -78,7 +77,7 @@
     //Buascar registros de Ingresos
     $('#btn_buscar_filtro').on("click", function() {
         $('.is-invalid').removeClass('is-invalid');
-        reloadtable('tb_ingresos');
+        reloadtable('tb_mantenimientos');
     });
 
     $('.filtro').keypress(function(e) {

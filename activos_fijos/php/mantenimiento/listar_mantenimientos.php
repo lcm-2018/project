@@ -19,23 +19,20 @@ $dir = $_POST['order'][0]['dir'];
 
 $where = " WHERE 1";
 
-if (isset($_POST['id_ing']) && $_POST['id_ing']) {
-    $where .= " AND acf_orden_ingreso.id_ingreso='" . $_POST['id_ing'] . "'";
-}
-if (isset($_POST['num_ing']) && $_POST['num_ing']) {
-    $where .= " AND acf_orden_ingreso.num_ingreso='" . $_POST['num_ing'] . "'";
+if (isset($_POST['id_mantenimiento']) && $_POST['id_mantenimiento']) {
+    $where .= " AND M.id_mantenimiento='" . $_POST['id_mantenimiento'] . "'";
 }
 if (isset($_POST['fec_ini']) && $_POST['fec_ini'] && isset($_POST['fec_fin']) && $_POST['fec_fin']) {
-    $where .= " AND acf_orden_ingreso.fec_ingreso BETWEEN '" . $_POST['fec_ini'] . "' AND '" . $_POST['fec_fin'] . "'";
+    $where .= " AND M.fecha_mantenimiento BETWEEN '" . $_POST['fec_ini'] . "' AND '" . $_POST['fec_fin'] . "'";
 }
 if (isset($_POST['id_tercero']) && $_POST['id_tercero']) {
-    $where .= " AND acf_orden_ingreso.id_provedor=" . $_POST['id_tercero'] . "";
+    $where .= " AND M.id_tercero=" . $_POST['id_tercero'] . "";
 }
-if (isset($_POST['id_tiping']) && $_POST['id_tiping']) {
-    $where .= " AND acf_orden_ingreso.id_tipo_ingreso=" . $_POST['id_tiping'] . "";
+if (isset($_POST['sl_tipomantenimiento_filtro']) && $_POST['sl_tipomantenimiento_filtro']) {
+    $where .= " AND M.tipo=" . $_POST['sl_tipomantenimiento_filtro'] . "";
 }
 if (isset($_POST['estado']) && strlen($_POST['estado'])) {
-    $where .= " AND acf_orden_ingreso.estado=" . $_POST['estado'];
+    $where .= " AND M.estado=" . $_POST['estado'];
 }
 
 try {
@@ -43,13 +40,13 @@ try {
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
     //Consulta el total de registros de la tabla
-    $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso";
+    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento M";
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
-    $sql = "SELECT COUNT(*) AS total FROM acf_orden_ingreso $where";
+    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento M $where";
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecordsFilter = $total['total'];

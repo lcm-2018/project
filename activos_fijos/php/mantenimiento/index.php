@@ -50,10 +50,7 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                             <!--Opciones de filtros -->
                             <div class="form-row">
                                 <div class="form-group col-md-1">
-                                    <input type="text" class="filtro form-control form-control-sm" id="txt_iding_filtro" placeholder="Id. Ingreso">
-                                </div>
-                                <div class="form-group col-md-1">
-                                    <input type="text" class="filtro form-control form-control-sm" id="txt_numing_filtro" placeholder="No. Ingreso">
+                                    <input type="text" class="filtro form-control form-control-sm" id="txt_idmantenimiento_filtro" placeholder="Id. Mantenimiento">
                                 </div>
                                 <div class="form-group col-md-3">
                                     <div class="form-row">
@@ -71,13 +68,13 @@ $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
                                     </select>
                                 </div>
                                 <div class="form-group col-md-2">
-                                    <select class="form-control form-control-sm" id="sl_tiping_filtro">
-                                        <?php tipo_ingreso($cmd,'--Tipo Ingreso--') ?>
+                                    <select class="form-control form-control-sm" id="sl_tipomantenimiento_filtro">
+                                        <?php tipos_mantenimiento('--Tipo Mantenimiento--') ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-1">
                                     <select class="form-control form-control-sm" id="sl_estado_filtro">
-                                        <?php estados_movimientos('--Estado--') ?>
+                                        <?php estados_mantenimiento('--Estado--') ?>
                                     </select>
                                 </div>
                                 <div class="form-group col-md-1">

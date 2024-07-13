@@ -139,6 +139,30 @@ function estados_movimientos($titulo = '', $estado = 3)
     echo '<option value="0"' . $selected . '>ANULADO</option>';
 }
 
+function estados_mantenimiento($titulo = '', $estado = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PENDIENTE</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>APROBADO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>EN EJECUCION</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
+    echo '<option value="4"' . $selected . '>FINALIZADO</option>';
+}
+
+function tipos_mantenimiento($titulo = '', $estado = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PREVENTIVO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>CORRECTIVO INTERNO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>CORRECTIVO EXTERNO</option>';
+}
+
 function estados_pedidos($titulo = '', $estado = -1)
 {
     echo '<option value="">' . $titulo . '</option>';
