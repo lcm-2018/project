@@ -27,7 +27,7 @@ if (empty($obj)) {
     endfor;
     //Inicializa variable por defecto
     $obj['valor'] = $_POST['val_unitario'];
-    $obj['tipo_activo'] = 1;
+    $obj['tipo_activo'] = 0;
 }
 ?>
 
@@ -63,7 +63,7 @@ if (empty($obj)) {
                     <div class="form-group col-md-6">
                         <label for="sl_tipoactivo" class="small">Tipo Activo</label>
                         <select class="form-control form-control-sm" id="sl_tipoactivo" name="sl_tipoactivo">
-                            <?php tipos_activo($cmd, '', $obj['tipo_activo']) ?>
+                            <?php tipos_activo('', $obj['tipo_activo']) ?>
                         </select>
                     </div>
                 </div>

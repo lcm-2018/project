@@ -108,66 +108,70 @@ try {
             $obj_ingreso = $rs->fetch();
             $num_detalles = $obj_ingreso['total'];
 
-            $sql = "SELECT GROUP_CONCAT(nom_medicamento) AS articulos 
-                    FROM (SELECT far_medicamentos.nom_medicamento,
-                                acf_orden_ingreso_detalle.cantidad,
-                                COUNT(acf_orden_ingreso_acfs.id_act_fij) AS registros
-                            FROM acf_orden_ingreso_detalle
-                            INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_articulo)
-                            LEFT JOIN acf_orden_ingreso_acfs ON (acf_orden_ingreso_acfs.id_ing_detalle=acf_orden_ingreso_detalle.id_ing_detalle)
-                            WHERE id_ingreso=24
-                            GROUP BY acf_orden_ingreso_detalle.id_ing_detalle) AS c
-                    WHERE cantidad>registros";
-            $rs = $cmd->query($sql);
-            $obj_ingreso = $rs->fetch();
-            $articulos_pen = $obj_ingreso['articulos'] ? $obj_ingreso['articulos'] : "";
+            if ($estado == 1 && $num_detalles > 0) {
 
-            if ($estado == 1 && $num_detalles > 0 && !$articulos_pen) {
-                $error = 0;
-                $cmd->beginTransaction();
-                
-                $sql = 'SELECT num_ingresoactual FROM tb_datos_ips LIMIT 1';
+                //Verificar si ya estan regisdtados los datos basicos de los activos fijos
+                $sql = "SELECT GROUP_CONCAT(nom_medicamento) AS articulos 
+                        FROM (SELECT far_medicamentos.nom_medicamento,
+                                    acf_orden_ingreso_detalle.cantidad,
+                                    COUNT(acf_orden_ingreso_acfs.id_act_fij) AS registros
+                                FROM acf_orden_ingreso_detalle
+                                INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_articulo)
+                                LEFT JOIN acf_orden_ingreso_acfs ON (acf_orden_ingreso_acfs.id_ing_detalle=acf_orden_ingreso_detalle.id_ing_detalle)
+                                WHERE id_ingreso=$id
+                                GROUP BY acf_orden_ingreso_detalle.id_ing_detalle) AS c
+                        WHERE cantidad>registros";
                 $rs = $cmd->query($sql);
-                $obj = $rs->fetch();
-                $num_ingreso = $obj['num_ingresoactual'];
-                $res['num_ingreso'] = $num_ingreso;
+                $obj_ingreso = $rs->fetch();
+                $articulos_pen = $obj_ingreso['articulos'] ? $obj_ingreso['articulos'] : "";
 
-                $sql = "UPDATE acf_orden_ingreso SET num_ingreso=$num_ingreso,estado=2,id_usr_cierre=$id_usr_ope,fec_cierre='$fecha_ope' WHERE id_ingreso=$id";
-                $rs1 = $cmd->query($sql);
-                $sql = 'UPDATE tb_datos_ips SET num_ingresoactual=num_ingresoactual+1';
-                $rs2 = $cmd->query($sql);
+                if (!$articulos_pen) {
+                    $error = 0;
+                    $cmd->beginTransaction();
+                    
+                    $sql = 'SELECT num_ingresoactual FROM tb_datos_ips LIMIT 1';
+                    $rs = $cmd->query($sql);
+                    $obj = $rs->fetch();
+                    $num_ingreso = $obj['num_ingresoactual'];
+                    $res['num_ingreso'] = $num_ingreso;
 
-                //Crear la hojas de vida de los activos fijos
-                $sql = "INSERT INTO acf_hojavida(id_act_fij,id_articulo,placa,serial,id_marca,valor,tipo_activo,id_proveedor,tipo_adquisicion,id_sede,id_area,id_usr_reg,fecha_reg,estado) 
-                        SELECT acf_orden_ingreso_acfs.id_act_fij,acf_orden_ingreso_acfs.id_articulo,
-                            acf_orden_ingreso_acfs.placa,acf_orden_ingreso_acfs.serial,acf_orden_ingreso_acfs.id_marca,
-                            acf_orden_ingreso_acfs.valor,acf_orden_ingreso_acfs.tipo_activo,acf_orden_ingreso.id_provedor,
-                            acf_orden_ingreso.id_tipo_ingreso,acf_orden_ingreso.id_sede,1,$id_usr_ope,'$fecha_ope',1
-                        FROM acf_orden_ingreso_acfs
-                        INNER JOIN acf_orden_ingreso_detalle ON (acf_orden_ingreso_detalle.id_ing_detalle=acf_orden_ingreso_acfs.id_ing_detalle)
-                        INNER JOIN acf_orden_ingreso ON (acf_orden_ingreso.id_ingreso=acf_orden_ingreso_detalle.id_ingreso)
-                        WHERE acf_orden_ingreso_detalle.id_ingreso=" . $id;
-                $rs3 = $cmd->query($sql);
-                
-                if ($rs1 == false || $rs2 == false || $rs3 == false || error_get_last()) {
-                    $error = 1;
-                }                
-                if ($error == 0) {
-                    $cmd->commit();
-                    $res['mensaje'] = 'ok';
+                    $sql = "UPDATE acf_orden_ingreso SET num_ingreso=$num_ingreso,estado=2,id_usr_cierre=$id_usr_ope,fec_cierre='$fecha_ope' WHERE id_ingreso=$id";
+                    $rs1 = $cmd->query($sql);
+                    $sql = 'UPDATE tb_datos_ips SET num_ingresoactual=num_ingresoactual+1';
+                    $rs2 = $cmd->query($sql);
+
+                    //Crear la hojas de vida de los activos fijos
+                    $sql = "INSERT INTO acf_hojavida(id_ingreso,id_articulo,placa,serial,id_marca,valor,tipo_activo,id_proveedor,id_tipo_ingreso,id_sede,id_area,id_usr_crea,fec_creacion,estado) 
+                            SELECT $id,acf_orden_ingreso_acfs.id_articulo,
+                                acf_orden_ingreso_acfs.placa,acf_orden_ingreso_acfs.serial,acf_orden_ingreso_acfs.id_marca,
+                                acf_orden_ingreso_acfs.valor,acf_orden_ingreso_acfs.tipo_activo,acf_orden_ingreso.id_provedor,
+                                acf_orden_ingreso.id_tipo_ingreso,acf_orden_ingreso.id_sede,1,$id_usr_ope,'$fecha_ope',1
+                            FROM acf_orden_ingreso_acfs
+                            INNER JOIN acf_orden_ingreso_detalle ON (acf_orden_ingreso_detalle.id_ing_detalle=acf_orden_ingreso_acfs.id_ing_detalle)
+                            INNER JOIN acf_orden_ingreso ON (acf_orden_ingreso.id_ingreso=acf_orden_ingreso_detalle.id_ingreso)
+                            WHERE acf_orden_ingreso_detalle.id_ingreso=" . $id;
+                    $rs3 = $cmd->query($sql);
+                    
+                    if ($rs1 == false || $rs2 == false || $rs3 == false || error_get_last()) {
+                        $error = 1;
+                    }                
+                    if ($error == 0) {
+                        $cmd->commit();
+                        $res['mensaje'] = 'ok';
+                    } else {
+                        $res['mensaje'] = 'Error de Ejecución de Proceso';
+                        $cmd->rollBack();
+                    }
                 } else {
-                    $res['mensaje'] = 'Error de Ejecución de Proceso';
-                    $cmd->rollBack();
+                    $res['mensaje'] = 'Debe registar los datos básicos de los Articulos: ' . $articulos_pen;                
                 }
-            } else {
+            } else {         
                 if ($estado != 1) {
                     $res['mensaje'] = 'Solo puede Cerrar Ordenes de Ingreso en estado Pendiente';
                 } else if ($num_detalles == 0) {
                     $res['mensaje'] = 'La Ordenes de Ingreso no tiene detalles';                
-                } else if ($articulos_pen) {
-                    $res['mensaje'] = 'Debe registar los datos básicos de los Articulos: ' . $articulos_pen;                
                 }
-            }
+            }    
         }
 
         if ($oper == 'annul') {
@@ -181,21 +185,37 @@ try {
             if ($estado == 2) {
 
                 //Verificar si se puede anular, siempre que los Activos no se hayan modificado
-
-                $sql = "UPDATE acf_orden_ingreso SET id_usr_anula=$id_usr_ope,fec_anulacion='$fecha_ope',estado=0 WHERE id_ingreso=$id";
+                $sql = "SELECT COUNT(*) AS total FROM acf_hojavida WHERE id_usr_actualiza IS NOT NULL AND id_ingreso=" . $id;
                 $rs = $cmd->query($sql);
+                $obj = $rs->fetch();
 
-                if ($rs) {
-                    $res['mensaje'] = 'ok';
-                    $accion = 'Anular';
-                    $opcion = 'Orden de Ingreso Activos Fijos';
-                    $detalle = 'Anulo Orden Ingreso Id: ' . $id;
-                    bitacora($accion, $opcion, $detalle, $id_usr_ope, $_SESSION['user']);
+                IF ($obj['total'] == 0){
+                    
+                    $error = 0;
+                    $cmd->beginTransaction();
+
+                    $sql = "UPDATE acf_orden_ingreso SET id_usr_anula=$id_usr_ope,fec_anulacion='$fecha_ope',estado=0 WHERE id_ingreso=$id";
+                    $rs1 = $cmd->query($sql);
+                    $sql = 'DELETE FROM acf_hojavida WHERE id_ingreso=' . $id;
+                    $rs2 = $cmd->query($sql);
+
+                    if ($rs1 == false || $rs2 == false || error_get_last()) {
+                        $error = 1;
+                    }                
+                    if ($error == 0) {
+                        $cmd->commit();
+                        $res['mensaje'] = 'ok';
+                        $accion = 'Anular';
+                        $opcion = 'Orden de Ingreso Activos Fijos';
+                        $detalle = 'Anulo Orden Ingreso Id: ' . $id;
+                        bitacora($accion, $opcion, $detalle, $id_usr_ope, $_SESSION['user']);
+                    } else {
+                        $res['mensaje'] = 'Error de Ejecución de Proceso';
+                        $cmd->rollBack();
+                    }
                 } else {
-                    $error = $cmd->errorInfo();
-                    $res['mensaje'] = 'Error en base de datos-far_alm_pedido:' . $error[2];
-                }
-               
+                    $res['mensaje'] = 'No puede Anular la Ordenes de Ingreso, los Activos Fijos ya fueron Actualizados';
+                }   
             } else {
                 $res['mensaje'] = 'Solo puede Anular Ordenes de Ingreso en estado Cerrado';
             }
