@@ -96,22 +96,16 @@
         });
     });
 
-    //Guardar registro Orden Ingreso
+    //Guardar registro Orden mantenimiento
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio_2($('#id_txt_sede'), $('#txt_nom_sede'));
-        error += verifica_vacio($('#txt_fec_ing'));
-        error += verifica_vacio($('#txt_hor_ing'));
-        error += verifica_vacio($('#txt_num_fac'));
-        error += verifica_vacio($('#txt_fec_fac'));
-        error += verifica_vacio($('#sl_tip_ing'));
-
-        if ($('#sl_tip_ing').find('option:selected').attr('data-intext') == 2) {
-            error += verifica_vacio($('#sl_tercero'));
-        }
-
-        error += verifica_vacio($('#txt_det_ing'));
+        var error = verifica_vacio($('#tipo_mantenimiento'));
+        error += verifica_vacio($('#id_responsable'));
+        error += verifica_vacio($('#id_tercero'));
+        error += verifica_vacio($('#fecha_inicio_mantenimiento'));
+        error += verifica_vacio($('#fecha_fin_mantenimiento'));
+        error += verifica_vacio($('#observaciones'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
@@ -120,15 +114,14 @@
             var data = $('#frm_reg_mantenimiento').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_orden_ingreso.php',
+                url: 'editar_mantenimiento.php',
                 dataType: 'json',
                 data: data + "&oper=add"
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_ingreso').val() == -1) ? 0 : $('#tb_ingresos').DataTable().page.info().page;
-                    reloadtable('tb_ingresos', pag);
-                    $('#id_ingreso').val(r.id);
-                    $('#txt_ide').val(r.id);
+                    let pag = ($('#id_mantenimiento').val() == -1) ? 0 : $('#tb_mantenimientos').DataTable().page.info().page;
+                    reloadtable('tb_mantenimientos', pag);
+                    $('#id_mantenimiento').val(r.id);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);

@@ -53,7 +53,7 @@ if (empty($obj)) {
     $obj['fecha_mantenimiento'] = $fecha['fecha'];
     $obj['hora_mantenimiento'] = $fecha['hora'];
 }
-$guardar = in_array($obj['estado'],[1]) ? '' : 'disabled="disabled"';
+$guardar = in_array($obj['estado'],['PENDIENTE']) ? '' : 'disabled="disabled"';
 $cerrar = in_array($obj['estado'],[1]) && $id != -1 ? '' : 'disabled="disabled"';
 $anular = in_array($obj['estado'],[2]) ? '' : 'disabled="disabled"';
 $imprimir = $id != -1 ? '' : 'disabled="disabled"';
@@ -63,7 +63,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
 <div class="px-0">
     <div class="shadow">
         <div class="card-header mb-3" style="background-color: #16a085 !important;">
-            <h5 style="color: white;">REGISRTAR ORDEN DE INGRESO DE ACTIVOS FIJOS</h5>
+            <h5 style="color: white;">REGISRTAR ORDEN DE MANTENIMIENTO</h5>
         </div>
         <div class="px-2">
             <form id="frm_reg_mantenimiento">
@@ -99,7 +99,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                     </div>
                     <div class="form-group col-md-4">
                         <label for="tercero" class="small">Tercero</label>
-                        <select class="form-control form-control-sm" id="tercero" name="tercero">
+                        <select class="form-control form-control-sm" id="id_tercero" name="id_tercero">
                             <?php terceros($cmd, '', $obj['id_tercero']) ?>
                         </select>
                     </div>

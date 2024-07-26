@@ -24,7 +24,7 @@ function usuarios($cmd, $titulo = '', $id = 0)
 {
     try {
         echo '<option value="">' . $titulo . '</option>';
-        $sql = "SELECT id_usuario, login FROM seg_usuarios_sistema";
+        $sql = "SELECT id_usuario, login FROM seg_usuarios_sistema  WHERE id_usuario<>0";
         $rs = $cmd->query($sql);
         $objs = $rs->fetchAll();
         foreach ($objs as $obj) {
