@@ -68,6 +68,7 @@ $sql = "SELECT
             HV.estado
         FROM acf_hojavida HV
         LEFT JOIN tb_sedes SD ON (SD.id_sede=HV.id_sede)
+        LEFT JOIN far_centrocosto_area AR ON (AR.id_area=HV.id_area)
         WHERE HV.id=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
