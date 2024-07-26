@@ -20,6 +20,26 @@ function sedes($cmd, $titulo = '', $id = 0)
     }
 }
 
+function usuarios($cmd, $titulo = '', $id = 0)
+{
+    try {
+        echo '<option value="">' . $titulo . '</option>';
+        $sql = "SELECT id_usuario, login FROM seg_usuarios_sistema";
+        $rs = $cmd->query($sql);
+        $objs = $rs->fetchAll();
+        foreach ($objs as $obj) {
+            if ($obj['id_usuario']  == $id) {
+                echo '<option value="' . $obj['id_usuario'] . '" selected="selected">' . $obj['login'] . '</option>';
+            } else {
+                echo '<option value="' . $obj['id_usuario'] . '">' . $obj['login'] . '</option>';
+            }
+        }
+        $cmd = null;
+    } catch (PDOException $e) {
+        echo $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
+    }
+}
+
 function sedes_usuario($cmd, $titulo = '', $id = 0)
 {
     try {

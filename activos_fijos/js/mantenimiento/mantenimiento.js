@@ -13,7 +13,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_ingresos.php", function(he) {
+                    $.post("frm_reg_mantenimiento.php", function(he) {
                         $('#divTamModalForms').removeClass('modal-sm');
                         $('#divTamModalForms').removeClass('modal-lg');
                         $('#divTamModalForms').addClass('modal-xl');
@@ -87,9 +87,9 @@
     });
 
     //Editar un registro Orden Ingreso
-    $('#tb_ingresos').on('click', '.btn_editar', function() {
+    $('#tb_mantenimientos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_ingresos.php", { id: id }, function(he) {
+        $.post("frm_reg_mantenimiento.php", { id_mantenimiento: id }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
@@ -117,7 +117,7 @@
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_ingresos').serialize();
+            var data = $('#frm_reg_mantenimiento').serialize();
             $.ajax({
                 type: 'POST',
                 url: 'editar_orden_ingreso.php',
