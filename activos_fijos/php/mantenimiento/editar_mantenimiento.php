@@ -18,9 +18,10 @@ try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    if ((PermisosUsuario($permisos, 5006, 2) && $oper == 'add' && $_POST['id_detalle'] == -1) ||
-        (PermisosUsuario($permisos, 5006, 3) && $oper == 'add' && $_POST['id_detalle'] != -1) ||
-        (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1
+    if ((PermisosUsuario($permisos, 5703, 2) && $oper == 'add' && $_POST['id_mantenimiento'] == -1) 
+        || (PermisosUsuario($permisos, 5703, 3) && $oper == 'add' && $_POST['id_mantenimiento'] != -1) 
+        || ($oper == 'del') 
+        || $id_rol == 1
     ) {
 
         $id = isset($_POST['id_mantenimiento']) ? $_POST['id_mantenimiento'] : -1;
@@ -56,7 +57,7 @@ try {
                 $sql->bindParam(':id_tercero', $_POST['id_tercero'], PDO::PARAM_INT);
                 $sql->bindParam(':fecha_inicio_mantenimiento', $_POST['fecha_inicio_mantenimiento']);
                 $sql->bindParam(':fecha_fin_mantenimiento', $_POST['fecha_fin_mantenimiento']);
-                $sql->bindParam(':estado', $_POST['estado'], PDO::PARAM_INT);
+                $sql->bindValue(':estado', 1, PDO::PARAM_INT);
                 $sql->bindParam(':fecha_creacion', $fecha_crea);
                 $sql->bindParam(':usuaro_creacion', $id_usr_crea, PDO::PARAM_INT);
                 $sql->bindValue(':fecha_aprobacion', null);
@@ -115,23 +116,32 @@ try {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }
             }
+        }
 
-            if ($oper == 'del') {
-                $id = $_POST['id_mantenimiento'];
-                $sql = "DELETE FROM acf_orden_ingrehso_detalle WHERE id_ing_detalle=" . $id;
+        if ($oper == 'del') {
+            $sql = "SELECT estado FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
+            $rs = $cmd->query($sql);
+            $obj = $rs->fetch();
+
+            if ($obj['estado'] == 1) {
+                $sql = "DELETE FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';
                 } else {
                     $res['mensaje'] = $cmd->errorInfo()[2];
                 }
-            }    
-
-        } else {
-            $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';
+            } else {
+                $res['mensaje'] = 'Solo puede Borrar Ordenes de Mantenimiento en estado Pendiente' ;
+            }
         }
+
+    } else {
+        $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';
     }
+    
     $cmd = null;
+
 } catch (PDOException $e) {
     $res['mensaje'] = $e->getCode() == 2002 ? 'Sin Conexión a Mysql (Error: 2002)' : 'Error: ' . $e->getMessage();
 }

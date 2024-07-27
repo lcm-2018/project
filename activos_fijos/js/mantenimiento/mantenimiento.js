@@ -141,23 +141,23 @@
         }
     });
 
-    //Borrar un registro Orden Ingreso
-    $('#tb_ingresos').on('click', '.btn_eliminar', function() {
+    //Borrar un registro Orden de mantenimiento
+    $('#tb_mantenimientos').on('click', '.btn_eliminar', function() {
         let id = $(this).attr('value');
-        confirmar_del('ingresos_del', id);
+        confirmar_del('mantenimientos_del', id);
     });
-    $('#divModalConfDel').on("click", "#ingresos_del", function() {
+    $('#divModalConfDel').on("click", "#mantenimientos_del", function() {
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_orden_ingreso.php',
+            url: 'editar_mantenimiento.php',
             dataType: 'json',
-            data: { id: id, oper: 'del' }
+            data: { id_mantenimiento: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_ingresos').DataTable().page.info().page;
-                reloadtable('tb_ingresos', pag);
+                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
+                reloadtable('tb_mantenimientos', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
