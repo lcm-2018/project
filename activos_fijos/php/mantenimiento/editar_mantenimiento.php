@@ -23,10 +23,7 @@ try {
         (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1
     ) {
 
-        $id = $_POST['id_mantenimiento'];
-
-        $rs = $cmd->query($sql);
-        $obj_ingreso = $rs->fetch();
+        $id = isset($_POST['id_mantenimiento']) ? $_POST['id_mantenimiento'] : -1;
 
         if ($oper == 'add') {
             if ($id == -1) {
@@ -62,6 +59,10 @@ try {
                 $sql->bindParam(':estado', $_POST['estado'], PDO::PARAM_INT);
                 $sql->bindParam(':fecha_creacion', $fecha_crea);
                 $sql->bindParam(':usuaro_creacion', $id_usr_crea, PDO::PARAM_INT);
+                $sql->bindValue(':fecha_aprobacion', null);
+                $sql->bindValue(':usuario_aprobacion', null, PDO::PARAM_INT);
+                $sql->bindValue(':fecha_ejecucion', null);
+                $sql->bindValue(':usuario_ejecucion', null, PDO::PARAM_NULL);
 
                 $inserted = $sql->execute();
 

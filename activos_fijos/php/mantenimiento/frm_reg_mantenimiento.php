@@ -71,7 +71,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
                 <div class="form-row">
                     <div class="form-group col-md-2">
                         <label for="id_mantenimiento" class="small">Id.</label>
-                        <input type="text" class="form-control form-control-sm" id="id_mantenimiento" name="id_mantenimiento" class="small" value="<?php echo ($id==-1?'':$id) ?>" readonly="readonly">
+                        <input type="text" class="form-control form-control-sm" id="txt_id_mantenimiento" name="txt_id_mantenimiento" class="small" value="<?php echo ($id==-1?'':$id) ?>" readonly="readonly">
                     </div>
                     <div class="form-group col-md-3">
                         <label for="txt_fec_ing" class="small">Fecha</label>
