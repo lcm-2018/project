@@ -68,20 +68,20 @@
     //Borrar
     $('#tb_mantenimientos_detalles').on('click', '.btn_eliminar', function() {
         let id = $(this).attr('value');
-        confirmar_del('componente_del', id);
+        confirmar_del('mantenimiento_detalle_del', id);
     });
-    $('#divModalConfDel').on("click", "#componente_del", function() {
-        var id = $(this).attr('value');
+    $('#divModalConfDel').on("click", "#mantenimiento_detalle_del", function() {
+        let id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_componente.php',
+            url: 'editar_mantenimiento_detalle.php',
             dataType: 'json',
-            data: { id_componente: id, oper: 'del' }
+            data: { id_detalle_mantenimiento: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_componentes_activofijo').DataTable().page.info().page;
-                reloadtable('tb_componentes_activofijo', pag);
+                let pag = $('#tb_mantenimientos_detalles').DataTable().page.info().page;
+                reloadtable('tb_mantenimientos_detalles', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {

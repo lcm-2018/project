@@ -292,40 +292,6 @@
         }
     });
 
-    //Borrarr un registro Detalle
-    $('#divForms').on('click', '#tb_ingresos_detalles .btn_eliminar', function() {
-        let id = $(this).attr('value');
-        confirmar_del('detalle_del', id);
-    });
-    $('#divModalConfDel').on("click", "#detalle_del", function() {
-        var id = $(this).attr('value');
-        $.ajax({
-            type: 'POST',
-            url: 'editar_orden_ingreso_detalle.php',
-            dataType: 'json',
-            data: { id: id, id_ingreso: $('#id_ingreso').val(), oper: 'del' }
-        }).done(function(r) {
-            $('#divModalConfDel').modal('hide');
-            if (r.mensaje == 'ok') {
-                let pag = $('#tb_ingresos_detalles').DataTable().page.info().page;
-                reloadtable('tb_ingresos_detalles', pag);
-                pag = $('#tb_ingresos').DataTable().page.info().page;
-                reloadtable('tb_ingresos', pag);
-
-                $('#txt_val_tot').val(r.val_total);
-
-                $('#divModalDone').modal('show');
-                $('#divMsgDone').html("Proceso realizado con éxito");
-            } else {
-                $('#divModalError').modal('show');
-                $('#divMsgError').html(r.mensaje);
-            }
-        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
-            console.error(xhr.responseText)
-            alert('Ocurrió un error');
-        });
-    });
-
     // Autocompletar Activo fijo
     $('#divTamModalBus').on("input", "#txt_activo_fijo", function() {
         $(this).autocomplete({

@@ -95,12 +95,12 @@ try {
         }
 
         if ($oper == 'del') {
-            $sql = "SELECT estado FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
+            $sql = "SELECT estado FROM acf_mantenimiento_detalle WHERE id_detalle_mantenimiento=" . $id;
             $rs = $cmd->query($sql);
             $obj = $rs->fetch();
 
             if ($obj['estado'] == 1) {
-                $sql = "DELETE FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
+                $sql = "DELETE FROM acf_mantenimiento_detalle WHERE id_detalle_mantenimiento=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';

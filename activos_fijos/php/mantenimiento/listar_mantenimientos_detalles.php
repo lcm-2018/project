@@ -75,9 +75,6 @@ if (!empty($objs)) {
         if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
             $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
-        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
-            $editaractivofijo = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_activofijo" title="Activo Fijo"><span class="fas fa-laptop fa-lg"></span></a>';
-        }
         if (PermisosUsuario($permisos, 5703, 4) || $id_rol == 1) {
             $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
@@ -89,7 +86,7 @@ if (!empty($objs)) {
             "estado" => $obj['estado'],
             "estado_fin" => $obj['estado_fin'],
             "observacio_fin_mantenimiento" => $obj['observacio_fin_mantenimiento'],
-            "botones" => '<div class="text-center centro-vertical">' . $editar . $editaractivofijo . $eliminar . '</div>',
+            "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
         ];
     }    
 }
