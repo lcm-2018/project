@@ -12,14 +12,29 @@ $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usua
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id_art = isset($_POST['idart']) ? $_POST['idart'] : -1;
-$id = isset($_POST['id']) ? $_POST['id'] : -1;
-$sql = "SELECT acf_orden_ingreso_detalle.*, 
-            far_medicamentos.nom_medicamento AS nom_articulo
-        FROM acf_orden_ingreso_detalle
-        INNER JOIN far_medicamentos ON (far_medicamentos.id_med=acf_orden_ingreso_detalle.id_articulo)
-        WHERE id_ing_detalle=" . $id . " LIMIT 1";
+$id = isset($_POST['id_detalle_mantenimiento']) ? $_POST['id_detalle_mantenimiento'] : -1;
+$id_mantenimiento = isset($_POST['id_mantenimiento']) ? $_POST['id_mantenimiento'] : -1;
+$sql = "SELECT 
+            MD.id_detalle_mantenimiento,
+            MD.id_mantenimiento,
+            m.nom_medicamento articulo,
+            HV.placa,
+            HV.id id_activofijo,
+            CONCAT(HV.placa,' (',M.nom_medicamento,')') as nombre_activofijo,
+            MD.observacion_mantenimiento,
+            MD.estado estado,
+            MD.estado_fin_mantenimiento estado_fin,
+            MD.observacio_fin_mantenimiento
+        FROM acf_mantenimiento_detalle MD
+            INNER JOIN acf_hojavida HV ON HV.id = MD.id_activo_fijo
+            INNER JOIN far_medicamentos M ON M.id_med = HV.id_articulo
+        WHERE MD.id_detalle_mantenimiento=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
 $obj = $rs->fetch();
+
+if ($obj === false) {
+    $obj = array(); 
+}
 
 if (empty($obj)) {
     $n = $rs->columnCount();
@@ -28,50 +43,45 @@ if (empty($obj)) {
         $name = $col['name'];
         $obj[$name] = NULL;
     endfor;
-    $articulo = datos_articulo($cmd, $id_art);
-    $obj['iva'] = 0;
-    $obj['id_articulo'] = $articulo['id_med'];
-    $obj['nom_articulo'] = $articulo['nom_articulo'];
 }
 ?>
 
 <div class="px-0">
     <div class="shadow">
         <div class="card-header mb-3" style="background-color: #16a085 !important;">
-            <h7 style="color: white;">REGISRTAR DETALLE EN ORDEN DE INGRESO</h7>
+            <h7 style="color: white;">REGISRTAR DETALLE EN ORDEN DE MANTENIMIENTO</h7>
         </div>
         <div class="px-2">
 
             <!--Formulario de registro de Detalle-->
-            <form id="frm_reg_ingresos_detalle">
-                <input type="hidden" id="id_detalle" name="id_detalle" value="<?php echo $id ?>">
+            <form id="frm_reg_mantenimiento_detalle">
+                <input type="hidden" id="id_detalle_mantenimiento" name="id_detalle_mantenimiento" value="<?php echo $id ?>">
+                <input type="hidden" id="id_mantenimiento" name="id_mantenimiento" value="<?php echo $id_mantenimiento ?>">
                 <div class=" form-row">
-                    <div class="form-group col-md-12">
-                        <label for="txt_nom_art" class="small">Articulo</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_nom_art" class="small" value="<?php echo $obj['nom_articulo'] ?>" readonly="readonly">
-                        <input type="hidden" id="id_txt_nom_art" name="id_txt_nom_art" value="<?php echo $obj['id_articulo'] ?>">
+                    <div class="form-group col-md-7">
+                    <label for="txt_activo_fijo" class="small">Activo Fijo</label>
+                        <input type="text" class="form-control form-control-sm" id="txt_activo_fijo" required value="<?php echo $obj['nombre_activofijo'] ?>">
+                        <input type="hidden" id="id_txt_activo_fijo" name="id_txt_activo_fijo" value="<?php echo $obj['id_activofijo'] ?>">
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="txt_can_ing" class="small">Cantidad</label>
-                        <input type="number" class="form-control form-control-sm numberint" id="txt_can_ing" name="txt_can_ing" required value="<?php echo $obj['cantidad'] ?>">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="txt_val_uni" class="small">Vr. Unitario</label>
-                        <input type="text" class="form-control form-control-sm numberfloat" id="txt_val_uni" name="txt_val_uni" required value="<?php echo $obj['valor_sin_iva'] ?>">
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="sl_por_iva" class="small">% IVA</label>
-                        <select class="form-control form-control-sm" id="sl_por_iva" name="sl_por_iva">
-                            <?php iva($obj['iva']) ?>
+                    <div class="form-group col-md-2">
+                        <label for="estado_detalle" class="small" required>Estado</label>
+                        <select class="form-control form-control-sm" id="estado_detalle" name="estado_detalle">
+                            <?php estados_detalle_mantenimiento('', $obj['estado']) ?>
                         </select>
                     </div>
                     <div class="form-group col-md-3">
-                        <label for="txt_val_cos" class="small">Vr. Costo</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_val_cos" name="txt_val_cos" value="<?php echo $obj['valor'] ?>" readonly="readonly">
+                        <label for="estado_fin" class="small" required>Estado Fin Mantenimiento</label>
+                        <select class="form-control form-control-sm" id="estado_fin" name="estado_fin">
+                            <?php estados_fin_mantenimiento('', $obj['estado_fin']) ?>
+                        </select>
                     </div>
                     <div class="form-group col-md-12">
-                        <label for="txt_observacion" class="small">Observación</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_observacion" name="txt_observacion" value="<?php echo $obj['observacion'] ?>">
+                        <label for="observacion_mantenimiento" class="small">Observación Mantenimiento</label>
+                        <input type="text" class="form-control form-control-sm" id="observacion_mantenimiento" name="observacion_mantenimiento" value="<?php echo $obj['observacio_fin_mantenimiento'] ?>">
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="observacio_fin_mantenimiento" class="small">Observación Fin Mantenimiento</label>
+                        <input type="text" class="form-control form-control-sm" id="observacio_fin_mantenimiento" name="observacio_fin_mantenimiento" value="<?php echo $obj['observacio_fin_mantenimiento'] ?>">
                     </div>
                 </div>
             </form>

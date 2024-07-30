@@ -243,15 +243,6 @@
     /* ---------------------------------------------------
     DETALLES
     -----------------------------------------------------*/
-    $('#divModalBus').on('dblclick', '#tb_articulos_activos tr', function() {
-        let idart = $(this).find('td:eq(0)').text();
-        $.post("frm_reg_ingresos_detalle.php", { idart: idart }, function(he) {
-            $('#divTamModalReg').addClass('modal-lg');
-            $('#divModalReg').modal('show');
-            $("#divFormsReg").html(he);
-        });
-    });
-
     $('#divForms').on('click', '#tb_ingresos_detalles .btn_editar', function() {
         let id = $(this).attr('value');
         $.post("frm_reg_ingresos_detalle.php", { id: id }, function(he) {
@@ -262,33 +253,32 @@
     });
 
     //Guardar registro Detalle
-    $('#divFormsReg').on("click", "#btn_guardar_detalle", function() {
+    $('#divModalBus').on("click", "#btn_guardar_detalle", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#txt_can_ing'));
-        error += verifica_vacio($('#txt_val_uni'));
-        error += verifica_vacio($('#txt_val_cos'));
+        var error = verifica_vacio($('#txt_activo_fijo'));
+        error += verifica_vacio($('#estado_detalle'));
+        error += verifica_vacio($('#estado_fin'));
+        error += verifica_vacio($('#observacio_fin_mantenimiento'));
+        error += verifica_vacio($('#observacion_mantenimiento'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
-        } else if (!verifica_valmin($('#txt_can_ing'), 1, "La cantidad debe ser mayor igual a 1")) {
-            var data = $('#frm_reg_ingresos_detalle').serialize();
+        } else {
+            var data = $('#frm_reg_mantenimiento_detalle').serialize();
+            alert(data);
             $.ajax({
                 type: 'POST',
-                url: 'editar_orden_ingreso_detalle.php',
+                url: 'editar_mantenimiento_detalle.php',
                 dataType: 'json',
-                data: data + "&id_ingreso=" + $('#id_ingreso').val() + '&oper=add'
+                data: data + "&id_detalle_mantenimiento=" + $('#id_detalle_mantenimiento').val() + "&id_mantenimiento=" + $('#id_mantenimiento').val() + '&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_detalle').val() == -1) ? 0 : $('#tb_ingresos_detalles').DataTable().page.info().page;
-                    reloadtable('tb_ingresos_detalles', pag);
-                    pag = $('#tb_ingresos').DataTable().page.info().page;
-                    reloadtable('tb_ingresos', pag);
+                    let pag = ($('#id_detalle_mantenimiento').val() == -1) ? 0 : $('#id_detalle_mantenimiento').DataTable().page.info().page;
+                    reloadtable('tb_mantenimientos_detalles', pag);
 
-                    $('#id_detalle').val(r.id);
-                    $('#txt_val_tot').val(r.val_total);
-
+                    $('#id_detalle_mantenimiento').val(r.id);
                     $('#divModalReg').modal('hide');
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");
@@ -337,11 +327,26 @@
         });
     });
 
-    $('#divModalReg').on('input', '#txt_val_uni, #sl_por_iva', function() {
-        var valor = $('#txt_val_uni').val() ? $('#txt_val_uni').val() : 0,
-            iva = $('#sl_por_iva').val() ? $('#sl_por_iva').val() : 0;
-        $('#txt_val_cos').val(parseFloat(valor) + parseFloat(valor) * parseFloat(iva) / 100);
+    // Autocompletar Activo fijo
+    $('#divTamModalBus').on("input", "#txt_activo_fijo", function() {
+        $(this).autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: "../common/cargar_activos_fijos.php",
+                    dataType: "json",
+                    type: 'POST',
+                    data: { term: request.term }
+                }).done(function(data) {
+                    response(data);
+                });
+            },
+            minLength: 2,
+            select: function(event, ui) {
+                $('#id_txt_activo_fijo').val(ui.item.id);
+            }
+        });
     });
+
 
     /* ---------------------------------------------------
     DETALLES - ACTIVOS FIJOS

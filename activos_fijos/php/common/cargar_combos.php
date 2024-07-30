@@ -172,6 +172,27 @@ function estados_mantenimiento($titulo = '', $estado = 0)
     echo '<option value="4"' . $selected . '>FINALIZADO</option>';
 }
 
+function estados_fin_mantenimiento($titulo = '', $estado = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>BUENO</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>REGULAR</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>MALO</option>';
+}
+function estados_detalle_mantenimiento($titulo = '', $estado = 0)
+{
+    echo '<option value="">' . $titulo . '</option>';
+    $selected = ($estado == 1) ? 'selected="selected"' : '';
+    echo '<option value="1"' . $selected . '>PENDIENTE</option>';
+    $selected = ($estado == 2) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
+    $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="3"' . $selected . '>FINALIZADO</option>';
+}
+
 function tipos_mantenimiento($titulo = '', $estado = 0)
 {
     echo '<option value="">' . $titulo . '</option>';

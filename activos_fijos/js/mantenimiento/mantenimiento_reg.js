@@ -4,7 +4,7 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("../common/buscar_articulos_act_frm.php", function(he) {
+                    $.post("frm_reg_mantenimiento_detalle.php", function(he) {
                         $('#divTamModalBus').removeClass('modal-lg');
                         $('#divTamModalBus').removeClass('modal-sm');
                         $('#divTamModalBus').addClass('modal-xl');
@@ -48,5 +48,49 @@
         });
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
         $('#tb_mantenimientos_detalles').wrap('<div class="overflow"/>');
+    });
+
+    //Editar 
+    $('#tb_mantenimientos_detalles').on('click', '.btn_editar', function() {
+        let id = $(this).attr('value');
+        $.post("frm_reg_mantenimiento_detalle.php", { 
+            id_componente: id,
+            id_hv: $('#id_hv').val()
+        }, function(he) {
+            $('#divTamModalReg').addClass('modal-lg');
+            $('#divModalReg').modal('show');
+            $("#divFormsReg").html(he);
+        });
+    }); 
+
+    //Borrar
+    $('#tb_mantenimientos_detalles').on('click', '.btn_eliminar', function() {
+        let id = $(this).attr('value');
+        confirmar_del('componente_del', id);
+    });
+    $('#divModalConfDel').on("click", "#componente_del", function() {
+        var id = $(this).attr('value');
+        $.ajax({
+            type: 'POST',
+            url: 'editar_componente.php',
+            dataType: 'json',
+            data: { id_componente: id, oper: 'del' }
+        }).done(function(r) {
+            $('#divModalConfDel').modal('hide');
+            if (r.mensaje == 'ok') {
+                let pag = $('#tb_componentes_activofijo').DataTable().page.info().page;
+                reloadtable('tb_componentes_activofijo', pag);
+                $('#divModalDone').modal('show');
+                $('#divMsgDone').html("Proceso realizado con éxito");
+            } else {
+                $('#divModalError').modal('show');
+                $('#divMsgError').html(r.mensaje);
+            }
+        }).always(function() {
+
+        }).fail(function(xhr, textStatus, errorThrown) {
+            console.error(xhr.responseText)
+            alert('Ocurrió un error');
+        });
     });
 })(jQuery);
