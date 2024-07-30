@@ -267,7 +267,6 @@
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
             var data = $('#frm_reg_mantenimiento_detalle').serialize();
-            alert(data);
             $.ajax({
                 type: 'POST',
                 url: 'editar_mantenimiento_detalle.php',
@@ -275,7 +274,7 @@
                 data: data + "&id_detalle_mantenimiento=" + $('#id_detalle_mantenimiento').val() + "&id_mantenimiento=" + $('#id_mantenimiento').val() + '&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_detalle_mantenimiento').val() == -1) ? 0 : $('#id_detalle_mantenimiento').DataTable().page.info().page;
+                    let pag = ($('#id_detalle_mantenimiento').val() == -1) ? 0 : $('#tb_mantenimientos_detalles').DataTable().page.info().page;
                     reloadtable('tb_mantenimientos_detalles', pag);
 
                     $('#id_detalle_mantenimiento').val(r.id);

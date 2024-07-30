@@ -54,12 +54,14 @@
     $('#tb_mantenimientos_detalles').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
         $.post("frm_reg_mantenimiento_detalle.php", { 
-            id_componente: id,
-            id_hv: $('#id_hv').val()
+            id_detalle_mantenimiento: id,
+            id_mantenimiento: $('#id_mantenimiento').val()
         }, function(he) {
-            $('#divTamModalReg').addClass('modal-lg');
-            $('#divModalReg').modal('show');
-            $("#divFormsReg").html(he);
+            $('#divTamModalBus').removeClass('modal-lg');
+            $('#divTamModalBus').removeClass('modal-sm');
+            $('#divTamModalBus').addClass('modal-xl');
+            $('#divModalBus').modal('show');
+            $("#divFormsBus").html(he);
         });
     }); 
 

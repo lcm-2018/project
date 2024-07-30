@@ -77,7 +77,7 @@ if (empty($obj)) {
                     </div>
                     <div class="form-group col-md-12">
                         <label for="observacion_mantenimiento" class="small">Observación Mantenimiento</label>
-                        <input type="text" class="form-control form-control-sm" id="observacion_mantenimiento" name="observacion_mantenimiento" value="<?php echo $obj['observacio_fin_mantenimiento'] ?>">
+                        <input type="text" class="form-control form-control-sm" id="observacion_mantenimiento" name="observacion_mantenimiento" value="<?php echo $obj['observacion_mantenimiento'] ?>">
                     </div>
                     <div class="form-group col-md-12">
                         <label for="observacio_fin_mantenimiento" class="small">Observación Fin Mantenimiento</label>

@@ -67,6 +67,7 @@ try {
             
                 $sql = "UPDATE `acf_mantenimiento_detalle` 
                         SET 
+                            `id_activo_fijo` = :id_activo_fijo, 
                             `observacion_mantenimiento` = :observacion_mantenimiento, 
                             `estado_fin_mantenimiento` = :estado_fin_mantenimiento, 
                             `observacio_fin_mantenimiento` = :observacio_fin_mantenimiento, 
@@ -77,7 +78,7 @@ try {
 
                 $sql->bindParam(':id_activo_fijo', $_POST['id_txt_activo_fijo'], PDO::PARAM_INT);
                 $sql->bindParam(':observacion_mantenimiento', $_POST['observacion_mantenimiento']);
-                $sql->bindParam(':estado_fin_mantenimiento', $_POST['estado_fin_mantenimiento']);
+                $sql->bindParam(':estado_fin_mantenimiento', $_POST['estado_fin']);
                 $sql->bindParam(':observacio_fin_mantenimiento', $_POST['observacio_fin_mantenimiento']);
                 $sql->bindParam(':estado', $_POST['estado_detalle']);
                 $sql->bindParam(':id_detalle_mantenimiento', $_POST['id_detalle_mantenimiento'], PDO::PARAM_INT);
