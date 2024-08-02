@@ -53,7 +53,6 @@ try {
 }
 
 $editar = NULL;
-$notas = NULL;
 $eliminar = NULL;
 $editaractivofijo = NULL;
 $data = [];
@@ -62,13 +61,10 @@ if (!empty($objs)) {
         $id = $obj['id'];
         //Permite crear botones en la cuadricula si tiene permisos de 1-Consultar,2-Crear,3-Editar,4-Eliminar,5-Anular,6-Imprimir
         if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
-            $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
-        }
-        if (PermisosUsuario($permisos, 5703, 3) || $id_rol == 1) {
-            $notas = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_notas" title="Notas"><span class="fas fa-clipboard-list fa-lg"></span></a>';
+            $editar = '<a value="' . $id . '" class="btn btn-outline-primary btn-sm btn-circle shadow-gb btn_editar_nota" title="Editar"><span class="fas fa-pencil-alt fa-lg"></span></a>';
         }
         if (PermisosUsuario($permisos, 5703, 4) || $id_rol == 1) {
-            $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
+            $eliminar =  '<a value="' . $id . '" class="btn btn-outline-danger btn-sm btn-circle shadow-gb btn_eliminar_nota" title="Eliminar"><span class="fas fa-trash-alt fa-lg"></span></a>';
         }
         $data[] = [
             "id" => $id,
@@ -76,7 +72,7 @@ if (!empty($objs)) {
             "hora" => $obj['hora'],
             "observaciones" => $obj['observaciones'],
             "archivo" => $obj['archivo'],
-            "botones" => '<div class="text-center centro-vertical">' . $editar . $notas . $eliminar . '</div>',
+            "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
         ];
     }    
 }

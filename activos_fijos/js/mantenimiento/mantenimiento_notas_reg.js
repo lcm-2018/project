@@ -65,22 +65,22 @@
     }); 
 
     //Editar 
-    $('#tb_mantenimientos_notas').on('click', '.btn_notas', function() {
+    $('#tb_mantenimientos_notas').on('click', '.btn_editar_nota', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_mantenimiento_nota.php", { 
-            id_detalle_mantenimiento: id,
+        $.post("frm_reg_notas_detalle.php", { 
+            id_nota_mantenimiento: id,
             id_mantenimiento: $('#id_mantenimiento').val()
         }, function(he) {
-            $('#divTamModalBus').removeClass('modal-lg');
-            $('#divTamModalBus').removeClass('modal-sm');
-            $('#divTamModalBus').addClass('modal-xl');
-            $('#divModalBus').modal('show');
-            $("#divFormsBus").html(he);
+            $('#divTamModalReg').removeClass('modal-lg');
+            $('#divTamModalReg').removeClass('modal-sm');
+            $('#divTamModalReg').addClass('modal-xl');
+            $('#divModalReg').modal('show');
+            $("#divFormsReg").html(he);
         });
     }); 
 
     //Borrar
-    $('#tb_mantenimientos_notas').on('click', '.btn_eliminar', function() {
+    $('#tb_mantenimientos_notas').on('click', '.btn_eliminar_nota', function() {
         let id = $(this).attr('value');
         confirmar_del('mantenimiento_detalle_del', id);
     });
