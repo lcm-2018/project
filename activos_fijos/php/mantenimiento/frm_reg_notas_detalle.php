@@ -57,8 +57,8 @@ if (empty($obj)) {
                         <input type="text" class="form-control form-control-sm" id="txt_id_nota" name="txt_id_nota" class="small" value="<?php echo ($id_nota==-1?'':$id_nota) ?>" readonly="readonly">
                 </div>
                 <div class="form-group col-md-10">
-                    <label for="observaciones" class="small">Observacion</label>
-                    <input type="text" class="form-control form-control-sm" id="observaciones" name="observaciones" value="<?php echo $obj['observaciones'] ?>">
+                    <label for="observaciones_nota" class="small">Observacion</label>
+                    <input type="text" class="form-control form-control-sm" id="observaciones_nota" name="observaciones_nota" value="<?php echo $obj['observaciones'] ?>">
                 </div>
 
                 <div class="form-group col-md-12">
@@ -69,7 +69,7 @@ if (empty($obj)) {
                     </div> 
                     <div class="input-group mb-3"> 
                         <div class="custom-file">
-                            <input type="file" class="custom-file-input form-control-sm" id="uploadDocAcf" accept=".pdf">
+                            <input type="file" class="custom-file-input form-control-sm" id="uploadDocNota" accept=".pdf">
                             <label class="custom-file-label" for="customFile">Seleccionar documento</label>
                         </div>
                     </div>
@@ -78,7 +78,7 @@ if (empty($obj)) {
                 </div>
 
                 <div class="form-group mt-3">
-                    <button type="button" class="btn btn-primary btn-sm" id="btn_guardar_documentos">Guardar</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="btn_guardar_notas">Guardar</button>
                     <a type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Salir</a>
                 </div>
             </form>

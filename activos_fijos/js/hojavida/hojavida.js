@@ -292,9 +292,6 @@
         datos.append('oper','add');
         datos.append('uploadDocAcf', file);
 
-        var error = 0
-
-
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');

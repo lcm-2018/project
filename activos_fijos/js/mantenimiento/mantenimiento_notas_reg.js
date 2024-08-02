@@ -4,12 +4,12 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_mantenimiento_detalle.php", function(he) {
-                        $('#divTamModalBus').removeClass('modal-lg');
-                        $('#divTamModalBus').removeClass('modal-sm');
-                        $('#divTamModalBus').addClass('modal-xl');
-                        $('#divModalBus').modal('show');
-                        $("#divFormsBus").html(he);
+                    $.post("frm_reg_notas_detalle.php", function(he) {
+                        $('#divTamModalReg').removeClass('modal-lg');
+                        $('#divTamModalReg').removeClass('modal-sm');
+                        $('#divTamModalReg').addClass('modal-xl');
+                        $('#divModalReg').modal('show');
+                        $("#divFormsReg").html(he);
                     });
                 }
             }],
@@ -48,21 +48,6 @@
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
         $('#tb_mantenimientos_notas').wrap('<div class="overflow"/>');
     });
-
-    //Editar 
-    $('#tb_mantenimientos_notas').on('click', '.btn_editar', function() {
-        let id = $(this).attr('value');
-        $.post("frm_reg_mantenimiento_detalle.php", { 
-            id_detalle_mantenimiento: id,
-            id_mantenimiento: $('#id_mantenimiento').val()
-        }, function(he) {
-            $('#divTamModalBus').removeClass('modal-lg');
-            $('#divTamModalBus').removeClass('modal-sm');
-            $('#divTamModalBus').addClass('modal-xl');
-            $('#divModalBus').modal('show');
-            $("#divFormsBus").html(he);
-        });
-    }); 
 
     //Editar 
     $('#tb_mantenimientos_notas').on('click', '.btn_editar_nota', function() {

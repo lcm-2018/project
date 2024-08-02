@@ -312,140 +312,70 @@
         });
     });
 
-
     /* ---------------------------------------------------
-    DETALLES - ACTIVOS FIJOS
+    NOTAS
     -----------------------------------------------------*/
-
-    //Editar la lista de activos fijos
-    $('#divForms').on('click', '#tb_ingresos_detalles .btn_activofijo', function() {
-        let id = $(this).attr('value');
-        $.post("frm_reg_activofijo.php", { id: id }, function(he) {
-            $('#divTamModalBus').addClass('modal-xl');
-            $('#divModalBus').modal('show');
-            $("#divFormsBus").html(he);
-        });
-    });
-
-    //Editar datos basicos de un activo fijo
-    $('#divFormsBus').on('click', '#tb_lista_activos_fijos .btn_editar', function() {
-        let id = $(this).attr('value');
-        $.post("frm_reg_activofijo_detalle.php", { id: id }, function(he) {
-            $('#divTamModalReg').addClass('modal-lg');
-            $('#divModalReg').modal('show');
-            $("#divFormsReg").html(he);
-        });
-    });
-
-    //Guardar activo fijo
-    $('#divFormsReg').on("click", "#btn_guardar_actfij", function() {
+    //Guardar documentos hoja de vida
+    $('#divTamModalReg').on("click", "#btn_guardar_notas", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#txt_placa'));
-        error += verifica_vacio($('#txt_serial'));
-        error += verifica_vacio($('#sl_marca'));
-        error += verifica_vacio($('#txt_val_uni'));
-        error += verifica_vacio($('#sl_tipoactivo'));
+        var error = verifica_vacio($('#observaciones_nota'));
+ 
+        var file =  $('#uploadDocNota')[0].files[0];
+        if(!$('#archivo').val()) {
+            if(!file) {
+                showError('Por favor, selecciona un archivo')
+                return;
+            }
+            
+            var validImageTypes = ["application/pdf", "application/pdf"];
+            
+            if (!validImageTypes.includes(file.type)) {
+                showError('Por favor, selecciona un documento válido')
+                return;
+            }
+        }
+
+        let datos = new FormData();
+        datos.append('id_nota', $('#id_nota').val());
+        datos.append('observaciones', $('#observaciones_nota').val());
+        datos.append('archivo', $('#archivo').val());
+
+        datos.append('oper','add');
+        datos.append('uploadDocNota', file);
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_activofijo_detalle').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_activofijo_detalle.php',
-                dataType: 'json',
-                data: data + "&id_ingreso=" + $('#id_ingreso').val() + "&id_articulo=" + $('#id_articulo').val() + "&id_ing_detalle=" + $('#id_ing_detalle').val() + "&oper=add"
-            }).done(function(r) {
-                if (r.mensaje == 'ok') {
-                    pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
-                    reloadtable('tb_lista_activos_fijos', 0);
-
-                    $('#id_act_fijo').val(r.id);
-                    $('#divModalReg').modal('hide');
+                url: 'editar_documentos_notas.php',
+                contentType: false,
+                data: datos,
+                processData: false,
+                cache: false,
+            }).done(function(res) {
+                var res = JSON.parse(res);
+                if (res.mensaje == 'ok') {
+                    let pag = ($('#tb_mantenimientos_notas').val() == -1) ? 0 : $('#tb_mantenimientos_notas').DataTable().page.info().page;
+                    reloadtable('tb_mantenimientos_notas', pag);
+                    $('#id_nota').val(res.id_nota);
+                    $('#archivo').val(res.nombre_archivo);
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");
                 } else {
                     $('#divModalError').modal('show');
-                    $('#divMsgError').html(r.mensaje);
+                    $('#divMsgError').html(res.mensaje);
                 }
-            }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
+            }).always(
+                function() {}
+            ).fail(function(xhr, textStatus, errorThrown) {
                 console.error(xhr.responseText)
-                alert('Error al guardar activo');
+                alert('Ocurrió un error');
             });
         }
     });
 
-    //Elimiar Activo fijo
-    $('#divFormsBus').on('click', '#tb_lista_activos_fijos .btn_eliminar', function() {
-        let id = $(this).attr('value');
-        confirmar_del('activofijo_del', id);
-    });
-    $('#divModalConfDel').on("click", "#activofijo_del", function() {
-        var id = $(this).attr('value');
-        $.ajax({
-            type: 'POST',
-            url: 'editar_activofijo_detalle.php',
-            dataType: 'json',
-            data: { id: id, id_ingreso: $('#id_ingreso').val(), oper: 'del' }
-        }).done(function(r) {
-            $('#divModalConfDel').modal('hide');
-            if (r.mensaje == 'ok') {
-                let pag = $('#tb_lista_activos_fijos').DataTable().page.info().page;
-                reloadtable('tb_lista_activos_fijos', pag);
-
-                $('#divModalDone').modal('show');
-                $('#divMsgDone').html("Proceso realizado con éxito");
-            } else {
-                $('#divModalError').modal('show');
-                $('#divMsgError').html(r.mensaje);
-            }
-        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
-            console.error(xhr.responseText)
-            alert('Ocurrió un error');
-        });
-    });
-
-    //Imprimir listado de registros
-    $('#btn_imprime_filtro').on('click', function() {
-        reloadtable('tb_ingresos');
-        $('.is-invalid').removeClass('is-invalid');
-        var verifica = verifica_vacio($('#txt_fecini_filtro'));
-        verifica += verifica_vacio($('#txt_fecfin_filtro'));
-        if (verifica >= 1) {
-            $('#divModalError').modal('show');
-            $('#divMsgError').html('Debe escribir un rango de fechas');
-        } else {
-            $.post("imp_ingresos.php", {
-                id_ing: $('#txt_iding_filtro').val(),
-                num_ing: $('#txt_numing_filtro').val(),
-                fec_ini: $('#txt_fecini_filtro').val(),
-                fec_fin: $('#txt_fecfin_filtro').val(),
-                id_tercero: $('#sl_tercero_filtro').val(),
-                id_tiping: $('#sl_tiping_filtro').val(),
-                estado: $('#sl_estado_filtro').val()
-            }, function(he) {
-                $('#divTamModalImp').removeClass('modal-sm');
-                $('#divTamModalImp').removeClass('modal-lg');
-                $('#divTamModalImp').addClass('modal-xl');
-                $('#divModalImp').modal('show');
-                $("#divImp").html(he);
-            });
-        }
-    });
-
-    //Imprimit una Orden de Ingreso
-    $('#divForms').on("click", "#btn_imprimir", function() {
-        $.post("imp_ingreso.php", {
-            id: $('#id_ingreso').val()
-        }, function(he) {
-            $('#divTamModalImp').removeClass('modal-sm');
-            $('#divTamModalImp').removeClass('modal-lg');
-            $('#divTamModalImp').addClass('modal-xl');
-            $('#divModalImp').modal('show');
-            $("#divImp").html(he);
-        });
-    });
 
 })(jQuery);
