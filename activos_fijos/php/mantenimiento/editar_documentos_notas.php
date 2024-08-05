@@ -22,9 +22,9 @@ try {
         (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1)
     ) {
 
-        $id_hv = isset($_POST['id_hv']) ? $_POST['id_hv'] : -1;
-        $id_hv_doc = $_POST['id_hv_doc'];
-        
+        $id_detalle_mantenimiento = $_POST['id_detalle_mantenimiento']
+        $id_nota = isset($_POST['id_nota_mantenimiento']) ? $_POST['id_nota_mantenimiento'] : -1;
+
         $rs = $cmd->query($sql);
         $obj_ingreso = $rs->fetch();
 
@@ -38,7 +38,7 @@ try {
             $id_usuario_crea = isset($_POST['id_usuario_crea']) ? $_POST['id_usuario_crea'] : null;
             $fecha_creacion = date('Y-m-d H:i:s'); // Fecha actual
 
-            if ($id_hv_doc == -1) {
+            if ($id_nota == -1) {
 
                 // Consulta SQL
                 $sql = "INSERT INTO acf_hojavida_documentos6677 (
@@ -90,7 +90,7 @@ try {
                 }
                 if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id_hv'] = $id_hv;
+                    $res['id_nota'] = $id_nota;
                     $res['nombre_imagen'] = $nombre;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
@@ -126,8 +126,7 @@ try {
                 $updated = $sql->execute();
                 if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id_hv'] = $id_hv;
-                    $res['id_hv_doc'] = $id_hv_doc;
+                    $res['id_nota'] = $id_nota;
                     $res['nombre_archivo'] = $nombre;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];

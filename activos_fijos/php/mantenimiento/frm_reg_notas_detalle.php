@@ -12,7 +12,7 @@ $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usua
 $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
 $id_nota = isset($_POST['id_nota_mantenimiento']) ? $_POST['id_nota_mantenimiento'] : -1;
-$id_hv = isset($_POST['id_hv']) ? $_POST['id_hv'] : -1;
+$id_detalle_mantenimiento = isset($_POST['id_detalle_mantenimiento']) ? $_POST['id_detalle_mantenimiento'] : -1;
 
 $fecha = fecha_hora_servidor();
 
@@ -48,8 +48,8 @@ if (empty($obj)) {
         </div>
         <div class="px-2">
             <form id="acf_reg_docs_hoja_vida" enctype="multipart/formdata">
-                <input type="hidden" id="id_hv" name="id_hv" value="<?php echo $id_hv ?>">
-                <input type="hidden" id="id_hv_doc" name="id_hv_doc" value="<?php echo $id_nota ?>">
+                <input type="hidden" id="id_detalle_mantenimiento" name="id_detalle_mantenimiento" value="<?php echo $id_detalle_mantenimiento ?>">
+                <input type="hidden" id="id_nota" name="id_nota" value="<?php echo $id_nota ?>">
 
                 <div class="form-row">
                 <div class="form-group col-md-2">

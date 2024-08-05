@@ -4,7 +4,10 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_notas_detalle.php", function(he) {
+                    $.post("frm_reg_notas_detalle.php", {
+                        id_detalle_mantenimiento: $('#id_detalle_mantenimiento').val()
+                    },
+                    function(he) {
                         $('#divTamModalReg').removeClass('modal-lg');
                         $('#divTamModalReg').removeClass('modal-sm');
                         $('#divTamModalReg').addClass('modal-xl');
@@ -54,7 +57,7 @@
         let id = $(this).attr('value');
         $.post("frm_reg_notas_detalle.php", { 
             id_nota_mantenimiento: id,
-            id_mantenimiento: $('#id_mantenimiento').val()
+            id_detalle_mantenimiento: $('#id_detalle_mantenimiento').val()
         }, function(he) {
             $('#divTamModalReg').removeClass('modal-lg');
             $('#divTamModalReg').removeClass('modal-sm');
