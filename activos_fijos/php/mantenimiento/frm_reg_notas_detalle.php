@@ -49,7 +49,7 @@ if (empty($obj)) {
         <div class="px-2">
             <form id="acf_reg_docs_hoja_vida" enctype="multipart/formdata">
                 <input type="hidden" id="id_detalle_mantenimiento" name="id_detalle_mantenimiento" value="<?php echo $id_detalle_mantenimiento ?>">
-                <input type="hidden" id="id_nota" name="id_nota" value="<?php echo $id_nota ?>">
+                <input type="hidden" id="id_nota_mantenimiento" name="id_nota_mantenimiento" value="<?php echo $id_nota ?>">
 
                 <div class="form-row">
                 <div class="form-group col-md-2">
@@ -62,9 +62,9 @@ if (empty($obj)) {
                 </div>
 
                 <div class="form-group col-md-12">
-                    <label for="uploadImageAcf" class="small text-left">Documento</label>
+                    <label for="uploadDocNota" class="small text-left">Documento</label>
                     <div class="input-group mb-3"> 
-                        <button type="button" id="btn_descargar_documento" class="btn btn-outline-primary btn-sm shadow-gb" title="Descargar"> <span class="fas fa-download"></span></button>
+                        <button type="button" id="btn_descargar_documento_nota" class="btn btn-outline-primary btn-sm shadow-gb" title="Descargar"> <span class="fas fa-download"></span></button>
                         <input type="label" class="form-control form-control-sm" id="archivo" name="archivo" value="<?php echo $obj['archivo'] ?>" readonly="readonly">
                     </div> 
                     <div class="input-group mb-3"> 

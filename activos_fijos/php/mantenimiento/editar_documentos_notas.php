@@ -13,6 +13,7 @@ $oper = isset($_POST['oper']) ? $_POST['oper'] : exit('Acción no permitida');
 $fecha_crea = date('Y-m-d H:i:s');
 $id_usr_crea = $_SESSION['id_user'];
 $res = array();
+$fecha_hora_servidor = fecha_hora_servidor();
 
 try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
@@ -22,64 +23,56 @@ try {
         (PermisosUsuario($permisos, 5006, 4) && $oper == 'del') || $id_rol == 1)
     ) {
 
-        $id_detalle_mantenimiento = $_POST['id_detalle_mantenimiento']
+        $id_detalle_mantenimiento = $_POST['id_detalle_mantenimiento'];
         $id_nota = isset($_POST['id_nota_mantenimiento']) ? $_POST['id_nota_mantenimiento'] : -1;
-
-        $rs = $cmd->query($sql);
-        $obj_ingreso = $rs->fetch();
 
         if ($oper == 'add') {
 
             $archivo_actual = $_POST['archivo'];
-
-            // Datos del formulario
-            $tipo = isset($_POST['tipo']) ? $_POST['tipo'] : null;
-            $descripcion = isset($_POST['descripcion']) ? $_POST['descripcion'] : null;
-            $id_usuario_crea = isset($_POST['id_usuario_crea']) ? $_POST['id_usuario_crea'] : null;
-            $fecha_creacion = date('Y-m-d H:i:s'); // Fecha actual
+            $observaciones = isset($_POST['observaciones']) ? $_POST['observaciones'] : null;
 
             if ($id_nota == -1) {
 
-                // Consulta SQL
-                $sql = "INSERT INTO acf_hojavida_documentos6677 (
-                            id_activo_fijo, tipo, descripcion, archivo, id_usuario_crea, fecha_creacion) 
-                        VALUES (:id_activo_fijo, :tipo, :descripcion, :archivo, :id_usuario_crea, :fecha_creacion)";
+                $sql = "INSERT INTO acf_detalle_mantenimiento_nota 
+                    (id_detalle_mantenimiento, fecha, hora, observaciones, fecha_creacion, id_usuario_crea, archivo) 
+                    VALUES 
+                    (:id_detalle_mantenimiento, :fecha, :hora, :observaciones,:fecha_creacion, :id_usuario_crea, :archivo)";
 
-                // Preparar la consulta
                 $sql = $cmd->prepare($sql);
 
                 $nombre = 'temp_file';
-                $sql->bindParam(':id_activo_fijo', $id_hv, PDO::PARAM_INT);
-                $sql->bindParam(':tipo', $tipo, PDO::PARAM_INT);
-                $sql->bindParam(':descripcion', $descripcion, PDO::PARAM_STR);
-                $sql->bindParam(':archivo', $nombre, PDO::PARAM_STR);
+                $sql->bindParam(':id_detalle_mantenimiento', $id_detalle_mantenimiento, PDO::PARAM_INT);
+                $sql->bindParam(':fecha', $fecha_hora_servidor['fecha'], PDO::PARAM_STR);
+                $sql->bindParam(':hora', $fecha_hora_servidor['hora'], PDO::PARAM_STR);
+                $sql->bindParam(':observaciones', $observaciones, PDO::PARAM_STR);
+                $sql->bindParam(':fecha_creacion', $fecha_crea, PDO::PARAM_STR);
                 $sql->bindParam(':id_usuario_crea', $id_usr_crea, PDO::PARAM_INT);
-                $sql->bindParam(':fecha_creacion', $fecha_creacion, PDO::PARAM_STR);
+                $sql->bindParam(':archivo', $nombre, PDO::PARAM_STR);
 
                 $inserted = $sql->execute();
 
                 if ($inserted) {
-                    $id_hv_doc = $cmd->lastInsertId();
+                    $id_nota = $cmd->lastInsertId();
 
-                    $nombreImagenLocal =  $_FILES["uploadDocAcf"]['name'];
+                    $nombreImagenLocal =  $_FILES["uploadDocNota"]['name'];
                     $fileExtension = '.' . strtolower( pathinfo($nombreImagenLocal)['extension']);
-                    $nombre = $id_hv_doc . '_' .  date('Ymd_His') . $fileExtension;
-                    $temporal = $_FILES['uploadDocAcf']['tmp_name'];
+                    $nombre = $id_nota . '_' .  date('Ymd_His') . $fileExtension;
+                    $temporal = $_FILES['uploadDocNota']['tmp_name'];
                     $ruta = '../../imagenes/activos_fijos/';
                     if (!file_exists($ruta)) {
                         $ruta = mkdir($ruta, 0777, true);
                         $ruta = '../../imagenes/activos_fijos/';
                     }
                     if ((move_uploaded_file($temporal, $ruta . $nombre))) {
-                        $sql = "UPDATE acf_hojavida_documentos SET archivo = :archivo WHERE id_documento = :id_documento";
+                        $sql = "UPDATE acf_detalle_mantenimiento_nota SET archivo = :archivo WHERE id = :id";
                         $sql = $cmd->prepare($sql);
                         $sql->bindValue(':archivo', $nombre);
-                        $sql->bindValue(':id_documento', $id_hv_doc, PDO::PARAM_INT);
+                        $sql->bindValue(':id', $id_nota, PDO::PARAM_INT);
                         $updated = $sql->execute();
                         if ($updated) {
                             $res['mensaje'] = 'ok';
-                            $res['id_hv'] = $id_hv;
-                            $res['id_hv_doc'] = $id_hv_doc;
+                            $res['id_detalle_mantenimiento'] = $id_detalle_mantenimiento;
+                            $res['id_nota_mantenimiento'] = $id_nota;
                             $res['nombre_archivo'] = $nombre;
                         } else {
                             $res['mensaje'] = $sql->errorInfo()[2];
@@ -90,20 +83,20 @@ try {
                 }
                 if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id_nota'] = $id_nota;
-                    $res['nombre_imagen'] = $nombre;
+                    $res['id_nota_mantenimiento'] = $id_nota;
+                    $res['nombre_archivo'] = $nombre;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }
             }  else {
                 $nombre = $archivo_actual;
 
-                if(isset($_FILES["uploadDocAcf"])) {
+                if(isset($_FILES["uploadDocNota"])) {
                     
-                    $nombreImagenLocal =  $_FILES["uploadDocAcf"]['name'];
+                    $nombreImagenLocal =  $_FILES["uploadDocNota"]['name'];
                     $fileExtension = '.' . strtolower( pathinfo($nombreImagenLocal)['extension']);
-                    $nombre = $id_hv_doc . '_' .  date('Ymd_His') . $fileExtension;
-                    $temporal = $_FILES['uploadDocAcf']['tmp_name'];
+                    $nombre = $id_nota . '_' .  date('Ymd_His') . $fileExtension;
+                    $temporal = $_FILES['uploadDocNota']['tmp_name'];
                     $ruta = '../../imagenes/activos_fijos/';
 
                     if (!file_exists($ruta)) {
@@ -113,20 +106,23 @@ try {
                     move_uploaded_file($temporal, $ruta . $nombre);
                 }
 
-                $sql = "UPDATE acf_hojavida_documentos77
-                        SET tipo = :tipo, descripcion = :descripcion, archivo = :archivo, id_usuario_crea = :id_usuario_crea, fecha_creacion = :fecha_creacion
-                        WHERE id_documento = :id_documento";
+                $sql = "UPDATE `acf_detalle_mantenimiento_nota` 
+                        SET `fecha` = :fecha, `hora` = :hora, `observaciones` = :observaciones, `archivo` = :archivo
+                        WHERE `id` = :id";
+
                 $sql = $cmd->prepare($sql);
-                $sql->bindValue(':archivo', $nombre);
-                $sql->bindValue(':tipo', $tipo);
-                $sql->bindValue(':descripcion', $descripcion);
-                $sql->bindValue(':id_documento', $id_hv_doc, PDO::PARAM_INT);
-                $sql->bindParam(':id_usuario_crea', $id_usr_crea, PDO::PARAM_INT);
-                $sql->bindParam(':fecha_creacion', $fecha_creacion, PDO::PARAM_STR);
+
+                $sql->bindParam(':id', $id_nota, PDO::PARAM_INT);
+                $sql->bindParam(':fecha', $fecha_hora_servidor['fecha'], PDO::PARAM_STR);
+                $sql->bindParam(':hora', $fecha_hora_servidor['hora'], PDO::PARAM_STR);
+                $sql->bindParam(':observaciones', $observaciones, PDO::PARAM_STR);
+                $sql->bindParam(':archivo', $nombre, PDO::PARAM_STR);
+
                 $updated = $sql->execute();
+
                 if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id_nota'] = $id_nota;
+                    $res['id_nota_mantenimiento'] = $id_nota;
                     $res['nombre_archivo'] = $nombre;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
