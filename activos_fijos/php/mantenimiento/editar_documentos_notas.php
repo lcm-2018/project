@@ -133,7 +133,7 @@ try {
         } 
 
         if ($oper == 'del') {
-            $sql = "DELETE FROM acf_hojavida_documentos WHERE id_documento=" . $id_hv_doc;
+            $sql = "DELETE FROM acf_detalle_mantenimiento_nota WHERE id=" . $id_nota;
             $rs = $cmd->query($sql);
             if ($rs) {
                 $res['mensaje'] = 'ok';

@@ -315,7 +315,7 @@
     /* ---------------------------------------------------
     NOTAS
     -----------------------------------------------------*/
-    //Guardar documentos hoja de vida
+    //Guardar documentos NOTAS MANTENIMIENTO
     $('#divTamModalReg').on("click", "#btn_guardar_notas", function() {
         $('.is-invalid').removeClass('is-invalid');
 
@@ -337,7 +337,8 @@
         }
 
         let datos = new FormData();
-        datos.append('id_nota', $('#id_nota').val());
+        datos.append('id_nota_mantenimiento', $('#id_nota_mantenimiento').val());
+        datos.append('id_detalle_mantenimiento', $('#id_detalle_mantenimiento').val());
         datos.append('observaciones', $('#observaciones_nota').val());
         datos.append('archivo', $('#archivo').val());
 
@@ -377,5 +378,18 @@
         }
     });
 
+    //Descarar documento  hoja de vida
+    $('#divTamModalReg').on("click", "#btn_descargar_documento_nota", function() {
+        $('.is-invalid').removeClass('is-invalid');
+
+        let nombreImagen = $('#archivo').val()
+
+        // Construir la URL relativa al archivo
+        var urlDescarga = '../../imagenes/activos_fijos/' + nombreImagen
+
+        // Redirigir al usuario a la URL para iniciar la descarga
+        window.open(urlDescarga, '_blank');
+    });
+    
 
 })(jQuery);

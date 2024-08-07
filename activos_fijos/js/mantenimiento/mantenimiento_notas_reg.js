@@ -70,20 +70,24 @@
     //Borrar
     $('#tb_mantenimientos_notas').on('click', '.btn_eliminar_nota', function() {
         let id = $(this).attr('value');
-        confirmar_del('mantenimiento_detalle_del', id);
+        confirmar_del('mantenimiento_nota_del', id);
     });
-    $('#divModalConfDel').on("click", "#mantenimiento_detalle_del", function() {
+    $('#divModalConfDel').on("click", "#mantenimiento_nota_del", function() {
         let id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_mantenimiento_detalle.php',
+            url: 'editar_documentos_notas.php',
             dataType: 'json',
-            data: { id_detalle_mantenimiento: id, oper: 'del' }
+            data: { 
+                id_nota_mantenimiento: id,
+                id_detalle_mantenimiento: $('#id_detalle_mantenimiento').val(),
+                oper: 'del' 
+            }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_mantenimientos_detalles').DataTable().page.info().page;
-                reloadtable('tb_mantenimientos_detalles', pag);
+                let pag = $('#tb_mantenimientos_notas').DataTable().page.info().page;
+                reloadtable('tb_mantenimientos_notas', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
