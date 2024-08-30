@@ -9,7 +9,7 @@
 
     $(document).ready(function() {
         //Tabla de Registros
-        $('#tb_mantenimientos').DataTable({
+        $('#tb_progreso_mantenimientos').DataTable({
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
@@ -27,7 +27,7 @@
             serverSide: true,
             searching: false,
             ajax: {
-                url: 'listar_mantenimientos.php',
+                url: 'listar_progreso_mantenimientos.php',
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
@@ -41,11 +41,11 @@
             },
             columns: [
                 { 'data': 'id_mantenimiento' }, //Index=0
+                { 'data': 'id_detalle_mantenimiento' }, 
                 { 'data': 'tipo_mantenimiento' },
-                { 'data': 'fecha_mantenimiento' },
-                { 'data': 'observaciones' },
-                { 'data': 'responsable' },
-                { 'data': 'tercero' },
+                { 'data': 'articulo' },
+                { 'data': 'placa' },
+                { 'data': 'observacion_mantenimiento' },
                 { 'data': 'estado' },
                 { 'data': 'botones' }
             ],
@@ -71,30 +71,47 @@
         });
 
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
-        $('#tb_mantenimientos').wrap('<div class="overflow"/>');
+        $('#tb_progreso_mantenimientos').wrap('<div class="overflow"/>');
     });
 
     //Buascar registros de Ingresos
     $('#btn_buscar_filtro').on("click", function() {
         $('.is-invalid').removeClass('is-invalid');
-        reloadtable('tb_mantenimientos');
+        reloadtable('tb_progreso_mantenimientos');
     });
 
     $('.filtro').keypress(function(e) {
         if (e.keyCode == 13) {
-            reloadtable('tb_ingresos');
+            reloadtable('tb_progreso_mantenimientos');
         }
     });
 
-    //Editar un registro Orden Ingreso
-    $('#tb_mantenimientos').on('click', '.btn_editar', function() {
+    //Editar 
+    $('#tb_progreso_mantenimientos').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_mantenimiento.php", { id_mantenimiento: id }, function(he) {
+        $.post("frm_reg_progreso_mantenimiento_detalle.php", { 
+            id_detalle_mantenimiento: id,
+            id_mantenimiento: $('#id_mantenimiento').val()
+        }, function(he) {
             $('#divTamModalForms').addClass('modal-xl');
             $('#divModalForms').modal('show');
             $("#divForms").html(he);
         });
     });
+
+    $('#tb_progreso_mantenimientos').on('click', '.btn_notas', function() {
+        let id = $(this).attr('value');
+        $.post("frm_reg_mantenimiento_nota.php", { 
+            id_detalle_mantenimiento: id,
+            id_mantenimiento: $('#id_mantenimiento').val()
+        }, function(he) {
+            $('#divTamModalBus').removeClass('modal-lg');
+            $('#divTamModalBus').removeClass('modal-sm');
+            $('#divTamModalBus').addClass('modal-xl');
+            $('#divModalBus').modal('show');
+            $("#divFormsBus").html(he);
+        });
+    }); 
 
     //Guardar registro Orden mantenimiento
     $('#divForms').on("click", "#btn_guardar", function() {
@@ -258,6 +275,8 @@
 
         var error = verifica_vacio($('#txt_activo_fijo'));
         error += verifica_vacio($('#estado_detalle'));
+        error += verifica_vacio($('#estado_fin'));
+        error += verifica_vacio($('#observacio_fin_mantenimiento'));
         error += verifica_vacio($('#observacion_mantenimiento'));
 
         if (error >= 1) {
@@ -376,7 +395,7 @@
         }
     });
 
-    //Descarar documento  hoja de vida
+    //Descargar documento nota
     $('#divTamModalReg').on("click", "#btn_descargar_documento_nota", function() {
         $('.is-invalid').removeClass('is-invalid');
 
