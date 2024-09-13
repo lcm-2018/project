@@ -17,24 +17,22 @@ try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    if ((PermisosUsuario($permisos, 5002, 2) && $oper == 'add' && $_POST['id_cum'] == -1) ||
-        (PermisosUsuario($permisos, 5002, 3) && $oper == 'add' && $_POST['id_cum'] != -1) ||
-        (PermisosUsuario($permisos, 5002, 4) && $oper == 'del') || $id_rol == 1) {
+    if ((PermisosUsuario($permisos, 5010, 2) && $oper == 'add' && $_POST['id_cum'] == -1) ||
+        (PermisosUsuario($permisos, 5010, 3) && $oper == 'add' && $_POST['id_cum'] != -1) ||
+        (PermisosUsuario($permisos, 5010, 4) && $oper == 'del') || $id_rol == 1) {
 
-        $id_articulo = $_POST['id_articulo'];
+        $id_cencos = $_POST['id_cencos'];
 
-        if ($id_articulo > 0) {
+        if ($id_cencos > 0) {
             if ($oper == 'add') {
-                $id = $_POST['id_cum'];
-                $cod_cum = $_POST['txt_cod_cum'];
-                $cod_ium = $_POST['txt_cod_ium'];
-                $id_lab = $_POST['id_txt_lab_cum'] ? $_POST['id_txt_lab_cum'] : 0;
-                $id_precom = $_POST['id_txt_precom_cum'] ? $_POST['id_txt_precom_cum'] : 0;
-                $estado = $_POST['sl_estado_cum'];
+                $id = $_POST['id_ceccta'];
+                $id_cta = $_POST['id_txt_cta_con'] ? $_POST['id_txt_cta_con'] : 'NULL';
+                $fec_vig = $_POST['txt_fec_vig'] ? "'".$_POST['txt_fec_vig']."'" : 'NULL';
+                $estado = $_POST['sl_estado_cta'];                
 
                 if ($id == -1) {
-                    $sql = "INSERT INTO far_medicamento_cum(cum,ium,id_lab,id_prescom,estado,id_usr_crea,id_med,con_sismed,uni_fac_sismed)  
-                        VALUES('$cod_cum','$cod_ium',$id_lab,$id_precom,$estado,$id_usr_crea,$id_articulo,1,'C')";
+                    $sql = "INSERT INTO tb_centrocostos_cta(id_cencos,id_cuenta,fecha_vigencia,estado,id_usr_crea,fec_creacion)  
+                            VALUES($id_cencos,$id_cta,$fec_vig,$estado,$id_usr_crea,'$fecha_crea')";
                     $rs = $cmd->query($sql);
 
                     if ($rs) {
@@ -47,8 +45,9 @@ try {
                         $res['mensaje'] = $cmd->errorInfo()[2];
                     }
                 } else {
-                    $sql = "UPDATE far_medicamento_cum SET cum='$cod_cum',ium='$cod_ium',id_lab=$id_lab,id_prescom=$id_precom,estado=$estado
-                        WHERE id_cum=" . $id;
+                    $sql = "UPDATE tb_centrocostos_cta 
+                            SET id_cuenta=$id_cta,fecha_vigencia=$fec_vig,estado=$estado
+                            WHERE id_cec_cta=" . $id;
                     $rs = $cmd->query($sql);
 
                     if ($rs) {
@@ -62,7 +61,7 @@ try {
 
             if ($oper == 'del') {
                 $id = $_POST['id'];
-                $sql = "DELETE FROM far_medicamento_cum WHERE id_cum=" . $id;
+                $sql = "DELETE FROM tb_centrocostos_cta WHERE id_cec_cta=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';
@@ -71,7 +70,7 @@ try {
                 }
             }
         } else {
-            $res['mensaje'] = 'Primero debe guardar el Articulo';
+            $res['mensaje'] = 'Primero debe guardar el Centro de Costo';
         }
     } else {
         $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';

@@ -1,5 +1,0 @@
-id_ingreso,num_ingreso,fec_ingreso,hor_ingreso,num_factura,fec_factura,detalle,id_provedor,id_centrocosto,id_tipo_ingreso,id_sede,id_bodega,val_total,id_usr_crea,id_sedetraslado,fec_creacion,id_usr_anula,fec_anulacion,id_usr_cierre,fec_cierre,id_traslado,id_traslado_temp,estado_fnc,estado
-1,776,2024-05-29,10:17PM,asda,2024-05-29,asdads,2,0,1,1,11,47250000.0000,1,1,2024-05-30 03:17:25,,,1,2024-05-30 03:18:23,,,,2
-2,777,2024-06-06,10:40AM,243,2024-06-06,234234,2,0,2,1,11,12000.0000,1,1,2024-06-06 15:40:51,,,1,2024-06-06 19:31:39,,,,2
-3,,2024-06-27,11:38AM,34,2024-06-27,as,1,0,1,1,10,13635.0000,1,1,2024-06-27 16:38:14,,,,,,,,1
-4,781,2024-07-11,03:19PM,2334234,2024-07-11,aasdlassdalsd,1,0,3,1,10,5000000.0000,1,1,2024-07-11 20:20:51,,,1,2024-07-11 20:24:02,,,,2

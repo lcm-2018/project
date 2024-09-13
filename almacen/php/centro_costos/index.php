@@ -73,8 +73,8 @@ include '../../../permisos.php';
                                     <tr class="text-center centro-vertical">
                                         <th>Id</th>                                        
                                         <th>Nombre</th>
-                                        <th>Cuenta</th>
                                         <th>Para Uso Asistencial</th>
+                                        <th>Cuenta Contable Vigente</th>
                                         <th>Responsable</th>
                                         <th>Acciones</th>
                                     </tr>

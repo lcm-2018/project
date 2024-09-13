@@ -314,7 +314,7 @@ function tipos_activo($titulo = '', $valor = 0)
 }
 
 
-function articulosActivosFijos($cmd, $titulo = '', $id = 0)
+function articulos_ActivosFijos($cmd, $titulo = '', $id = 0)
 {
     try {
         echo '<option value="">' . $titulo . '</option>';

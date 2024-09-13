@@ -1,12 +1,10 @@
 (function($) {
     $(document).ready(function() {
-        $('#tb_componentes_hojavida').DataTable({
+        $('#tb_cuentas').DataTable({
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_componente.php", {
-                        id_hv: $('#id_hv').val()
-                    }, function(he) {
+                    $.post("frm_reg_centrocostos_cta.php", { id_cencos: $('#id_centrocosto').val() }, function(he) {
                         $('#divTamModalReg').removeClass('modal-xl');
                         $('#divTamModalReg').removeClass('modal-sm');
                         $('#divTamModalReg').addClass('modal-lg');
@@ -19,24 +17,31 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url: 'listar_componentes_hojavida.php',
+                url: 'listar_centrocostos_cta.php',
                 type: 'POST',
                 dataType: 'json',
                 data: function(data) {
-                    data.id_hv = $('#id_hv').val();
+                    data.id_cencos = $('#id_centrocosto').val();
                 }
             },
             columns: [
-                { 'data': 'id' }, //Index=0
-                { 'data': 'nom_articulo' },
-                { 'data': 'num_serial' },
-                { 'data': 'modelo' },
-                { 'data': 'nom_marca' },
+                { 'data': 'id_cec_cta' }, //Index=0
+                { 'data': 'cuenta' },
+                { 'data': 'fecha_vigencia' },
+                { 'data': 'vigente' },
+                { 'data': 'estado' },
                 { 'data': 'botones' }
             ],
             columnDefs: [
+                { class: 'text-wrap', targets: 1 },
                 { orderable: false, targets: 5 }
             ],
+            rowCallback: function(row, data) {
+                var vigente = $($(row).find("td")[3]).text();
+                if (vigente == 'X') {
+                    $($(row).find("td")[3]).css("background-color", "#ffc107");
+                }
+            },
             order: [
                 [0, "desc"]
             ],
@@ -46,6 +51,8 @@
             ],
         });
         $('.bttn-plus-dt span').html('<span class="icon-dt fas fa-plus-circle fa-lg"></span>');
-        $('#tb_componentes_hojavida').wrap('<div class="overflow"/>');
+        $('#tb_cuentas').wrap('<div class="overflow"/>');
+
     });
+
 })(jQuery);
