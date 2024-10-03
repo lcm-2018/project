@@ -63,22 +63,7 @@
             $('#divModalBus').modal('show');
             $("#divFormsBus").html(he);
         });
-    }); 
-
-    //Editar 
-    $('#tb_mantenimientos_detalles').on('click', '.btn_notas', function() {
-        let id = $(this).attr('value');
-        $.post("frm_reg_mantenimiento_nota.php", { 
-            id_detalle_mantenimiento: id,
-            id_mantenimiento: $('#id_mantenimiento').val()
-        }, function(he) {
-            $('#divTamModalBus').removeClass('modal-lg');
-            $('#divTamModalBus').removeClass('modal-sm');
-            $('#divTamModalBus').addClass('modal-xl');
-            $('#divModalBus').modal('show');
-            $("#divFormsBus").html(he);
-        });
-    }); 
+    });
 
     //Borrar
     $('#tb_mantenimientos_detalles').on('click', '.btn_eliminar', function() {

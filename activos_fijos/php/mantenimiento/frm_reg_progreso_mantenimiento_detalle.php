@@ -60,18 +60,24 @@ if (empty($obj)) {
                 <div class=" form-row">
                     <div class="form-group col-md-7">
                     <label for="txt_activo_fijo" class="small">Activo Fijo</label>
-                        <input type="text" class="form-control form-control-sm" id="txt_activo_fijo" required value="<?php echo $obj['nombre_activofijo'] ?>">
+                        <input type="text" class="form-control form-control-sm" id="txt_activo_fijo" required value="<?php echo $obj['nombre_activofijo'] ?>" readonly="readonly">
                         <input type="hidden" id="id_txt_activo_fijo" name="id_txt_activo_fijo" value="<?php echo $obj['id_activofijo'] ?>">
                     </div>
                     <div class="form-group col-md-2">
                         <label for="estado_detalle" class="small" required>Estado</label>
-                        <select class="form-control form-control-sm" id="estado_detalle" name="estado_detalle">
+                        <select class="form-control form-control-sm" id="estado_detalle" name="estado_detalle" disabled>
                             <?php estados_detalle_mantenimiento('', $obj['estado']) ?>
                         </select>
                     </div>
+                    <div class="form-group col-md-3">
+                        <label for="estado_fin" class="small" required>Estado Fin Mantenimiento</label>
+                        <select class="form-control form-control-sm" id="estado_fin" name="estado_fin">
+                            <?php estados_fin_mantenimiento('', $obj['estado_fin']) ?>
+                        </select>
+                    </div>
                     <div class="form-group col-md-12">
-                        <label for="observacion_mantenimiento" class="small">Observación Mantenimiento</label>
-                        <input type="text" class="form-control form-control-sm" id="observacion_mantenimiento" name="observacion_mantenimiento" value="<?php echo $obj['observacion_mantenimiento'] ?>">
+                        <label for="observacio_fin_mantenimiento" class="small">Observación Fin Mantenimiento</label>
+                        <input type="text" class="form-control form-control-sm" id="observacio_fin_mantenimiento" name="observacio_fin_mantenimiento" value="<?php echo $obj['observacio_fin_mantenimiento'] ?>">
                     </div>
                 </div>
             </form>

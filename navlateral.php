@@ -411,7 +411,7 @@ $rol = $_SESSION['rol'];
                                         </a>
                                     <?php } ?>  
                                     <?php if (PermisosUsuario($permisos, 5703, 1) || $id_rol == 1) { ?>
-                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/ingresos/index.php?var=3">
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/mantenimiento/index_progreso.php?var=3">
                                             <div class="form-row">
                                                 <div class="div-icono">
                                                     <i class="fas fa-sort-amount-down-alt fa-sm" style="color: #E74C3C;"></i>
