@@ -36,7 +36,7 @@ try {
     //Consulta el total de registros aplicando el filtro
     $sql = "SELECT COUNT(*) AS total 
             FROM acf_mantenimiento_detalle MD
-                INNER JOIN acf_hojavida HV ON HV.id = MD.id_activo_fijo
+                INNER JOIN acf_hojavida HV ON HV.id_activo_fijo = MD.id_activo_fijo
                 INNER JOIN far_medicamentos M ON M.id_med = HV.id_articulo 
             WHERE MD.id_mantenimiento=" . $_POST['id_mantenimiento'] . $where; 
     $rs = $cmd->query($sql);
@@ -53,7 +53,7 @@ try {
                 CASE MD.estado_fin_mantenimiento WHEN 1 THEN 'BUENO' WHEN 2 THEN 'REGULAR' WHEN 3 THEN 'MALO' END AS estado_fin,
                 MD.observacio_fin_mantenimiento
             FROM acf_mantenimiento_detalle MD
-                INNER JOIN acf_hojavida HV ON HV.id = MD.id_activo_fijo
+                INNER JOIN acf_hojavida HV ON HV.id_activo_fijo = MD.id_activo_fijo
                 INNER JOIN far_medicamentos M ON M.id_med = HV.id_articulo
             WHERE MD.id_mantenimiento=" . $_POST['id_mantenimiento'] . $where . " ORDER BY $col $dir $limit";
 
@@ -87,7 +87,7 @@ if (!empty($objs)) {
             "estado" => $obj['estado'],
             "estado_fin" => $obj['estado_fin'],
             "observacio_fin_mantenimiento" => $obj['observacio_fin_mantenimiento'],
-            "botones" => '<div class="text-center centro-vertical">' . $editar . $notas . $eliminar . '</div>',
+            "botones" => '<div class="text-center centro-vertical">' . $editar . $eliminar . '</div>',
         ];
     }    
 }

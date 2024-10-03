@@ -64,7 +64,7 @@ try {
                 MD.observacio_fin_mantenimiento
             FROM acf_mantenimiento_detalle MD
                 INNER JOIN acf_mantenimiento MT ON MT.id_mantenimiento = MD.id_mantenimiento
-                INNER JOIN acf_hojavida HV ON HV.id = MD.id_activo_fijo
+                INNER JOIN acf_hojavida HV ON HV.id_activo_fijo = MD.id_activo_fijo
                 INNER JOIN far_medicamentos M ON M.id_med = HV.id_articulo
             $where ORDER BY $col $dir $limit";
 

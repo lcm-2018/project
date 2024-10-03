@@ -244,7 +244,7 @@ function tipo_documento_activo($titulo = '', $estado = 3)
 
 }
 
-function estado_activo($titulo = '', $estado = 3)
+function estado_activo($titulo = '', $estado = 0)
 {
     echo '<option value="">' . $titulo . '</option>';
     $selected = ($estado == 1) ? 'selected="selected"' : '';

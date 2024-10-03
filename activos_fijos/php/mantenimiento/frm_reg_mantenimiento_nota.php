@@ -17,9 +17,9 @@ $sql = "SELECT
             MD.id_mantenimiento,
             m.nom_medicamento articulo,
             HV.placa,
-            HV.id id_activofijo
+            HV.id_activo_fijo id_activofijo
         FROM acf_mantenimiento_detalle MD
-        INNER JOIN acf_hojavida HV ON HV.id = MD.id_activo_fijo
+        INNER JOIN acf_hojavida HV ON HV.id_activo_fijo = MD.id_activo_fijo
         INNER JOIN far_medicamentos M ON M.id_med = HV.id_articulo
         WHERE MD.id_detalle_mantenimiento=" . $id . " LIMIT 1";
 $rs = $cmd->query($sql);
