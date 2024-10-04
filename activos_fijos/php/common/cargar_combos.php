@@ -250,8 +250,10 @@ function estado_activo($titulo = '', $estado = 0)
     $selected = ($estado == 1) ? 'selected="selected"' : '';
     echo '<option value="1"' . $selected . '>ACTIVO</option>';
     $selected = ($estado == 2) ? 'selected="selected"' : '';
-    echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
+    echo '<option value="2"' . $selected . '>PARA MANTENIMIENTO</option>';
     $selected = ($estado == 3) ? 'selected="selected"' : '';
+    echo '<option value="2"' . $selected . '>EN MANTENIMIENTO</option>';
+    $selected = ($estado == 4) ? 'selected="selected"' : '';
     echo '<option value="3"' . $selected . '>DADO DE BAJA</option>';
 
 }

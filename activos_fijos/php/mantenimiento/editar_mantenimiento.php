@@ -136,6 +136,46 @@ try {
             }
         }
 
+        if ($oper == 'aprobar') {
+
+            $sql = "UPDATE acf_mantenimiento SET estado = :estado WHERE id_mantenimiento = :id_mantenimiento";
+
+            $APROBADO = 2;
+            $sql = $cmd->prepare($sql);
+            $sql->bindParam(':estado', $ESTADO_PARA_MANTENIMIENTO, PDO::PARAM_INT);
+            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+   
+            $updated = $sql->execute();
+
+            if ($updated) {
+                $res['mensaje'] = 'ok';
+                $res['id_mantenimiento'] = $id;
+            } else {
+                $res['mensaje'] = $sql->errorInfo()[2];
+            }
+
+        }
+
+        if ($oper == 'ejecutar') {
+
+            $sql = "UPDATE acf_mantenimiento SET estado = :estado WHERE id_mantenimiento = :id_mantenimiento";
+
+            $EN_EJECUCON = 3;
+            $sql = $cmd->prepare($sql);
+            $sql->bindParam(':estado', $EN_EJECUCON, PDO::PARAM_INT);
+            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+   
+            $updated = $sql->execute();
+
+            if ($updated) {
+                $res['mensaje'] = 'ok';
+                $res['id_mantenimiento'] = $id;
+            } else {
+                $res['mensaje'] = $sql->errorInfo()[2];
+            }
+            
+        }
+
     } else {
         $res['mensaje'] = 'El Usuario del Sistema no tiene Permisos para esta Acción';
     }

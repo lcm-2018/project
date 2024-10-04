@@ -17,7 +17,7 @@ if ($length != -1) {
 $col = $_POST['order'][0]['column'] + 1;
 $dir = $_POST['order'][0]['dir'];
 
-$where = " WHERE 1";
+$where = " WHERE HV.estado = 2";//PARA MANTENIMIENTO
 
 if (isset($_POST['id_mantenimiento']) && $_POST['id_mantenimiento']) {
     $where .= " AND M.id_mantenimiento='" . $_POST['id_mantenimiento'] . "'";

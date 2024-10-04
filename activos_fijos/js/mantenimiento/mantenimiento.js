@@ -172,28 +172,27 @@
         });
     });
 
-    //Cerrar un registro Orden Ingreso
-    $('#divForms').on("click", "#btn_cerrar", function() {
-        confirmar_proceso('ingresos_close');
+    //Aprobar orden de mantenimiento
+    $('#divForms').on("click", "#btn_aprobado", function() {
+        confirmar_proceso('mantenimiento_aprobar');
     });
-    $('#divModalConfDel').on("click", "#ingresos_close", function() {
+    $('#divModalConfDel').on("click", "#mantenimiento_aprobar", function() {
         $.ajax({
             type: 'POST',
-            url: 'editar_orden_ingreso.php',
+            url: 'editar_mantenimiento.php',
             dataType: 'json',
-            data: { id: $('#id_ingreso').val(), oper: 'close' }
+            data: { id_mantenimiento: $('#id_mantenimiento').val(), oper: 'aprobar' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_ingresos').DataTable().page.info().page;
-                reloadtable('tb_ingresos', pag);
+                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
+                reloadtable('tb_mantenimientos', pag);
 
-                $('#txt_num_ing').val(r.num_ingreso);
-                $('#txt_est_ing').val('CERRADO');
+                $('#estado').val('APROBADO');
 
                 $('#btn_guardar').prop('disabled', true);
-                $('#btn_cerrar').prop('disabled', true);
-                $('#btn_anular').prop('disabled', false);
+                $('#btn_ejecucion').prop('disabled', false);
+                $('#btn_aprobado').prop('disabled', true);
 
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
@@ -201,33 +200,32 @@
                 $('#divModalError').modal('show');
                 $('#divMsgError').html(r.mensaje);
             }
-        }).always(function() {}).fail(function(xhr, textStatus, errorThrown) {
-            console.error(xhr.responseText)
+        }).always(function() {}).fail(function() {
             alert('Ocurrió un error');
         });
     });
 
-    //Anular un registro Orden Ingreso
-    $('#divForms').on("click", "#btn_anular", function() {
-        confirmar_proceso('ingresos_annul');
+    //Ejecutar orden de mantenimiento
+    $('#divForms').on("click", "#btn_ejecucion", function() {
+        confirmar_proceso('mantenimiento_ejecutar');
     });
-    $('#divModalConfDel').on("click", "#ingresos_annul", function() {
+    $('#divModalConfDel').on("click", "#mantenimiento_ejecutar", function() {
         $.ajax({
             type: 'POST',
-            url: 'editar_orden_ingreso.php',
+            url: 'editar_mantenimiento.php',
             dataType: 'json',
-            data: { id: $('#id_ingreso').val(), oper: 'annul' }
+            data: { id_mantenimiento: $('#id_mantenimiento').val(), oper: 'ejecutar' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_ingresos').DataTable().page.info().page;
-                reloadtable('tb_ingresos', pag);
+                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
+                reloadtable('tb_mantenimientos', pag);
 
-                $('#txt_est_ing').val('ANULADO');
+                $('#estado').val('EN EJECUCION');
 
                 $('#btn_guardar').prop('disabled', true);
-                $('#btn_cerrar').prop('disabled', true);
-                $('#btn_anular').prop('disabled', true);
+                $('#btn_ejecucion').prop('disabled', true);
+                $('#btn_aprobado').prop('disabled', true);
 
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
