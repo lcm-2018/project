@@ -58,7 +58,7 @@ if (empty($obj)) {
                 <input type="hidden" id="id_detalle_mantenimiento" name="id_detalle_mantenimiento" value="<?php echo $id ?>">
                 <input type="hidden" id="id_mantenimiento" name="id_mantenimiento" value="<?php echo $id_mantenimiento ?>">
                 <div class=" form-row">
-                    <div class="form-group col-md-7">
+                    <div class="form-group col-md-8">
                     <label for="txt_activo_fijo" class="small">Activo Fijo</label>
                         <input type="text" class="form-control form-control-sm" id="txt_activo_fijo" required value="<?php echo $obj['nombre_activofijo'] ?>" readonly="readonly">
                         <input type="hidden" id="id_txt_activo_fijo" name="id_txt_activo_fijo" value="<?php echo $obj['id_activofijo'] ?>">
@@ -69,7 +69,7 @@ if (empty($obj)) {
                             <?php estados_detalle_mantenimiento('', $obj['estado']) ?>
                         </select>
                     </div>
-                    <div class="form-group col-md-3">
+                    <div class="form-group col-md-2">
                         <label for="estado_fin" class="small" required>Estado Fin Mantenimiento</label>
                         <select class="form-control form-control-sm" id="estado_fin" name="estado_fin">
                             <?php estados_fin_mantenimiento('', $obj['estado_fin']) ?>

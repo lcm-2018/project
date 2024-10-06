@@ -142,9 +142,20 @@ try {
 
             $APROBADO = 2;
             $sql = $cmd->prepare($sql);
-            $sql->bindParam(':estado', $ESTADO_PARA_MANTENIMIENTO, PDO::PARAM_INT);
+            $sql->bindParam(':estado', $APROBADO, PDO::PARAM_INT);
             $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
    
+            $updated = $sql->execute();
+
+            $sql = "UPDATE acf_hojavida HV INNER JOIN acf_mantenimiento_detalle AFMD ON HV.id_activo_fijo = AFMD.id_activo_fijo
+                    SET HV.estado = :estado
+                    WHERE AFMD.id_mantenimiento = :id_mantenimiento;";
+
+            $PARA_MANTENIMIENTO = 2;
+            $sql = $cmd->prepare($sql);
+            $sql->bindParam(':estado', $PARA_MANTENIMIENTO, PDO::PARAM_INT);
+            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+
             $updated = $sql->execute();
 
             if ($updated) {
@@ -165,6 +176,17 @@ try {
             $sql->bindParam(':estado', $EN_EJECUCON, PDO::PARAM_INT);
             $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
    
+            $updated = $sql->execute();
+
+            $sql = "UPDATE acf_hojavida HV INNER JOIN acf_mantenimiento_detalle AFMD ON HV.id_activo_fijo = AFMD.id_activo_fijo
+                    SET HV.estado = :estado
+                    WHERE AFMD.id_mantenimiento = :id_mantenimiento;";
+
+            $EN_MANTENIMIENTO = 3;
+            $sql = $cmd->prepare($sql);
+            $sql->bindParam(':estado', $EN_MANTENIMIENTO, PDO::PARAM_INT);
+            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+
             $updated = $sql->execute();
 
             if ($updated) {

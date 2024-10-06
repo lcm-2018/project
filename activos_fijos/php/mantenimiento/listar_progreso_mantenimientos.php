@@ -40,13 +40,14 @@ try {
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 
     //Consulta el total de registros de la tabla
-    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento M";
+    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento_detalle M";
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecords = $total['total'];
 
     //Consulta el total de registros aplicando el filtro
-    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento M $where";
+    $sql = "SELECT COUNT(*) AS total FROM acf_mantenimiento_detalle MD 
+            INNER JOIN acf_hojavida HV ON HV.id_activo_fijo = MD.id_activo_fijo $where";
     $rs = $cmd->query($sql);
     $total = $rs->fetch();
     $totalRecordsFilter = $total['total'];
