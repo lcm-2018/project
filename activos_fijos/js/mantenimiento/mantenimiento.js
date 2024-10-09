@@ -121,7 +121,7 @@
                 if (r.mensaje == 'ok') {
                     let pag = ($('#id_mantenimiento').val() == -1) ? 0 : $('#tb_mantenimientos').DataTable().page.info().page;
                     reloadtable('tb_mantenimientos', pag);
-                    $('#id_mantenimiento').val(r.id);
+                    $('#id_mantenimiento').val(r.id_mantenimiento);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
