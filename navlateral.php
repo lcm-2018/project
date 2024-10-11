@@ -421,7 +421,19 @@ $rol = $_SESSION['rol'];
                                                 </div>
                                             </div>
                                         </a>
-                                    <?php } ?>                                   
+                                    <?php } ?>
+                                    <?php if (PermisosUsuario($permisos, 5703, 1) || $id_rol == 1) { ?>
+                                        <a class="nav-link sombra" href="<?php echo $_SESSION['urlin'] ?>/activos_fijos/php/baja/index.php?var=3">
+                                            <div class="form-row">
+                                                <div class="div-icono">
+                                                    <i class="fas fa-sort-amount-down-alt fa-sm" style="color: #E74C3C;"></i>
+                                                </div>
+                                                <div>
+                                                    Bajas
+                                                </div>
+                                            </div>
+                                        </a>
+                                    <?php } ?>                                  
                                 </nav>
                             </div>
                         </nav>
