@@ -236,39 +236,30 @@
     /* ---------------------------------------------------
     DETALLES
     -----------------------------------------------------*/
-    $('#divForms').on('click', '#tb_ingresos_detalles .btn_editar', function() {
-        let id = $(this).attr('value');
-        $.post("frm_reg_ingresos_detalle.php", { id: id }, function(he) {
-            $('#divTamModalReg').addClass('modal-lg');
-            $('#divModalReg').modal('show');
-            $("#divFormsReg").html(he);
-        });
-    });
 
     //Guardar registro Detalle
     $('#divModalBus').on("click", "#btn_guardar_detalle", function() {
         $('.is-invalid').removeClass('is-invalid');
 
         var error = verifica_vacio($('#txt_activo_fijo'));
-        error += verifica_vacio($('#estado_detalle'));
-        error += verifica_vacio($('#observacion_mantenimiento'));
+        error += verifica_vacio($('#observacion_baja'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_mantenimiento_detalle').serialize();
+            var data = $('#frm_reg_baja_detalle').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_mantenimiento_detalle.php',
+                url: 'editar_baja_detalle.php',
                 dataType: 'json',
-                data: data + "&id_detalle_mantenimiento=" + $('#id_detalle_mantenimiento').val() + "&id_mantenimiento=" + $('#id_mantenimiento').val() + '&oper=add'
+                data: data + "&id_baja_detalle=" + $('#id_baja_detalle').val() + "&id_baja=" + $('#id_baja').val() + '&oper=add'
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_detalle_mantenimiento').val() == -1) ? 0 : $('#tb_mantenimientos_detalles').DataTable().page.info().page;
-                    reloadtable('tb_mantenimientos_detalles', pag);
+                    let pag = ($('#id_baja_detalle').val() == -1) ? 0 : $('#tb_baja_detalles').DataTable().page.info().page;
+                    reloadtable('tb_baja_detalles', pag);
 
-                    $('#id_detalle_mantenimiento').val(r.id);
+                    $('#id_baja_detalle').val(r.id);
                     $('#divModalReg').modal('hide');
                     $('#divModalDone').modal('show');
                     $('#divMsgDone').html("Proceso realizado con éxito");

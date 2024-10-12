@@ -4,7 +4,10 @@
             dom: setdom,
             buttons: [{
                 action: function(e, dt, node, config) {
-                    $.post("frm_reg_mantenimiento_detalle.php", function(he) {
+                    $.post("frm_reg_baja_detalle.php", {
+                        id_baja: $('#id_baja').val()
+                    },
+                    function(he) {
                         $('#divTamModalBus').removeClass('modal-lg');
                         $('#divTamModalBus').removeClass('modal-sm');
                         $('#divTamModalBus').addClass('modal-xl');
@@ -48,11 +51,11 @@
     });
 
     //Editar 
-    $('#tb_mantenimientos_detalles').on('click', '.btn_editar', function() {
+    $('#tb_baja_detalles').on('click', '.btn_editar', function() {
         let id = $(this).attr('value');
-        $.post("frm_reg_mantenimiento_detalle.php", { 
-            id_detalle_mantenimiento: id,
-            id_mantenimiento: $('#id_mantenimiento').val()
+        $.post("frm_reg_baja_detalle.php", { 
+            id_baja_detalle: id,
+            id_baja: $('#id_baja').val()
         }, function(he) {
             $('#divTamModalBus').removeClass('modal-lg');
             $('#divTamModalBus').removeClass('modal-sm');
@@ -63,22 +66,22 @@
     });
 
     //Borrar
-    $('#tb_mantenimientos_detalles').on('click', '.btn_eliminar', function() {
+    $('#tb_baja_detalles').on('click', '.btn_eliminar', function() {
         let id = $(this).attr('value');
         confirmar_del('mantenimiento_detalle_del', id);
     });
-    $('#divModalConfDel').on("click", "#mantenimiento_detalle_del", function() {
+    $('#divModalConfDel').on("click", "#baja_detalle_del", function() {
         let id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_mantenimiento_detalle.php',
+            url: 'editar_baja_detalle.php',
             dataType: 'json',
             data: { id_detalle_mantenimiento: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_mantenimientos_detalles').DataTable().page.info().page;
-                reloadtable('tb_mantenimientos_detalles', pag);
+                let pag = $('#tb_baja_detalles').DataTable().page.info().page;
+                reloadtable('tb_baja_detalles', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
