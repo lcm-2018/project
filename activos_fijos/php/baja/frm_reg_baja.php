@@ -96,8 +96,7 @@ $imprimir = $id != -1 ? '' : 'disabled="disabled"';
     </div>
     <div class="text-center pt-3">
         <button type="button" class="btn btn-primary btn-sm" id="btn_guardar" <?php echo $guardar ?>>Guardar</button>
-        <button type="button" class="btn btn-primary btn-sm" id="btn_aprobado" <?php echo $aprobado ?>>Aprobado</button>
-        <button type="button" class="btn btn-primary btn-sm" id="btn_ejecucion" <?php echo $ejecucion ?>>En Ejecución</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn_cerrar" <?php echo $aprobado ?>>Cerrar</button>
         <a type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Cancelar</a>
     </div>
 </div>

@@ -95,28 +95,23 @@
     $('#divForms').on("click", "#btn_guardar", function() {
         $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#tipo_mantenimiento'));
-        error += verifica_vacio($('#id_responsable'));
-        error += verifica_vacio($('#id_tercero'));
-        error += verifica_vacio($('#fecha_inicio_mantenimiento'));
-        error += verifica_vacio($('#fecha_fin_mantenimiento'));
-        error += verifica_vacio($('#observaciones'));
+        var error = verifica_vacio($('#observaciones'));
 
         if (error >= 1) {
             $('#divModalError').modal('show');
             $('#divMsgError').html('Los datos resaltados son obligatorios');
         } else {
-            var data = $('#frm_reg_mantenimiento').serialize();
+            var data = $('#frm_reg_baja').serialize();
             $.ajax({
                 type: 'POST',
-                url: 'editar_mantenimiento.php',
+                url: 'editar_baja.php',
                 dataType: 'json',
                 data: data + "&oper=add"
             }).done(function(r) {
                 if (r.mensaje == 'ok') {
-                    let pag = ($('#id_mantenimiento').val() == -1) ? 0 : $('#tb_mantenimientos').DataTable().page.info().page;
-                    reloadtable('tb_mantenimientos', pag);
-                    $('#id_mantenimiento').val(r.id);
+                    let pag = ($('#id_baja').val() == -1) ? 0 : $('#tb_bajas').DataTable().page.info().page;
+                    reloadtable('tb_bajas', pag);
+                    $('#id_baja').val(r.id);
 
                     $('#btn_cerrar').prop('disabled', false);
                     $('#btn_imprimir').prop('disabled', false);
@@ -145,14 +140,14 @@
         var id = $(this).attr('value');
         $.ajax({
             type: 'POST',
-            url: 'editar_mantenimiento.php',
+            url: 'editar_baja.php',
             dataType: 'json',
-            data: { id_mantenimiento: id, oper: 'del' }
+            data: { id_baja: id, oper: 'del' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
-                reloadtable('tb_mantenimientos', pag);
+                let pag = $('#tb_bajas').DataTable().page.info().page;
+                reloadtable('tb_bajas', pag);
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
             } else {
@@ -167,27 +162,26 @@
         });
     });
 
-    //Aprobar orden de mantenimiento
-    $('#divForms').on("click", "#btn_aprobado", function() {
-        confirmar_proceso('mantenimiento_aprobar');
+    //Cerrar orden de baja
+    $('#divForms').on("click", "#btn_cerrar", function() {
+        confirmar_proceso('baja_cerrar');
     });
-    $('#divModalConfDel').on("click", "#mantenimiento_aprobar", function() {
+    $('#divModalConfDel').on("click", "#baja_cerrar", function() {
         $.ajax({
             type: 'POST',
-            url: 'editar_mantenimiento.php',
+            url: 'editar_baja.php',
             dataType: 'json',
-            data: { id_mantenimiento: $('#id_mantenimiento').val(), oper: 'aprobar' }
+            data: { id_baja: $('#id_baja').val(), oper: 'cerrar' }
         }).done(function(r) {
             $('#divModalConfDel').modal('hide');
             if (r.mensaje == 'ok') {
-                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
-                reloadtable('tb_mantenimientos', pag);
+                let pag = $('#tb_bajas').DataTable().page.info().page;
+                reloadtable('tb_bajas', pag);
 
-                $('#estado').val('APROBADO');
+                $('#estado').val('CERRADO');
 
                 $('#btn_guardar').prop('disabled', true);
-                $('#btn_ejecucion').prop('disabled', false);
-                $('#btn_aprobado').prop('disabled', true);
+                $('#btn_cerrado').prop('disabled', true);
 
                 $('#divModalDone').modal('show');
                 $('#divMsgDone').html("Proceso realizado con éxito");
@@ -200,38 +194,6 @@
         });
     });
 
-    //Ejecutar orden de mantenimiento
-    $('#divForms').on("click", "#btn_ejecucion", function() {
-        confirmar_proceso('mantenimiento_ejecutar');
-    });
-    $('#divModalConfDel').on("click", "#mantenimiento_ejecutar", function() {
-        $.ajax({
-            type: 'POST',
-            url: 'editar_mantenimiento.php',
-            dataType: 'json',
-            data: { id_mantenimiento: $('#id_mantenimiento').val(), oper: 'ejecutar' }
-        }).done(function(r) {
-            $('#divModalConfDel').modal('hide');
-            if (r.mensaje == 'ok') {
-                let pag = $('#tb_mantenimientos').DataTable().page.info().page;
-                reloadtable('tb_mantenimientos', pag);
-
-                $('#estado').val('EN EJECUCION');
-
-                $('#btn_guardar').prop('disabled', true);
-                $('#btn_ejecucion').prop('disabled', true);
-                $('#btn_aprobado').prop('disabled', true);
-
-                $('#divModalDone').modal('show');
-                $('#divMsgDone').html("Proceso realizado con éxito");
-            } else {
-                $('#divModalError').modal('show');
-                $('#divMsgError').html(r.mensaje);
-            }
-        }).always(function() {}).fail(function() {
-            alert('Ocurrió un error');
-        });
-    });
 
     /* ---------------------------------------------------
     DETALLES
@@ -294,84 +256,7 @@
         });
     });
 
-    /* ---------------------------------------------------
-    NOTAS
-    -----------------------------------------------------*/
-    //Guardar documentos NOTAS MANTENIMIENTO
-    $('#divTamModalReg').on("click", "#btn_guardar_notas", function() {
-        $('.is-invalid').removeClass('is-invalid');
 
-        var error = verifica_vacio($('#observaciones_nota'));
- 
-        var file =  $('#uploadDocNota')[0].files[0];
-        if(!$('#archivo').val()) {
-            if(!file) {
-                showError('Por favor, selecciona un archivo')
-                return;
-            }
-            
-            var validImageTypes = ["application/pdf", "application/pdf"];
-            
-            if (!validImageTypes.includes(file.type)) {
-                showError('Por favor, selecciona un documento válido')
-                return;
-            }
-        }
-
-        let datos = new FormData();
-        datos.append('id_nota_mantenimiento', $('#id_nota_mantenimiento').val());
-        datos.append('id_detalle_mantenimiento', $('#id_detalle_mantenimiento').val());
-        datos.append('observaciones', $('#observaciones_nota').val());
-        datos.append('archivo', $('#archivo').val());
-
-        datos.append('oper','add');
-        datos.append('uploadDocNota', file);
-
-        if (error >= 1) {
-            $('#divModalError').modal('show');
-            $('#divMsgError').html('Los datos resaltados son obligatorios');
-        } else {
-            $.ajax({
-                type: 'POST',
-                url: 'editar_documentos_notas.php',
-                contentType: false,
-                data: datos,
-                processData: false,
-                cache: false,
-            }).done(function(res) {
-                var res = JSON.parse(res);
-                if (res.mensaje == 'ok') {
-                    let pag = ($('#tb_mantenimientos_notas').val() == -1) ? 0 : $('#tb_mantenimientos_notas').DataTable().page.info().page;
-                    reloadtable('tb_mantenimientos_notas', pag);
-                    $('#id_nota').val(res.id_nota);
-                    $('#archivo').val(res.nombre_archivo);
-                    $('#divModalDone').modal('show');
-                    $('#divMsgDone').html("Proceso realizado con éxito");
-                } else {
-                    $('#divModalError').modal('show');
-                    $('#divMsgError').html(res.mensaje);
-                }
-            }).always(
-                function() {}
-            ).fail(function(xhr, textStatus, errorThrown) {
-                console.error(xhr.responseText)
-                alert('Ocurrió un error');
-            });
-        }
-    });
-
-    //Descarar documento  hoja de vida
-    $('#divTamModalReg').on("click", "#btn_descargar_documento_nota", function() {
-        $('.is-invalid').removeClass('is-invalid');
-
-        let nombreImagen = $('#archivo').val()
-
-        // Construir la URL relativa al archivo
-        var urlDescarga = '../../imagenes/activos_fijos/' + nombreImagen
-
-        // Redirigir al usuario a la URL para iniciar la descarga
-        window.open(urlDescarga, '_blank');
-    });
     
 
 })(jQuery);

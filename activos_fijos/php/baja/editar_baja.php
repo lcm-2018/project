@@ -18,78 +18,57 @@ try {
     $cmd = new PDO("$bd_driver:host=$bd_servidor;dbname=$bd_base;$charset", $bd_usuario, $bd_clave);
     $cmd->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_SILENT);
 
-    if ((PermisosUsuario($permisos, 5703, 2) && $oper == 'add' && $_POST['id_mantenimiento'] == -1) 
-        || (PermisosUsuario($permisos, 5703, 3) && $oper == 'add' && $_POST['id_mantenimiento'] != -1) 
+    if ((PermisosUsuario($permisos, 5703, 2) && $oper == 'add' && $_POST['id_baja'] == -1) 
+        || (PermisosUsuario($permisos, 5703, 3) && $oper == 'add' && $_POST['id_baja'] != -1) 
         || ($oper == 'del') 
         || $id_rol == 1
     ) {
 
-        $id = isset($_POST['id_mantenimiento']) ? $_POST['id_mantenimiento'] : -1;
+        $id = isset($_POST['id_baja']) ? $_POST['id_baja'] : -1;
 
         if ($oper == 'add') {
             if ($id == -1) {
                 
-                $sql = "INSERT INTO acf_baja 
+                $sql = "INSERT INTO acf_baja
                     (fecha_orden, hora_orden, observaciones, estado, fecha_baja, usuario_crea, usuario_cierra) 
                     VALUES (:fecha_orden, :hora_orden, :observaciones, :estado, :fecha_baja, :usuario_crea, :usuario_cierra)";
 
-                $stmt = $conn->prepare($sql);
+                $sql = $cmd->prepare($sql);
 
-                $stmt->bindParam(':fecha_orden', $_POST['fecha_orden']);
-                $stmt->bindParam(':hora_orden', $_POST['hora_orden']);
-                $stmt->bindParam(':observaciones', $_POST['observaciones']);
-                $stmt->bindParam(':estado', 1, PDO::PARAM_INT);
-                $stmt->bindParam(':fecha_baja', $fecha_crea);
-                $stmt->bindParam(':usuario_crea', $id_usr_crea, PDO::PARAM_INT);
-                $stmt->bindParam(':usuario_cierra', null, PDO::PARAM_INT);
+                $PENDIENTE = 1;
+
+                $sql->bindParam(':fecha_orden', $_POST['fecha_orden']);
+                $sql->bindParam(':hora_orden', $_POST['hora_orden']);
+                $sql->bindParam(':observaciones', $_POST['observaciones']);
+                $sql->bindParam(':estado', $PENDIENTE, PDO::PARAM_INT);
+                $sql->bindParam(':fecha_baja', $fecha_crea);
+                $sql->bindParam(':usuario_crea', $id_usr_crea, PDO::PARAM_INT);
+                $sql->bindValue(':usuario_cierra', null, PDO::PARAM_INT);
 
                 $inserted = $sql->execute();
 
                 if ($inserted) {
                     $id = $cmd->lastInsertId();
                     $res['mensaje'] = 'ok';
-                    $res['id_mantenimiento'] = $id;
+                    $res['id_baja'] = $id;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }   
             } else {
             
-                $sql = "UPDATE acf_mantenimiento SET
-                            fecha_mantenimiento = :fecha_mantenimiento,
-                            hora_mantenimiento = :hora_mantenimiento,
-                            observaciones = :observaciones,
-                            tipo_mantenimiento = :tipo_mantenimiento,
-                            id_responsable = :id_responsable,
-                            id_tercero = :id_tercero,
-                            fecha_inicio_mantenimiento = :fecha_inicio_mantenimiento,
-                            fecha_fin_mantenimiento = :fecha_fin_mantenimiento,
-                            fecha_aprobacion = :fecha_aprobacion,
-                            usuario_aprobacion = :usuario_aprobacion,
-                            fecha_ejecucion = :fecha_ejecucion,
-                            usuario_ejecucion = :usuario_ejecucion
-                        WHERE id_mantenimiento = :id_mantenimiento";
+                $sql = "UPDATE acf_baja SET observaciones = :observaciones WHERE id_baja = :id_baja";
 
                 $sql = $cmd->prepare($sql);
-                $sql->bindParam(':fecha_mantenimiento', $_POST['fecha_mantenimiento']);
-                $sql->bindParam(':hora_mantenimiento', $_POST['hora_mantenimiento']);
+               
                 $sql->bindParam(':observaciones', $_POST['observaciones']);
-                $sql->bindParam(':tipo_mantenimiento', $_POST['tipo_mantenimiento'], PDO::PARAM_INT);
-                $sql->bindParam(':id_responsable', $_POST['id_responsable'], PDO::PARAM_INT);
-                $sql->bindParam(':id_tercero', $_POST['id_tercero'], PDO::PARAM_INT);
-                $sql->bindParam(':fecha_inicio_mantenimiento', $_POST['fecha_inicio_mantenimiento']);
-                $sql->bindParam(':fecha_fin_mantenimiento', $_POST['fecha_fin_mantenimiento']);
-                $sql->bindValue(':fecha_aprobacion', null);
-                $sql->bindValue(':usuario_aprobacion', null, PDO::PARAM_INT);
-                $sql->bindValue(':fecha_ejecucion', null);
-                $sql->bindValue(':usuario_ejecucion', null, PDO::PARAM_NULL);
-                $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+                $sql->bindParam(':id_baja', $id, PDO::PARAM_INT);
 
                 
                 $updated = $sql->execute();
 
                 if ($updated) {
                     $res['mensaje'] = 'ok';
-                    $res['id_mantenimiento'] = $id;
+                    $res['id_baja'] = $id;
                 } else {
                     $res['mensaje'] = $sql->errorInfo()[2];
                 }
@@ -97,12 +76,12 @@ try {
         }
 
         if ($oper == 'del') {
-            $sql = "SELECT estado FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
+            $sql = "SELECT estado FROM acf_baja WHERE id_baja=" . $id;
             $rs = $cmd->query($sql);
             $obj = $rs->fetch();
 
             if ($obj['estado'] == 1) {
-                $sql = "DELETE FROM acf_mantenimiento WHERE id_mantenimiento=" . $id;
+                $sql = "DELETE FROM acf_baja WHERE id_baja=" . $id;
                 $rs = $cmd->query($sql);
                 if ($rs) {
                     $res['mensaje'] = 'ok';
@@ -110,70 +89,39 @@ try {
                     $res['mensaje'] = $cmd->errorInfo()[2];
                 }
             } else {
-                $res['mensaje'] = 'Solo puede Borrar Ordenes de Mantenimiento en estado Pendiente' ;
+                $res['mensaje'] = 'Solo puede Borrar Ordenes de Baja en estado Pendiente' ;
             }
         }
 
-        if ($oper == 'aprobar') {
+        if ($oper == 'cerrar') {
 
-            $sql = "UPDATE acf_mantenimiento SET estado = :estado WHERE id_mantenimiento = :id_mantenimiento";
+            $sql = "UPDATE acf_baja SET estado = :estado WHERE id_baja = :id_baja";
 
-            $APROBADO = 2;
+            $CERRADO = 2;
             $sql = $cmd->prepare($sql);
-            $sql->bindParam(':estado', $APROBADO, PDO::PARAM_INT);
-            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+            $sql->bindParam(':estado', $CERRADO, PDO::PARAM_INT);
+            $sql->bindParam(':id_baja', $id, PDO::PARAM_INT);
    
             $updated = $sql->execute();
 
-            $sql = "UPDATE acf_hojavida HV INNER JOIN acf_mantenimiento_detalle AFMD ON HV.id_activo_fijo = AFMD.id_activo_fijo
+            $sql = "UPDATE acf_hojavida HV INNER JOIN acf_baja_detalle AFB ON HV.id_activo_fijo = AFB.id_activo_fijo
                     SET HV.estado = :estado
-                    WHERE AFMD.id_mantenimiento = :id_mantenimiento;";
+                    WHERE AFB.id_baja = :id_baja;";
 
-            $PARA_MANTENIMIENTO = 2;
+            $DADO_DE_BAJA = 5;
             $sql = $cmd->prepare($sql);
-            $sql->bindParam(':estado', $PARA_MANTENIMIENTO, PDO::PARAM_INT);
-            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
+            $sql->bindParam(':estado', $DADO_DE_BAJA, PDO::PARAM_INT);
+            $sql->bindParam(':id_baja', $id, PDO::PARAM_INT);
 
             $updated = $sql->execute();
 
             if ($updated) {
                 $res['mensaje'] = 'ok';
-                $res['id_mantenimiento'] = $id;
+                $res['id_baja'] = $id;
             } else {
                 $res['mensaje'] = $sql->errorInfo()[2];
             }
 
-        }
-
-        if ($oper == 'ejecutar') {
-
-            $sql = "UPDATE acf_mantenimiento SET estado = :estado WHERE id_mantenimiento = :id_mantenimiento";
-
-            $EN_EJECUCON = 3;
-            $sql = $cmd->prepare($sql);
-            $sql->bindParam(':estado', $EN_EJECUCON, PDO::PARAM_INT);
-            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
-   
-            $updated = $sql->execute();
-
-            $sql = "UPDATE acf_hojavida HV INNER JOIN acf_mantenimiento_detalle AFMD ON HV.id_activo_fijo = AFMD.id_activo_fijo
-                    SET HV.estado = :estado
-                    WHERE AFMD.id_mantenimiento = :id_mantenimiento;";
-
-            $EN_MANTENIMIENTO = 3;
-            $sql = $cmd->prepare($sql);
-            $sql->bindParam(':estado', $EN_MANTENIMIENTO, PDO::PARAM_INT);
-            $sql->bindParam(':id_mantenimiento', $id, PDO::PARAM_INT);
-
-            $updated = $sql->execute();
-
-            if ($updated) {
-                $res['mensaje'] = 'ok';
-                $res['id_mantenimiento'] = $id;
-            } else {
-                $res['mensaje'] = $sql->errorInfo()[2];
-            }
-            
         }
 
     } else {
